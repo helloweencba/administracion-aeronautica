@@ -7,12 +7,14 @@
         :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --gris: #7f8c8d; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid var(--azul); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        h2 { color: var(--azul); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
         .full { grid-column: span 2; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
-        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
-        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; transition: 0.3s; }
+        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; font-size: 1.1em; }
+        .btn-main:hover { background: #154360; }
         .btn-action { font-size: 0.7em; padding: 5px; margin-right: 2px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { background: var(--azul); color: white; padding: 10px; text-align: left; font-size: 0.8em; }
@@ -25,8 +27,16 @@
 <div class="card">
     <h2>🚀 Carga de Solicitud</h2>
     <div class="grid">
-        <div><label>Unidad</label><select id="unidad"><option>TÉCNICA</option><option>OPERACIONES</option><option>UOTA</option><option>ADMINISTRACIÓN</option></select></div>
-        <div><label>N° Solicitud</label><input type="text" id="nro_sol" placeholder="Ej: 26/010"></div>
+        <div><label>Unidad</label>
+            <select id="unidad">
+                <option>TÉCNICA</option>
+                <option>OPERACIONES</option>
+                <option>UOTA</option>
+                <option>ADMINISTRACIÓN</option>
+            </select>
+        </div>
+        <div><label>N° Solicitud</label><input type="text" id="nro_sol" placeholder="Ej: 26-001"></div>
+        <div><label>Fecha Solicitud</label><input type="date" id="f_sol_manual"></div>
         <div><label>Fecha Nec.</label><input type="date" id="f_nec"></div>
         <div><label>Activo/Aeronave</label><input type="text" id="activo" placeholder="Matrícula o OFICINA"></div>
         <div><label>GIP / Anticipo</label><input type="text" id="gip" placeholder="Ej: 73-I o GIP-05"></div>
@@ -41,29 +51,38 @@
 <div class="card">
     <h2>📋 Trazabilidad</h2>
     <button class="btn" style="background:var(--celeste)" onclick="cargar()">ACTUALIZAR LISTA</button>
-    <table id="tabla">
-        <thead>
-            <tr>
-                <th>N° Sol.</th>
-                <th>Unidad</th>
-                <th>Detalle</th>
-                <th>Estado Entrega</th>
-                <th>Fin.</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="cuerpo"></tbody>
-    </table>
+    <div style="overflow-x:auto;">
+        <table id="tabla">
+            <thead>
+                <tr>
+                    <th>N° Sol.</th>
+                    <th>Unidad</th>
+                    <th>Detalle</th>
+                    <th>Estado Entrega</th>
+                    <th>Fin.</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbypLibPzVkbQE83s3s0nvGZ2FGHF-e-UZfego7KlrvR2s6qA-5O_BlJmX00dngq-Isu/exec"; // REEMPLAZAR CON TU URL /EXEC
+    // REEMPLAZA ESTA URL CON LA QUE TE DIO GOOGLE APPS SCRIPT
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwwEUWaJyaPZ9u-C3OvQ_v89dxZhFq_322foj0_MWApa83ERuv_mcEiKdjcSddVN9UL/exec"; 
+
+    // Poner la fecha de hoy por defecto en el campo de Fecha Solicitud
+    window.onload = function() {
+        document.getElementById('f_sol_manual').valueAsDate = new Date();
+        cargar();
+    };
 
     async function enviar() {
         const d = {
             unidad: document.getElementById('unidad').value,
             nro_sol: document.getElementById('nro_sol').value,
-            f_sol: new Date().toLocaleDateString(),
+            f_sol: document.getElementById('f_sol_manual').value, // Fecha seleccionada manualmente
             f_nec: document.getElementById('f_nec').value,
             activo: document.getElementById('activo').value,
             gip: document.getElementById('gip').value,
@@ -74,46 +93,61 @@
             entregado: "NO",
             finalizado: "NO"
         };
-        if(!d.nro_sol || !d.detalle) return alert("Faltan datos.");
+        
+        if(!d.nro_sol || !d.detalle) return alert("Por favor, complete N° de Solicitud y Detalle.");
+        
+        // Efecto visual de carga
+        const btn = document.querySelector('.btn-main');
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        alert("Enviado.");
+        
+        alert("Solicitud Registrada Exitosamente.");
         location.reload();
     }
 
     async function cargar() {
-        const res = await fetch(WEB_APP_URL);
-        const data = await res.json();
         const cuerpo = document.getElementById('cuerpo');
-        cuerpo.innerHTML = '';
-        data.reverse().forEach(f => {
-            const isCtaCte = f.entregado.includes("PEND OC");
-            cuerpo.innerHTML += `
-                <tr class="${isCtaCte ? 'row-cta-cte' : ''}">
-                    <td>${f.nro_sol}</td>
-                    <td>${f.unidad}</td>
-                    <td>${f.detalle}</td>
-                    <td>${f.entregado}</td>
-                    <td><b>${f.finalizado}</b></td>
-                    <td>
-                        ${f.finalizado === 'NO' ? `
-                            <button class="btn btn-action" style="background:var(--gris)" onclick="updateStatus('${f.nro_sol}','STOCK')">STOCK</button>
-                            <button class="btn btn-action" style="background:var(--celeste)" onclick="updateStatus('${f.nro_sol}','CTA')">CTA CTE</button>
-                            <button class="btn btn-action" style="background:var(--verde)" onclick="updateStatus('${f.nro_sol}','SI')">FIN</button>
-                        ` : '✓'}
-                    </td>
-                </tr>`;
-        });
+        cuerpo.innerHTML = '<tr><td colspan="6">Cargando datos...</td></tr>';
+        
+        try {
+            const res = await fetch(WEB_APP_URL);
+            const data = await res.json();
+            cuerpo.innerHTML = '';
+            
+            data.reverse().forEach(f => {
+                const isCtaCte = f.entregado.includes("PEND OC");
+                cuerpo.innerHTML += `
+                    <tr class="${isCtaCte ? 'row-cta-cte' : ''}">
+                        <td><strong>${f.nro_sol}</strong></td>
+                        <td>${f.unidad}</td>
+                        <td>${f.detalle}</td>
+                        <td>${f.entregado}</td>
+                        <td><b style="color:${f.finalizado === 'SI' ? 'var(--verde)' : 'var(--naranja)'}">${f.finalizado}</b></td>
+                        <td>
+                            ${f.finalizado === 'NO' ? `
+                                <button class="btn btn-action" style="background:var(--gris)" onclick="updateStatus('${f.nro_sol}','STOCK')">STOCK</button>
+                                <button class="btn btn-action" style="background:var(--celeste)" onclick="updateStatus('${f.nro_sol}','CTA')">CTA CTE</button>
+                                <button class="btn btn-action" style="background:var(--verde)" onclick="updateStatus('${f.nro_sol}','SI')">FIN</button>
+                            ` : '✓'}
+                        </td>
+                    </tr>`;
+            });
+        } catch(e) {
+            cuerpo.innerHTML = '<tr><td colspan="6">Error al cargar datos. Verifica la conexión.</td></tr>';
+        }
     }
 
     async function updateStatus(nro, modo) {
         let p = { action: "update", nro_sol: nro, entregado: "SI", finalizado: "SI" };
         if(modo === 'STOCK') p.entregado = "ENTREGADO STOCK";
         if(modo === 'CTA') { p.entregado = "S.R. PEND OC"; p.finalizado = "NO"; }
+        
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
         alert("Estado actualizado.");
         cargar();
     }
-    window.onload = cargar;
 </script>
 </body>
 </html>
