@@ -4,21 +4,24 @@
     <meta charset="UTF-8">
     <title>SGA - Aeronáutica Córdoba</title>
     <style>
-        :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --gris: #7f8c8d; }
+        :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --gris: #ebf2f7; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid var(--azul); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
         .full { grid-column: span 2; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: var(--azul); }
-        input, select, textarea { width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.9em; }
-        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
-        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; }
-        .btn-update { background: var(--verde); font-size: 0.75em; padding: 5px; width: 100%; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        th { background: var(--azul); color: white; padding: 8px; text-align: left; font-size: 0.75em; }
-        td { border-bottom: 1px solid #eee; padding: 6px; font-size: 0.8em; }
-        .row-cta-cte { background-color: #fff3cd !important; }
-        .table-input { font-size: 0.85em; padding: 3px; border: 1px solid #ddd; }
+        label { display: block; font-weight: bold; font-size: 0.8em; color: var(--azul); }
+        input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85em; }
+        .btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-main { background: var(--azul); width: 100%; margin-top: 10px; }
+        .btn-group { background: var(--naranja); display: none; margin-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--azul); color: white; padding: 8px; font-size: 0.7em; }
+        td { border-bottom: 1px solid #eee; padding: 6px; font-size: 0.75em; }
+        
+        /* ESTILO VISTA BLOQUE */
+        .bloque-agrupado { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
+        .chk-col { display: none; width: 30px; text-align: center; }
+        .badge-grupo { background: var(--naranja); color: white; padding: 2px 5px; border-radius: 3px; font-size: 0.7em; }
     </style>
 </head>
 <body>
@@ -30,26 +33,31 @@
         <div><label>N° Solicitud</label><input type="text" id="nro_sol"></div>
         <div><label>Fecha Sol.</label><input type="date" id="f_sol"></div>
         <div><label>Fecha Nec.</label><input type="date" id="f_nec"></div>
-        <div><label>Aeronave/Activo</label><input type="text" id="activo"></div>
-        <div><label>GIP / Anticipo</label><input type="text" id="gip"></div>
-        <div><label>Agente</label><input type="text" id="agente"></div>
-        <div class="full"><label>Detalle Técnico</label><textarea id="detalle" style="height:40px"></textarea></div>
+        <div><label>Activo</label><input type="text" id="activo"></div>
+        <div><label>GIP</label><input type="text" id="gip"></div>
+        <div class="full"><label>Detalle Técnico</label><textarea id="detalle" style="height:35px"></textarea></div>
     </div>
-    <button class="btn btn-main" id="btnEnviar" onclick="enviar()">REGISTRAR SOLICITUD</button>
+    <button class="btn btn-main" id="btnEnviar" onclick="enviar()">REGISTRAR</button>
 </div>
 
 <div class="card">
-    <h2>📋 Trazabilidad y Gestión de Compras</h2>
-    <button class="btn" style="background:var(--celeste)" onclick="cargar()">ACTUALIZAR LISTA</button>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2>📋 Trazabilidad</h2>
+        <div>
+            <button class="btn" style="background:var(--celeste)" onclick="cargar()">ACTUALIZAR</button>
+            <button class="btn" style="background:var(--azul)" onclick="toggleChecks()">AGRUPAR SOLICITUDES</button>
+            <button id="btnConfirmarGrupo" class="btn btn-group" onclick="confirmarAgrupacion()">CONFIRMAR GRUPO</button>
+        </div>
+    </div>
     <div style="overflow-x:auto;">
         <table>
             <thead>
                 <tr>
+                    <th class="chk-col">Sel.</th>
                     <th>Solicitud</th>
-                    <th>Detalle / Aeronave</th>
-                    <th>Proveedor</th>
-                    <th>Factura / Importe</th>
-                    <th>Orden Compra</th>
+                    <th>Detalle</th>
+                    <th>Proveedor / OC</th>
+                    <th>Factura / $</th>
                     <th>Observaciones</th>
                     <th>Entrega</th>
                     <th>Acción</th>
@@ -61,12 +69,16 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxY0zAWDmFm4AqVug-nud-pvBv_GL-K49mnrynD15L0WetqlbQvC8bAhIyCSG_RhLfR/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx9sa2VS_HF0fFEh6U9qo0yOsVbydjZ_xUaRJ5MS11TZYXjraDgv4ypkXd3Ld2o2YvJ/exec"; 
 
-    window.onload = () => { 
-        document.getElementById('f_sol').valueAsDate = new Date();
-        cargar(); 
-    };
+    window.onload = () => { document.getElementById('f_sol').valueAsDate = new Date(); cargar(); };
+
+    function toggleChecks() {
+        const cols = document.querySelectorAll('.chk-col');
+        const btn = document.getElementById('btnConfirmarGrupo');
+        cols.forEach(c => c.style.display = (c.style.display === 'table-cell' ? 'none' : 'table-cell'));
+        btn.style.display = (btn.style.display === 'block' || btn.style.display === 'inline-block' ? 'none' : 'inline-block');
+    }
 
     async function enviar() {
         const d = {
@@ -76,35 +88,39 @@
             f_nec: document.getElementById('f_nec').value,
             activo: document.getElementById('activo').value,
             gip: document.getElementById('gip').value,
-            agente: document.getElementById('agente').value,
             detalle: document.getElementById('detalle').value,
             entregado: "NO", finalizado: "NO"
         };
-        if(!d.nro_sol || !d.detalle) return alert("Complete N° Solicitud y Detalle.");
-        document.getElementById('btnEnviar').innerText = "Enviando...";
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
         location.reload();
     }
 
     async function cargar() {
         const cuerpo = document.getElementById('cuerpo');
-        cuerpo.innerHTML = '<tr><td colspan="8">Cargando gestión...</td></tr>';
+        cuerpo.innerHTML = '<tr><td colspan="8">Cargando...</td></tr>';
         const res = await fetch(WEB_APP_URL);
         const data = await res.json();
         cuerpo.innerHTML = '';
         data.reverse().forEach(f => {
             const isFin = f.finalizado === 'SI';
+            const claseBloque = f.id_grupo ? 'bloque-agrupado' : '';
             cuerpo.innerHTML += `
-                <tr class="${f.entregado.includes('PEND') ? 'row-cta-cte' : ''}">
-                    <td><strong>${f.nro_sol}</strong><br><small>${f.unidad}</small></td>
-                    <td>${f.detalle}<br><small><b>Activo:</b> ${f.activo}</small></td>
-                    <td><input type="text" id="prov_${f.nro_sol}" class="table-input" value="${f.prov||''}" ${isFin?'disabled':''}></td>
+                <tr class="${claseBloque}">
+                    <td class="chk-col"><input type="checkbox" class="chk-sol" value="${f.nro_sol}" ${isFin?'disabled':''}></td>
                     <td>
-                        <input type="text" id="fac_${f.nro_sol}" class="table-input" placeholder="Factura" value="${f.nro_factura||''}" ${isFin?'disabled':''}><br>
-                        <input type="number" id="imp_${f.nro_sol}" class="table-input" placeholder="Importe" value="${f.importe||''}" ${isFin?'disabled':''}>
+                        <strong>${f.nro_sol}</strong> ${f.id_grupo ? `<br><span class="badge-grupo">${f.id_grupo}</span>` : ''}
+                        <br><small>${f.unidad}</small>
                     </td>
-                    <td><input type="text" id="oc_${f.nro_sol}" class="table-input" value="${f.oc||''}" ${isFin?'disabled':''}></td>
-                    <td><input type="text" id="obs_${f.nro_sol}" class="table-input" value="${f.observaciones||''}" ${isFin?'disabled':''}></td>
+                    <td>${f.detalle}<br><small><b>Activo:</b> ${f.activo}</small></td>
+                    <td>
+                        <input type="text" id="prov_${f.nro_sol}" placeholder="Prov" value="${f.prov||''}" ${isFin?'disabled':''}>
+                        <input type="text" id="oc_${f.nro_sol}" placeholder="OC" value="${f.oc||''}" ${isFin?'disabled':''}>
+                    </td>
+                    <td>
+                        <input type="text" id="fac_${f.nro_sol}" placeholder="Fac" value="${f.nro_factura||''}" ${isFin?'disabled':''}>
+                        <input type="number" id="imp_${f.nro_sol}" placeholder="$" value="${f.importe||''}" ${isFin?'disabled':''}>
+                    </td>
+                    <td><input type="text" id="obs_${f.nro_sol}" value="${f.observaciones||''}" ${isFin?'disabled':''}></td>
                     <td>
                         <select id="sel_${f.nro_sol}" ${isFin?'disabled':''}>
                             <option value="NO" ${f.entregado==='NO'?'selected':''}>PENDIENTE</option>
@@ -113,15 +129,27 @@
                             <option value="CTA" ${f.entregado.includes('PEND')?'selected':''}>S.R. PEND OC</option>
                         </select>
                     </td>
-                    <td>${!isFin ? `<button class="btn btn-update" onclick="actualizar('${f.nro_sol}')">GUARDAR</button>` : '<b>FINALIZADO</b>'}</td>
+                    <td>${!isFin ? `<button class="btn" style="background:var(--verde);padding:5px" onclick="actualizar('${f.nro_sol}', '${f.id_grupo||''}')">GUARDAR</button>` : '✓'}</td>
                 </tr>`;
         });
     }
 
-    async function actualizar(nro) {
+    async function confirmarAgrupacion() {
+        const seleccionados = Array.from(document.querySelectorAll('.chk-sol:checked')).map(cb => cb.value);
+        if(seleccionados.length < 2) return alert("Seleccione 2 o más.");
+        const idG = "GRP-" + Math.floor(Date.now() / 100000);
+        
+        for(let nro of seleccionados) {
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action:"update", nro_sol: nro, id_grupo: idG }) });
+        }
+        alert("Solicitudes Agrupadas bajo " + idG);
+        location.reload();
+    }
+
+    async function actualizar(nro, idG) {
         const modo = document.getElementById(`sel_${nro}`).value;
         let p = { 
-            action: "update", nro_sol: nro, 
+            action: "update", nro_sol: nro, id_grupo: idG,
             prov: document.getElementById(`prov_${nro}`).value,
             nro_factura: document.getElementById(`fac_${nro}`).value,
             importe: document.getElementById(`imp_${nro}`).value,
@@ -131,11 +159,16 @@
         };
         
         if(modo === 'NO') { p.entregado = "NO"; p.finalizado = "NO"; }
-        if(modo === 'STOCK') p.entregado = "ENTREGADO STOCK";
         if(modo === 'CTA') { p.entregado = "S.R. PEND OC"; p.finalizado = "NO"; }
+        if(modo === 'STOCK') p.entregado = "ENTREGADO STOCK";
+
+        // Si es un grupo, preguntamos si aplica a todos
+        if(idG && confirm("¿Desea aplicar estos datos y finalizar a TODO el grupo " + idG + "?")) {
+            p.nro_sol = ""; // El script usará el id_grupo para actualizar todos
+        }
 
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
-        alert("Gestión guardada en el sistema.");
+        alert("Actualizado.");
         cargar();
     }
 </script>
