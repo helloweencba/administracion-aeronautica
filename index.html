@@ -5,52 +5,53 @@
     <title>SGA - Aeronáutica Córdoba</title>
     <style>
         :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --gris: #7f8c8d; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid var(--azul); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
         .full { grid-column: span 2; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
-        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.85em; color: var(--azul); }
+        input, select, textarea { width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.9em; }
         .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
-        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; font-size: 1.1em; }
-        .btn-update { background: var(--verde); font-size: 0.8em; padding: 5px 10px; width: 100%; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: var(--azul); color: white; padding: 10px; text-align: left; font-size: 0.8em; }
-        td { border-bottom: 1px solid #eee; padding: 8px; font-size: 0.85em; vertical-align: middle; }
+        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; }
+        .btn-update { background: var(--verde); font-size: 0.75em; padding: 5px; width: 100%; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th { background: var(--azul); color: white; padding: 8px; text-align: left; font-size: 0.75em; }
+        td { border-bottom: 1px solid #eee; padding: 6px; font-size: 0.8em; }
         .row-cta-cte { background-color: #fff3cd !important; }
-        .obs-input { width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 3px; }
+        .table-input { font-size: 0.85em; padding: 3px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🚀 Carga de Solicitud</h2>
+    <h2>🚀 Nueva Solicitud</h2>
     <div class="grid">
         <div><label>Unidad</label><select id="unidad"><option>TÉCNICA</option><option>OPERACIONES</option><option>UOTA</option><option>ADMINISTRACIÓN</option></select></div>
-        <div><label>N° Solicitud</label><input type="text" id="nro_sol" placeholder="Ej: 26-001"></div>
-        <div><label>Fecha Solicitud</label><input type="date" id="f_sol"></div>
+        <div><label>N° Solicitud</label><input type="text" id="nro_sol"></div>
+        <div><label>Fecha Sol.</label><input type="date" id="f_sol"></div>
         <div><label>Fecha Nec.</label><input type="date" id="f_nec"></div>
         <div><label>Aeronave/Activo</label><input type="text" id="activo"></div>
         <div><label>GIP / Anticipo</label><input type="text" id="gip"></div>
-        <div><label>Proveedor</label><input type="text" id="prov"></div>
         <div><label>Agente</label><input type="text" id="agente"></div>
-        <div class="full"><label>Detalle Técnico (Copie y pegue aquí)</label><textarea id="detalle" style="height:80px"></textarea></div>
+        <div class="full"><label>Detalle Técnico</label><textarea id="detalle" style="height:40px"></textarea></div>
     </div>
-    <button class="btn btn-main" id="btnEnviar" onclick="enviar()">REGISTRAR EN GOOGLE SHEETS</button>
+    <button class="btn btn-main" id="btnEnviar" onclick="enviar()">REGISTRAR SOLICITUD</button>
 </div>
 
 <div class="card">
-    <h2>📋 Trazabilidad</h2>
+    <h2>📋 Trazabilidad y Gestión de Compras</h2>
     <button class="btn" style="background:var(--celeste)" onclick="cargar()">ACTUALIZAR LISTA</button>
     <div style="overflow-x:auto;">
         <table>
             <thead>
                 <tr>
-                    <th>N° Sol.</th>
-                    <th>Detalle</th>
+                    <th>Solicitud</th>
+                    <th>Detalle / Aeronave</th>
+                    <th>Proveedor</th>
+                    <th>Factura / Importe</th>
+                    <th>Orden Compra</th>
                     <th>Observaciones</th>
-                    <th>Tipo Entrega</th>
-                    <th>Estado</th>
+                    <th>Entrega</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -60,7 +61,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxjrOGo3eyNPI-lfOh7bb344y--yr2Gol8sr4Met14nNsJZaaEsxxQnq4aI-kmsTOlp/exec"; // REEMPLAZAR CON TU URL /EXEC
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxY0zAWDmFm4AqVug-nud-pvBv_GL-K49mnrynD15L0WetqlbQvC8bAhIyCSG_RhLfR/exec"; 
 
     window.onload = () => { 
         document.getElementById('f_sol').valueAsDate = new Date();
@@ -75,56 +76,66 @@
             f_nec: document.getElementById('f_nec').value,
             activo: document.getElementById('activo').value,
             gip: document.getElementById('gip').value,
-            prov: document.getElementById('prov').value,
-            detalle: document.getElementById('detalle').value,
             agente: document.getElementById('agente').value,
+            detalle: document.getElementById('detalle').value,
             entregado: "NO", finalizado: "NO"
         };
-        if(!d.nro_sol || !d.detalle) return alert("Faltan datos.");
-        
+        if(!d.nro_sol || !d.detalle) return alert("Complete N° Solicitud y Detalle.");
         document.getElementById('btnEnviar').innerText = "Enviando...";
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        alert("Registrado.");
         location.reload();
     }
 
     async function cargar() {
         const cuerpo = document.getElementById('cuerpo');
-        cuerpo.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
+        cuerpo.innerHTML = '<tr><td colspan="8">Cargando gestión...</td></tr>';
         const res = await fetch(WEB_APP_URL);
         const data = await res.json();
         cuerpo.innerHTML = '';
         data.reverse().forEach(f => {
             const isFin = f.finalizado === 'SI';
-            const isCta = f.entregado.includes("PEND OC");
             cuerpo.innerHTML += `
-                <tr class="${isCta ? 'row-cta-cte' : ''}">
-                    <td><strong>${f.nro_sol}</strong></td>
-                    <td>${f.detalle}</td>
-                    <td><input type="text" id="obs_${f.nro_sol}" class="obs-input" value="${f.observaciones || ''}" ${isFin ? 'disabled' : ''}></td>
+                <tr class="${f.entregado.includes('PEND') ? 'row-cta-cte' : ''}">
+                    <td><strong>${f.nro_sol}</strong><br><small>${f.unidad}</small></td>
+                    <td>${f.detalle}<br><small><b>Activo:</b> ${f.activo}</small></td>
+                    <td><input type="text" id="prov_${f.nro_sol}" class="table-input" value="${f.prov||''}" ${isFin?'disabled':''}></td>
                     <td>
-                        <select id="sel_${f.nro_sol}" ${isFin ? 'disabled' : ''}>
-                            <option value="SI" ${f.entregado==='SI'?'selected':''}>NORMAL (SI)</option>
-                            <option value="STOCK" ${f.entregado.includes('STOCK')?'selected':''}>STOCK</option>
-                            <option value="CTA" ${isCta?'selected':''}>S.R. PEND OC</option>
+                        <input type="text" id="fac_${f.nro_sol}" class="table-input" placeholder="Factura" value="${f.nro_factura||''}" ${isFin?'disabled':''}><br>
+                        <input type="number" id="imp_${f.nro_sol}" class="table-input" placeholder="Importe" value="${f.importe||''}" ${isFin?'disabled':''}>
+                    </td>
+                    <td><input type="text" id="oc_${f.nro_sol}" class="table-input" value="${f.oc||''}" ${isFin?'disabled':''}></td>
+                    <td><input type="text" id="obs_${f.nro_sol}" class="table-input" value="${f.observaciones||''}" ${isFin?'disabled':''}></td>
+                    <td>
+                        <select id="sel_${f.nro_sol}" ${isFin?'disabled':''}>
+                            <option value="NO" ${f.entregado==='NO'?'selected':''}>PENDIENTE</option>
+                            <option value="SI" ${f.entregado==='SI'?'selected':''}>ENTREGA SI</option>
+                            <option value="STOCK" ${f.entregado==='ENTREGADO STOCK'?'selected':''}>STOCK</option>
+                            <option value="CTA" ${f.entregado.includes('PEND')?'selected':''}>S.R. PEND OC</option>
                         </select>
                     </td>
-                    <td><b style="color:${isFin ? 'var(--verde)' : 'var(--naranja)'}">${f.finalizado}</b></td>
-                    <td>${!isFin ? `<button class="btn btn-update" onclick="actualizar('${f.nro_sol}')">GUARDAR</button>` : '✓'}</td>
+                    <td>${!isFin ? `<button class="btn btn-update" onclick="actualizar('${f.nro_sol}')">GUARDAR</button>` : '<b>FINALIZADO</b>'}</td>
                 </tr>`;
         });
     }
 
     async function actualizar(nro) {
         const modo = document.getElementById(`sel_${nro}`).value;
-        const obs = document.getElementById(`obs_${nro}`).value;
-        let p = { action: "update", nro_sol: nro, observaciones: obs, entregado: "SI", finalizado: "SI" };
+        let p = { 
+            action: "update", nro_sol: nro, 
+            prov: document.getElementById(`prov_${nro}`).value,
+            nro_factura: document.getElementById(`fac_${nro}`).value,
+            importe: document.getElementById(`imp_${nro}`).value,
+            oc: document.getElementById(`oc_${nro}`).value,
+            observaciones: document.getElementById(`obs_${nro}`).value,
+            entregado: "SI", finalizado: "SI" 
+        };
         
+        if(modo === 'NO') { p.entregado = "NO"; p.finalizado = "NO"; }
         if(modo === 'STOCK') p.entregado = "ENTREGADO STOCK";
         if(modo === 'CTA') { p.entregado = "S.R. PEND OC"; p.finalizado = "NO"; }
 
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
-        alert("Actualizado.");
+        alert("Gestión guardada en el sistema.");
         cargar();
     }
 </script>
