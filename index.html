@@ -2,191 +2,156 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SGA - Aeronáutica Córdoba</title>
     <style>
         :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --rojo: #c0392b; --fondo: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--fondo); margin: 0; padding: 15px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid var(--azul); }
-        h2 { color: var(--azul); margin-top: 0; font-size: 1.2em; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-        label { display: block; font-weight: bold; font-size: 0.75em; color: var(--azul); margin-bottom: 4px; }
-        input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85em; }
-        .btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); margin: 0; padding: 10px; font-size: 14px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--azul); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        label { font-weight: bold; font-size: 0.75em; color: var(--azul); }
+        input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em; }
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
         .btn-main { background: var(--azul); width: 100%; margin-top: 10px; }
-        .btn-main:hover { background: #154360; }
-        .btn-group-mode { background: var(--naranja); }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        th { background: var(--azul); color: white; padding: 8px; font-size: 0.7em; text-transform: uppercase; }
-        td { border-bottom: 1px solid #eee; padding: 6px; font-size: 0.75em; vertical-align: middle; }
-        .bloque-agrupado { background-color: #fff9f0 !important; border-left: 6px solid var(--naranja) !important; }
-        .chk-col { display: none; text-align: center; background: #fdf2e9; }
-        .badge-grupo { background: var(--naranja); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.65em; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
-        .btn-del-group { background: rgba(255,255,255,0.3); border: none; color: white; cursor: pointer; border-radius: 50%; width: 14px; height: 14px; line-height: 12px; font-weight: bold; }
-        .table-input { border: 1px solid #ddd; background: #fafafa; }
-        .table-input:focus { border-color: var(--celeste); background: #fff; }
+        .flota-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .flota-card { min-width: 180px; padding: 8px; border-radius: 6px; border: 1px solid #ddd; background: #fff; font-size: 0.75em; }
+        .vence-rojo { border-left: 5px solid var(--rojo); background: #fff5f5; }
+        .vence-amarillo { border-left: 5px solid #f1c40f; background: #fffdf0; }
+        .vence-verde { border-left: 5px solid var(--verde); background: #f5fff5; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--azul); color: white; font-size: 0.7em; padding: 8px; text-transform: uppercase; text-align: left; }
+        td { border-bottom: 1px solid #eee; padding: 6px; font-size: 0.75em; }
+        .row-grupo { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
+        .badge-grupo { background: var(--naranja); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7em; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .alerta-45 { background: #fff9c4; font-weight: bold; }
+        .vencido { background: #ffcdd2; color: #b71c1c; font-weight: bold; }
+        .chk-col { display: none; }
+        .multi-select { height: 70px; overflow-y: scroll; border: 1px solid #ccc; padding: 5px; background: #fafafa; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🚀 Nueva Solicitud de Repuesto / Servicio</h2>
-    <div class="grid">
-        <div><label>Unidad</label><select id="unidad"><option>TÉCNICA</option><option>OPERACIONES</option><option>UOTA</option><option>ADMINISTRACIÓN</option></select></div>
-        <div><label>N° Solicitud</label><input type="text" id="nro_sol" placeholder="Ej: 26-001"></div>
-        <div><label>Fecha Sol.</label><input type="date" id="f_sol"></div>
-        <div><label>Fecha Nec.</label><input type="date" id="f_nec"></div>
-        <div><label>Aeronave/Activo</label><input type="text" id="activo" placeholder="Matrícula"></div>
-        <div><label>GIP / Anticipo</label><input type="text" id="gip"></div>
-        <div><label>Agente</label><input type="text" id="agente"></div>
-        <div style="grid-column: span 3;"><label>Detalle Técnico (Requerimiento)</label><textarea id="detalle" style="height:35px"></textarea></div>
-    </div>
-    <button class="btn btn-main" id="btnEnviar" onclick="enviar()">REGISTRAR EN SISTEMA</button>
+    <h2>🚦 Vencimientos de Flota</h2>
+    <div class="flota-container" id="panelFlota">Cargando flota...</div>
 </div>
 
 <div class="card">
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-        <h2>📋 Trazabilidad y Gestión de Compras</h2>
-        <div style="display: flex; gap: 8px;">
-            <button class="btn" style="background:var(--celeste)" onclick="cargar()">ACTUALIZAR</button>
-            <button class="btn btn-group-mode" onclick="toggleChecks()">MODO AGRUPAR</button>
-            <button id="btnConfirmarGrupo" class="btn" style="background:var(--verde); display:none;" onclick="confirmarAgrupacion()">CONFIRMAR UNIFICACIÓN</button>
+    <h2>🚀 Nueva Solicitud</h2>
+    <div class="grid">
+        <div><label>Unidad</label><select id="unidad"><option>TÉCNICA</option><option>OPERACIONES</option><option>UOTA</option><option>ADMINISTRACIÓN</option></select></div>
+        <div><label>N° Solicitud</label><input type="text" id="nro_sol"></div>
+        <div><label>Fecha Necesidad</label><input type="date" id="f_nec"></div>
+        <div><label>GIP / Anticipo / Exp.</label><input type="text" id="gip"></div>
+        <div style="grid-column: span 2;"><label>Activos</label><div class="multi-select" id="listaActivos"></div></div>
+        <div style="grid-column: span 3;"><label>Detalle Técnico</label><textarea id="detalle" style="height:30px"></textarea></div>
+    </div>
+    <button class="btn btn-main" onclick="registrarSolicitud()">REGISTRAR</button>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>📋 Trazabilidad</h2>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="busqueda" placeholder="🔍 Buscar..." onkeyup="filtrarTabla()" style="width: 120px;">
+            <button class="btn" style="background:var(--naranja)" onclick="toggleModoGrupo()">AGRUPAR</button>
+            <button id="btnUnificar" class="btn" style="background:var(--verde); display:none;" onclick="ejecutarUnificacion()">UNIFICAR</button>
         </div>
     </div>
     <div style="overflow-x:auto;">
         <table>
-            <thead>
-                <tr>
-                    <th class="chk-col">Sel.</th>
-                    <th>Solicitud</th>
-                    <th>Detalle Requerido</th>
-                    <th>Proveedor / OC</th>
-                    <th>Factura / Importe</th>
-                    <th>Observaciones</th>
-                    <th>Estado Entrega</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpo"></tbody>
+            <thead><tr><th class="chk-col">Sel</th><th>Solicitud / Activo</th><th>Detalle</th><th>Proveedor / OC</th><th>Factura / $</th><th>Estado</th><th>OK</th></tr></thead>
+            <tbody id="cuerpoSol"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0OfSdTD2kw-QFbHgRUeJEkTzEPF5R63_8suSMrA8HoJvvCQ0h26o2iEwzm9ATIohG/exec"; // REEMPLAZAR CON TU URL /EXEC
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwb-7rdrHf4q_wfhZ65rYTn0k8tmWpGjHWozZLIEeE3iSXukass1DhoxaG1rowd0NEB/exec"; 
+    const ACTIVOS = ["LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", "AE875UX (C. Blanco)", "FAK619 (C. Amarillo)", "AD150QB", "IXH694"];
 
-    window.onload = () => { 
-        document.getElementById('f_sol').valueAsDate = new Date();
-        cargar(); 
+    window.onload = () => {
+        ACTIVOS.forEach(a => document.getElementById('listaActivos').innerHTML += `<div><input type="checkbox" class="chk-activo" value="${a}"> ${a}</div>`);
+        cargarDatos();
     };
 
-    function toggleChecks() {
-        const cols = document.querySelectorAll('.chk-col');
-        const btn = document.getElementById('btnConfirmarGrupo');
-        cols.forEach(c => c.style.display = (c.style.display === 'table-cell' ? 'none' : 'table-cell'));
-        btn.style.display = (btn.style.display === 'inline-block' ? 'none' : 'inline-block');
+    async function cargarDatos() {
+        const res = await fetch(WEB_APP_URL);
+        const data = await res.json();
+        renderFlota(data.flota);
+        renderSolicitudes(data.solicitudes);
     }
 
-    async function enviar() {
-        const d = { 
-            unidad: document.getElementById('unidad').value, 
-            nro_sol: document.getElementById('nro_sol').value, 
-            f_sol: document.getElementById('f_sol').value, 
-            f_nec: document.getElementById('f_nec').value, 
-            activo: document.getElementById('activo').value, 
-            gip: document.getElementById('gip').value, 
-            agente: document.getElementById('agente').value,
-            detalle: document.getElementById('detalle').value, 
-            entregado: "NO", finalizado: "NO" 
-        };
-        if(!d.nro_sol || !d.detalle) return alert("Complete N° de Solicitud y Detalle.");
-        document.getElementById('btnEnviar').innerText = "Enviando...";
+    function parseFechaArg(str) {
+        if(!str || typeof str !== 'string') return new Date();
+        const parts = str.split('/');
+        return new Date(parts[2], parts[1]-1, parts[0]);
+    }
+
+    function renderFlota(flota) {
+        const container = document.getElementById('panelFlota'); container.innerHTML = '';
+        const hoy = new Date();
+        flota.forEach(v => {
+            const dItv = Math.ceil((parseFechaArg(v.itv) - hoy) / 86400000);
+            const est = dItv < 0 ? 'vence-rojo' : (dItv < 30 ? 'vence-amarillo' : 'vence-verde');
+            container.innerHTML += `<div class="flota-card ${est}"><strong>${v.patente}</strong><br>ITV: ${v.itv||'-'}<br>POV: ${v.pov||'-'}<br>CIST: ${v.cisterna||'-'}<br><button onclick="editarVencimiento('${v.patente}')" style="font-size:9px;">ACTUALIZAR</button></div>`;
+        });
+    }
+
+    function renderSolicitudes(sols) {
+        const cuerpo = document.getElementById('cuerpoSol'); cuerpo.innerHTML = '';
+        const hoy = new Date();
+        sols.reverse().forEach(s => {
+            const isFin = s.finalizado === "SI";
+            const diff = Math.ceil((parseFechaArg(s.f_nec) - hoy) / 86400000);
+            let alerta = (!isFin && s.f_nec) ? (diff < 0 ? 'vencido' : (diff <= 45 ? 'alerta-45' : '')) : '';
+            cuerpo.innerHTML += `<tr class="${s.id_grupo ? 'row-grupo' : ''} ${alerta}"><td class="chk-col"><input type="checkbox" class="chk-sel" value="${s.nro_sol}"></td><td><strong>${s.nro_sol}</strong><br><small>${s.activo}</small>${s.id_grupo ? `<br><span class="badge-grupo" onclick="desagrupar('${s.nro_sol}')">${s.nombre_grupo} ✖</span>` : ''}</td><td>${s.detalle}<br><small>Nec: ${s.f_nec||'-'}</small></td><td><input type="text" id="prov_${s.nro_sol}" value="${s.prov||''}" ${isFin?'disabled':''}> <input type="text" id="oc_${s.nro_sol}" value="${s.oc||''}" ${isFin?'disabled':''}></td><td><input type="text" id="fac_${s.nro_sol}" value="${s.nro_factura||''}" ${isFin?'disabled':''}> <input type="number" id="imp_${s.nro_sol}" value="${s.importe||''}" ${isFin?'disabled':''}></td><td><select id="sel_${s.nro_sol}" ${isFin?'disabled':''}><option value="NO" ${s.entregado==='NO'?'selected':''}>PEND</option><option value="SI" ${s.entregado==='SI'?'selected':''}>FIN (SI)</option><option value="STOCK" ${s.entregado==='STOCK'?'selected':''}>STOCK</option></select></td><td>${!isFin ? `<button class="btn" style="background:var(--verde)" onclick="actualizar('${s.nro_sol}','${s.id_grupo||''}')">OK</button>` : '✅'}</td></tr>`;
+        });
+    }
+
+    async function registrarSolicitud() {
+        const d = { unidad: document.getElementById('unidad').value, nro_sol: document.getElementById('nro_sol').value, f_nec: document.getElementById('f_nec').value, gip: document.getElementById('gip').value, activo: Array.from(document.querySelectorAll('.chk-activo:checked')).map(c => c.value).join(", "), detalle: document.getElementById('detalle').value, f_sol: new Date().toISOString().split('T')[0] };
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        location.reload();
-    }
-
-    async function cargar() {
-        const cuerpo = document.getElementById('cuerpo');
-        cuerpo.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;">Cargando base de datos...</td></tr>';
-        try {
-            const res = await fetch(WEB_APP_URL);
-            const data = await res.json();
-            cuerpo.innerHTML = '';
-            data.reverse().forEach(f => {
-                const isFin = f.finalizado === 'SI';
-                const idG = f.id_grupo || "";
-                cuerpo.innerHTML += `
-                    <tr class="${idG ? 'bloque-agrupado' : ''}">
-                        <td class="chk-col"><input type="checkbox" class="chk-sol" value="${f.nro_sol}" ${isFin?'disabled':''}></td>
-                        <td>
-                            <strong>${f.nro_sol}</strong>
-                            ${idG ? `<br><span class="badge-grupo">${idG} <button class="btn-del-group" onclick="desagrupar('${f.nro_sol}')">×</button></span>` : ''}
-                            <br><small>${f.unidad}</small>
-                        </td>
-                        <td>${f.detalle}<br><small style="color:var(--celeste)"><b>Activo:</b> ${f.activo}</small></td>
-                        <td>
-                            <input type="text" id="prov_${f.nro_sol}" class="table-input" placeholder="Proveedor" value="${f.prov||''}" ${isFin?'disabled':''}>
-                            <input type="text" id="oc_${f.nro_sol}" class="table-input" placeholder="N° OC" value="${f.oc||''}" ${isFin?'disabled':''}>
-                        </td>
-                        <td>
-                            <input type="text" id="fac_${f.nro_sol}" class="table-input" placeholder="N° Factura" value="${f.nro_factura||''}" ${isFin?'disabled':''}>
-                            <input type="number" id="imp_${f.nro_sol}" class="table-input" placeholder="Importe $" value="${f.importe||''}" ${isFin?'disabled':''}>
-                        </td>
-                        <td><input type="text" id="obs_${f.nro_sol}" class="table-input" value="${f.observaciones||''}" ${isFin?'disabled':''}></td>
-                        <td>
-                            <select id="sel_${f.nro_sol}" ${isFin?'disabled':''}>
-                                <option value="NO" ${f.entregado==='NO'?'selected':''}>PENDIENTE</option>
-                                <option value="SI" ${f.entregado==='SI'?'selected':''}>NORMAL (SI)</option>
-                                <option value="STOCK" ${f.entregado.includes('STOCK')?'selected':''}>DE STOCK</option>
-                                <option value="CTA" ${f.entregado.includes('PEND')?'selected':''}>S.R. PEND OC</option>
-                            </select>
-                        </td>
-                        <td>${!isFin ? `<button class="btn" style="background:var(--verde);padding:5px 10px;" onclick="actualizar('${f.nro_sol}', '${idG}')">GDR</button>` : '<b style="color:var(--verde)">✓ FIN</b>'}</td>
-                    </tr>`;
-            });
-        } catch(e) { cuerpo.innerHTML = '<tr><td colspan="8">Error de conexión. Reintente.</td></tr>'; }
-    }
-
-    async function desagrupar(nro) {
-        if(!confirm("¿Quitar esta solicitud del grupo? Se gestionará por separado.")) return;
-        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action:"update", nro_sol: nro, id_grupo: "" }) });
-        cargar();
-    }
-
-    async function confirmarAgrupacion() {
-        const seleccionados = Array.from(document.querySelectorAll('.chk-sol:checked')).map(cb => cb.value);
-        if(seleccionados.length < 2) return alert("Seleccione al menos 2 solicitudes.");
-        const idG = "GRP-" + Math.floor(Date.now() / 100000);
-        for(let nro of seleccionados) {
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action:"update", nro_sol: nro, id_grupo: idG }) });
-        }
-        alert("Solicitudes unificadas con ID: " + idG);
         location.reload();
     }
 
     async function actualizar(nro, idG) {
         const modo = document.getElementById(`sel_${nro}`).value;
-        let p = { 
-            action: "update", nro_sol: nro, id_grupo: idG, update_block: false,
-            prov: document.getElementById(`prov_${nro}`).value,
-            nro_factura: document.getElementById(`fac_${nro}`).value,
-            importe: document.getElementById(`imp_${nro}`).value,
-            oc: document.getElementById(`oc_${nro}`).value,
-            observaciones: document.getElementById(`obs_${nro}`).value,
-            entregado: "SI", finalizado: "SI" 
-        };
-        
-        if(modo === 'NO' || modo === 'CTA') p.finalizado = "NO";
-        if(modo === 'CTA') p.entregado = "S.R. PEND OC";
-        if(modo === 'STOCK') p.entregado = "ENTREGADO STOCK";
-
-        if(idG && confirm("¿Desea aplicar estos datos y finalizar TODO el grupo " + idG + "?")) {
-            p.update_block = true;
-            p.nro_sol = ""; 
-        }
-
+        let p = { action: "update", nro_sol: nro, id_grupo: idG, update_block: false, prov: document.getElementById(`prov_${nro}`).value, oc: document.getElementById(`oc_${nro}`).value, nro_factura: document.getElementById(`fac_${nro}`).value, importe: document.getElementById(`imp_${nro}`).value, entregado: modo, finalizado: modo === 'SI' ? 'SI' : 'NO' };
+        if(idG && confirm("¿Aplicar a todo el grupo?")) p.update_block = true;
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
-        alert("Registro actualizado.");
-        cargar();
+        cargarDatos();
+    }
+
+    async function ejecutarUnificacion() {
+        const sels = Array.from(document.querySelectorAll('.chk-sel:checked')).map(c => c.value);
+        if(sels.length < 2) return;
+        const nom = prompt("Nombre del grupo:", "COMPRA");
+        const idG = "GRP-" + Date.now();
+        for(let nro of sels) await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: idG, nombre_grupo: nom }) });
+        location.reload();
+    }
+
+    async function editarVencimiento(patente) {
+        const tipo = prompt("itv / pov / cisterna:").toLowerCase();
+        const fecha = prompt("Fecha (AAAA-MM-DD):");
+        if(fecha) { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_vencimiento", patente: patente, tipo: tipo, fecha: fecha }) }); cargarDatos(); }
+    }
+
+    function toggleModoGrupo() { 
+        const cols = document.querySelectorAll('.chk-col'); 
+        cols.forEach(c => c.style.display = c.style.display === 'table-cell' ? 'none' : 'table-cell');
+        document.getElementById('btnUnificar').style.display = 'inline-block';
+    }
+
+    function filtrarTabla() {
+        const bus = document.getElementById('busqueda').value.toUpperCase();
+        const filas = document.querySelectorAll('#cuerpoSol tr');
+        filas.forEach(f => f.style.display = f.innerText.toUpperCase().includes(bus) ? "" : "none");
+    }
+
+    async function desagrupar(nro) {
+        if(confirm("¿Desagrupar?")) { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: "", nombre_grupo: "" }) }); cargarDatos(); }
     }
 </script>
 </body>
