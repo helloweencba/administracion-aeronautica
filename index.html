@@ -21,8 +21,9 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--azul); color: white; font-size: 0.7em; padding: 8px; text-transform: uppercase; text-align: left; }
         td { border-bottom: 1px solid #eee; padding: 8px; vertical-align: top; }
+        .row-grupo { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
         .badge-ur { background: #ebf5fb; color: #2874a6; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
-        .badge-grupo { background: var(--naranja); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7em; cursor: pointer; }
+        .badge-grupo { background: var(--naranja); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7em; cursor: pointer; display: inline-block; margin-top: 4px; }
         .obs-input { width: 100%; margin-top: 5px; min-height: 40px; border: 1px dashed #bbb; font-family: inherit; }
         .filtros-estado { background: #fdfefe; padding: 10px; border-radius: 4px; border: 1px solid #d4e6f1; margin: 10px 0; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
         .chk-col { display: none; }
@@ -33,7 +34,7 @@
 
 <div class="card">
     <h2>🚦 Vencimientos de Flota</h2>
-    <div class="flota-container" id="panelFlota">Cargando datos...</div>
+    <div class="flota-container" id="panelFlota">Cargando flota...</div>
 </div>
 
 <div class="card">
@@ -92,7 +93,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQDjVmotyG1Y7I44qhEGMCCvsVjdHfcvmVSm6eDluBtFaaXy8Z-2RGWbHfVdJolooj/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxghpQe4MzNrY9WCtzrWBaBBq342zuAtmm9MWZQlux7SkQdYozi1Ctd1csHqA4iZEFM/exec"; 
     const ACTIVOS = ["LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", "AE875UX (C.Blanco)", "FAK619 (C.Amarillo)", "AD150QB", "IXH694"];
 
     window.onload = () => {
@@ -101,20 +102,21 @@
     };
 
     async function cargarDatos() {
-        const res = await fetch(WEB_APP_URL);
-        const data = await res.json();
-        renderFlota(data.flota);
-        renderSolicitudes(data.solicitudes);
+        try {
+            const res = await fetch(WEB_APP_URL);
+            const data = await res.json();
+            renderFlota(data.flota);
+            renderSolicitudes(data.solicitudes);
+        } catch (e) { console.error("Error cargando datos:", e); }
     }
 
-    // Función de seguridad para limpiar fechas largas
+    // CORRECCIÓN: Función que limpia la fecha larga de Google
     function limpiarFecha(txt) {
         if (!txt) return "-";
         let s = txt.toString();
+        // Si detectamos el formato largo de zona horaria, cortamos a 10 caracteres
         if (s.includes("GMT") || s.length > 10) {
-            // Si es formato ISO o largo de JS, intentamos extraer DD/MM/AAAA si existe, sino cortamos
-            let partes = s.match(/\d{2}\/\d{2}\/\d{4}/);
-            return partes ? partes[0] : s.substring(0, 10);
+            return s.substring(0, 10);
         }
         return s;
     }
@@ -123,19 +125,11 @@
         const container = document.getElementById('panelFlota'); container.innerHTML = '';
         const hoy = new Date();
         flota.forEach(v => {
-            const fItvStr = limpiarFecha(v.itv);
-            const fItvParts = fItvStr.split('/');
-            const dItv = Math.ceil((new Date(fItvParts[2], fItvParts[1]-1, fItvParts[0]) - hoy) / 86400000);
+            const fStr = limpiarFecha(v.itv);
+            const p = fStr.split('/');
+            const dItv = Math.ceil((new Date(p[2], p[1]-1, p[0]) - hoy) / 86400000);
             const est = dItv < 0 ? 'vence-rojo' : (dItv < 30 ? 'vence-amarillo' : 'vence-verde');
-            
-            container.innerHTML += `
-                <div class="flota-card ${est}">
-                    <strong>${v.patente}</strong><br>
-                    ITV: ${fItvStr}<br>
-                    POV: ${limpiarFecha(v.pov)}<br>
-                    CIST: ${limpiarFecha(v.cisterna)}<br>
-                    <button onclick="editarVencimiento('${v.patente}')" style="font-size:10px; margin-top:5px;">ACTUALIZAR</button>
-                </div>`;
+            container.innerHTML += `<div class="flota-card ${est}"><strong>${v.patente}</strong><br>ITV: ${fStr}<br>POV: ${limpiarFecha(v.pov)}<br>CIST: ${limpiarFecha(v.cisterna)}<br><button onclick="editarVencimiento('${v.patente}')" style="font-size:10px; margin-top:5px; cursor:pointer;">ACTUALIZAR</button></div>`;
         });
     }
 
@@ -178,7 +172,7 @@
             nro_factura: document.getElementById(`fac_${nro}`).value, importe: document.getElementById(`imp_${nro}`).value, 
             estado_app: document.getElementById(`sel_${nro}`).value, observaciones: document.getElementById(`obs_${nro}`).value 
         };
-        if(idG && confirm("¿Aplicar a todo el grupo?")) p.update_block = true;
+        if(idG && confirm("¿Aplicar cambios a todo el grupo unificado?")) p.update_block = true;
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
         cargarDatos();
     }
@@ -196,25 +190,38 @@
 
     async function registrarSolicitud() {
         const selects = Array.from(document.querySelectorAll('.chk-activo:checked')).map(c => c.value);
-        if(!document.getElementById('nro_sol').value) return alert("Falta Nro Solicitud");
-        const d = { unidad: document.getElementById('unidad').value, nro_sol: document.getElementById('nro_sol').value, f_nec: document.getElementById('f_nec').value, activo: selects.join(", "), detalle: document.getElementById('detalle').value, f_sol: new Date().toLocaleDateString('es-AR') };
+        if(!document.getElementById('nro_sol').value) return alert("Falta N° de Solicitud");
+        const d = { 
+            unidad: document.getElementById('unidad').value, 
+            nro_sol: document.getElementById('nro_sol').value, 
+            f_nec: document.getElementById('f_nec').value, 
+            activo: selects.join(", "), 
+            detalle: document.getElementById('detalle').value, 
+            f_sol: new Date().toLocaleDateString('es-AR') 
+        };
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
         location.reload();
     }
 
     async function ejecutarUnificacion() { 
         const sels = Array.from(document.querySelectorAll('.chk-sel:checked')).map(c => c.value); 
-        if(sels.length < 2) return; 
+        if(sels.length < 2) return alert("Seleccione al menos 2 ítems"); 
         const nom = prompt("Nombre del grupo:"); 
+        if(!nom) return;
         const idG = "GRP-" + Date.now(); 
-        for(let nro of sels) await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: idG, nombre_grupo: nom }) }); 
+        for(let nro of sels) {
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: idG, nombre_grupo: nom }) });
+        }
         location.reload(); 
     }
 
     async function editarVencimiento(patente) { 
         const tipo = prompt("itv / pov / cisterna:").toLowerCase(); 
-        const fecha = prompt("Fecha (AAAA-MM-DD):"); 
-        if(fecha) { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_vencimiento", patente: patente, tipo: tipo, fecha: fecha }) }); cargarDatos(); } 
+        const fecha = prompt("Nueva Fecha (AAAA-MM-DD):"); 
+        if(fecha) { 
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_vencimiento", patente: patente, tipo: tipo, fecha: fecha }) }); 
+            cargarDatos(); 
+        } 
     }
 
     function toggleModoGrupo() { 
@@ -223,7 +230,12 @@
         document.getElementById('btnUnificar').style.display = (document.getElementById('btnUnificar').style.display === 'none') ? 'inline-block' : 'none'; 
     }
 
-    async function desagrupar(nro) { if(confirm("¿Desagrupar?")) { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: "", nombre_grupo: "" }) }); cargarDatos(); } }
+    async function desagrupar(nro) { 
+        if(confirm("¿Quitar del grupo?")) { 
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: "", nombre_grupo: "" }) }); 
+            cargarDatos(); 
+        } 
+    }
 </script>
 </body>
 </html>
