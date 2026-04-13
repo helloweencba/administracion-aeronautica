@@ -92,7 +92,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzSXVjjXRneJ-htMKtBByqtqJtznUyzZKe0Taje4POQV7j7ObTMRA4_1dGE4zCENkqh/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQDjVmotyG1Y7I44qhEGMCCvsVjdHfcvmVSm6eDluBtFaaXy8Z-2RGWbHfVdJolooj/exec"; 
     const ACTIVOS = ["LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", "AE875UX (C.Blanco)", "FAK619 (C.Amarillo)", "AD150QB", "IXH694"];
 
     window.onload = () => {
@@ -107,14 +107,35 @@
         renderSolicitudes(data.solicitudes);
     }
 
+    // Función de seguridad para limpiar fechas largas
+    function limpiarFecha(txt) {
+        if (!txt) return "-";
+        let s = txt.toString();
+        if (s.includes("GMT") || s.length > 10) {
+            // Si es formato ISO o largo de JS, intentamos extraer DD/MM/AAAA si existe, sino cortamos
+            let partes = s.match(/\d{2}\/\d{2}\/\d{4}/);
+            return partes ? partes[0] : s.substring(0, 10);
+        }
+        return s;
+    }
+
     function renderFlota(flota) {
         const container = document.getElementById('panelFlota'); container.innerHTML = '';
         const hoy = new Date();
         flota.forEach(v => {
-            const fItv = v.itv.split('/');
-            const dItv = Math.ceil((new Date(fItv[2], fItv[1]-1, fItv[0]) - hoy) / 86400000);
+            const fItvStr = limpiarFecha(v.itv);
+            const fItvParts = fItvStr.split('/');
+            const dItv = Math.ceil((new Date(fItvParts[2], fItvParts[1]-1, fItvParts[0]) - hoy) / 86400000);
             const est = dItv < 0 ? 'vence-rojo' : (dItv < 30 ? 'vence-amarillo' : 'vence-verde');
-            container.innerHTML += `<div class="flota-card ${est}"><strong>${v.patente}</strong><br>ITV: ${v.itv}<br>POV: ${v.pov}<br>CIST: ${v.cisterna}<br><button onclick="editarVencimiento('${v.patente}')" style="font-size:10px; margin-top:5px;">ACTUALIZAR</button></div>`;
+            
+            container.innerHTML += `
+                <div class="flota-card ${est}">
+                    <strong>${v.patente}</strong><br>
+                    ITV: ${fItvStr}<br>
+                    POV: ${limpiarFecha(v.pov)}<br>
+                    CIST: ${limpiarFecha(v.cisterna)}<br>
+                    <button onclick="editarVencimiento('${v.patente}')" style="font-size:10px; margin-top:5px;">ACTUALIZAR</button>
+                </div>`;
         });
     }
 
