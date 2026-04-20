@@ -3,239 +3,1189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGA - Aeronáutica Córdoba</title>
+    <meta name="description" content="Sistema de Gestión de Solicitudes - Dirección de Aeronáutica de Córdoba">
+    <meta name="theme-color" content="#003366">
+    <meta name="author" content="Dirección de Aeronáutica Córdoba">
+    <title>SGA - Dirección de Aeronáutica Córdoba</title>
     <style>
-        :root { --azul: #1a5276; --celeste: #2980b9; --naranja: #e67e22; --verde: #27ae60; --rojo: #c0392b; --fondo: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); margin: 0; padding: 10px; font-size: 12px; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--azul); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        label { font-weight: bold; font-size: 0.75em; color: var(--azul); display: block; margin-bottom: 3px; }
-        input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9em; box-sizing: border-box; }
-        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
-        .btn-main { background: var(--azul); width: 100%; margin-top: 15px; padding: 12px; }
-        .flota-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-        .flota-card { min-width: 170px; padding: 10px; border-radius: 6px; border: 1px solid #ddd; background: #fff; font-size: 0.85em; }
-        .vence-rojo { border-left: 5px solid var(--rojo); background: #fff5f5; }
-        .vence-amarillo { border-left: 5px solid #f1c40f; background: #fffdf0; }
-        .vence-verde { border-left: 5px solid var(--verde); background: #f5fff5; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: var(--azul); color: white; font-size: 0.7em; padding: 8px; text-transform: uppercase; text-align: left; }
-        td { border-bottom: 1px solid #eee; padding: 8px; vertical-align: top; }
-        .row-grupo { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
-        .badge-ur { background: #ebf5fb; color: #2874a6; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
-        .badge-grupo { background: var(--naranja); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7em; cursor: pointer; display: inline-block; margin-top: 4px; }
-        .obs-input { width: 100%; margin-top: 5px; min-height: 40px; border: 1px dashed #bbb; font-family: inherit; }
-        .filtros-estado { background: #fdfefe; padding: 10px; border-radius: 4px; border: 1px solid #d4e6f1; margin: 10px 0; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        .chk-col { display: none; }
-        .multi-select { height: 100px; overflow-y: scroll; border: 1px solid #ccc; padding: 8px; background: #fafafa; border-radius: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; grid-column: span 2; }
+        /* ============================================= */
+        /* VARIABLES Y RESET                              */
+        /* ============================================= */
+        :root {
+            --azul-aeronautica: #003366;
+            --azul-secundario: #1a5276;
+            --celeste: #2980b9;
+            --naranja: #e67e22;
+            --verde: #27ae60;
+            --rojo: #c0392b;
+            --amarillo: #f1c40f;
+            --fondo: #f4f7f6;
+            --gris-claro: #ecf0f1;
+            --sombra: 0 4px 12px rgba(0,0,0,0.08);
+            --sombra-hover: 0 6px 16px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--fondo);
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* ============================================= */
+        /* HEADER CON LOGO Y TÍTULO                       */
+        /* ============================================= */
+        .app-header {
+            background: linear-gradient(135deg, var(--azul-aeronautica) 0%, var(--azul-secundario) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,51,102,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .logo-container {
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .logo-aeronautica {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+        
+        .app-title h1 {
+            font-size: 2em;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .app-title p {
+            font-size: 1em;
+            opacity: 0.95;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+        
+        .header-right {
+            text-align: right;
+        }
+        
+        .fecha-actual {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        
+        .version-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 8px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* ============================================= */
+        /* CARDS Y CONTENEDORES                           */
+        /* ============================================= */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--sombra);
+            margin-bottom: 25px;
+            border-top: 4px solid var(--azul-aeronautica);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--sombra-hover);
+        }
+        
+        .card h2 {
+            color: var(--azul-aeronautica);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--gris-claro);
+            padding-bottom: 15px;
+        }
+        
+        /* ============================================= */
+        /* FORMULARIOS Y GRID                             */
+        /* ============================================= */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+        
+        label {
+            font-weight: 600;
+            font-size: 0.8em;
+            color: var(--azul-secundario);
+            display: block;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #d5dbdb;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--celeste);
+            box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
+        }
+        
+        /* ============================================= */
+        /* BOTONES                                        */
+        /* ============================================= */
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-main {
+            background: var(--azul-aeronautica);
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-eliminar {
+            background: var(--rojo);
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        
+        .btn-eliminar:hover {
+            background: #a93226;
+        }
+        
+        /* ============================================= */
+        /* FLOTA DE AERONAVES                             */
+        /* ============================================= */
+        .flota-container {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: thin;
+        }
+        
+        .flota-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .flota-container::-webkit-scrollbar-thumb {
+            background: var(--celeste);
+            border-radius: 10px;
+        }
+        
+        .flota-card {
+            min-width: 220px;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        
+        .flota-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .vence-rojo {
+            border-left: 6px solid var(--rojo);
+            background: #fff5f5;
+        }
+        
+        .vence-amarillo {
+            border-left: 6px solid var(--amarillo);
+            background: #fffdf0;
+        }
+        
+        .vence-verde {
+            border-left: 6px solid var(--verde);
+            background: #f5fff5;
+        }
+        
+        /* ============================================= */
+        /* TABLA DE TRAZABILIDAD                          */
+        /* ============================================= */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        
+        th {
+            background: var(--azul-aeronautica);
+            color: white;
+            padding: 14px 12px;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+            text-align: left;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .row-grupo {
+            background-color: #fff4e6 !important;
+            border-left: 6px solid var(--naranja) !important;
+        }
+        
+        /* ============================================= */
+        /* BADGES Y ETIQUETAS                             */
+        /* ============================================= */
+        .badge-ur {
+            background: #ebf5fb;
+            color: #2874a6;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.75em;
+            display: inline-block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .badge-grupo {
+            background: var(--naranja);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        
+        .badge-grupo:hover {
+            background: #d35400;
+        }
+        
+        /* ============================================= */
+        /* FILTROS Y BÚSQUEDA                             */
+        /* ============================================= */
+        .filtros-estado {
+            background: var(--gris-claro);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filtros-estado label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: none;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .filtros-estado input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+        
+        /* ============================================= */
+        /* COMPONENTES ESPECIALES                         */
+        /* ============================================= */
+        .chk-col {
+            display: none;
+        }
+        
+        .multi-select {
+            height: 130px;
+            overflow-y: auto;
+            border: 2px solid #d5dbdb;
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            grid-column: span 2;
+        }
+        
+        .multi-select div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .multi-select input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .multi-select label {
+            text-transform: none;
+            font-weight: normal;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .obs-input {
+            width: 100%;
+            margin-top: 5px;
+            min-height: 45px;
+            border: 2px dashed #bdc3c7;
+            font-size: 0.85em;
+            resize: vertical;
+        }
+        
+        /* ============================================= */
+        /* UTILIDADES                                     */
+        /* ============================================= */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        /* ============================================= */
+        /* TOAST NOTIFICATIONS                            */
+        /* ============================================= */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            max-width: 380px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toast-success { background: var(--verde); }
+        .toast-error { background: var(--rojo); }
+        .toast-info { background: var(--celeste); }
+        .toast-warning { background: var(--naranja); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ============================================= */
+        /* LOADER                                         */
+        /* ============================================= */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+        }
+        
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--gris-claro);
+            border-top: 5px solid var(--azul-aeronautica);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ============================================= */
+        /* ANIMACIONES                                    */
+        /* ============================================= */
+        @keyframes eliminarFila {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-100%); }
+        }
+        
+        .fila-eliminada {
+            animation: eliminarFila 0.3s ease forwards;
+        }
+        
+        /* ============================================= */
+        /* RESPONSIVE                                     */
+        /* ============================================= */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .app-header { padding: 15px; }
+            .app-title h1 { font-size: 1.4em; }
+            .logo-container { width: 60px; height: 60px; }
+            .logo-aeronautica { width: 50px; height: 50px; }
+            .grid { grid-template-columns: 1fr; }
+            .multi-select { grid-template-columns: 1fr; grid-column: span 1; }
+            .filtros-estado { flex-direction: column; align-items: flex-start; }
+            .flota-card { min-width: 180px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>🚦 Vencimientos de Flota</h2>
-    <div class="flota-container" id="panelFlota">Cargando flota...</div>
-</div>
-
-<div class="card">
-    <h2>🚀 Nueva Solicitud</h2>
-    <div class="grid">
-        <div><label>Unidad (UR)</label><select id="unidad"><option>TÉCNICA</option><option>OPERACIONES</option><option>UOTA</option><option>ADMINISTRACIÓN</option></select></div>
-        <div><label>N° Solicitud</label><input type="text" id="nro_sol"></div>
-        <div><label>Fecha Necesidad</label><input type="date" id="f_nec"></div>
-        <div class="multi-select" id="listaActivos"></div>
-        <div style="grid-column: span 4;"><label>Detalle Técnico (Motivo)</label><textarea id="detalle" style="height:40px"></textarea></div>
+<!-- ============================================= -->
+<!-- HEADER CON LOGO Y TÍTULO                       -->
+<!-- ============================================= -->
+<header class="app-header">
+    <div class="header-left">
+        <div class="logo-container">
+            <svg width="65" height="65" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#003366"/>
+                <path d="M50 20 L65 35 L60 35 L60 55 L65 55 L50 70 L35 55 L40 55 L40 35 L35 35 Z" fill="#ffffff"/>
+                <circle cx="50" cy="45" r="8" fill="#e67e22"/>
+                <path d="M30 60 L40 50 M70 60 L60 50" stroke="#ffffff" stroke-width="3"/>
+                <text x="50" y="90" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">CBA</text>
+            </svg>
+        </div>
+        <div class="app-title">
+            <h1>🛩️ Gestor de Solicitudes</h1>
+            <p>Dirección de Aeronáutica - Provincia de Córdoba</p>
+        </div>
     </div>
-    <button class="btn btn-main" onclick="registrarSolicitud()">REGISTRAR EN SISTEMA</button>
+    <div class="header-right">
+        <div class="fecha-actual" id="fechaActual"></div>
+        <div class="version-badge">v2.0.1 | SGA</div>
+    </div>
+</header>
+
+<!-- ============================================= -->
+<!-- PANEL DE FLOTA                                 -->
+<!-- ============================================= -->
+<div class="card">
+    <h2><span>🚦</span> Estado de Vencimientos - Flota Aeronáutica</h2>
+    <div class="flota-container" id="panelFlota">
+        <div style="padding:20px;text-align:center;width:100%;">Cargando información de flota...</div>
+    </div>
 </div>
 
+<!-- ============================================= -->
+<!-- NUEVA SOLICITUD                                -->
+<!-- ============================================= -->
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <h2>📋 Trazabilidad</h2>
-        <div style="display: flex; gap: 5px;">
-            <select id="filtroUR" onchange="filtrarTabla()" style="width: 120px; background: #ebf5fb; font-weight: bold;">
+    <h2><span>🚀</span> Nueva Solicitud de Mantenimiento</h2>
+    <div class="grid">
+        <div>
+            <label for="unidad">Unidad (UR)</label>
+            <select id="unidad">
+                <option value="TÉCNICA">TÉCNICA</option>
+                <option value="OPERACIONES">OPERACIONES</option>
+                <option value="UOTA">UOTA</option>
+                <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
+            </select>
+        </div>
+        <div>
+            <label for="nro_sol">N° Solicitud *</label>
+            <input type="text" id="nro_sol" placeholder="Ej: SOL-2024-001" required>
+        </div>
+        <div>
+            <label for="f_nec">Fecha Necesidad *</label>
+            <input type="date" id="f_nec" required>
+        </div>
+        <div style="grid-column: span 2;">
+            <label>Activos Aeronáuticos *</label>
+            <div class="multi-select" id="listaActivos"></div>
+        </div>
+        <div style="grid-column: 1/-1;">
+            <label for="detalle">Detalle Técnico / Motivo *</label>
+            <textarea id="detalle" rows="3" placeholder="Describa el trabajo técnico requerido..."></textarea>
+        </div>
+    </div>
+    <button class="btn btn-main" onclick="registrarSolicitud()">📝 REGISTRAR SOLICITUD EN SISTEMA</button>
+</div>
+
+<!-- ============================================= -->
+<!-- TRAZABILIDAD DE SOLICITUDES                    -->
+<!-- ============================================= -->
+<div class="card">
+    <div class="flex-between">
+        <h2><span>📋</span> Trazabilidad y Seguimiento</h2>
+        <div style="display: flex; gap: 8px;">
+            <select id="filtroUR" onchange="filtrarTabla()" style="width: 140px; background: #ebf5fb; font-weight: bold;">
                 <option value="">TODAS LAS UR</option>
                 <option value="TÉCNICA">TÉCNICA</option>
                 <option value="OPERACIONES">OPERACIONES</option>
                 <option value="UOTA">UOTA</option>
-                <option value="ADMINISTRACIÓN">ADMIN</option>
+                <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
             </select>
-            <input type="text" id="busqueda" placeholder="🔍 Buscar..." onkeyup="filtrarTabla()" style="width: 130px;">
-            <button class="btn" style="background:var(--naranja)" onclick="toggleModoGrupo()">AGRUPAR</button>
-            <button id="btnUnificar" class="btn" style="background:var(--verde); display:none;" onclick="ejecutarUnificacion()">UNIFICAR</button>
+            <input type="text" id="busqueda" placeholder="🔍 Buscar..." onkeyup="filtrarTabla()" style="width: 150px;">
+            <button class="btn" style="background: var(--naranja);" onclick="toggleModoSeleccion()">📋 MODO SELECCIÓN</button>
+            <button id="btnUnificar" class="btn" style="background: var(--verde); display: none;" onclick="ejecutarUnificacion()">🔗 UNIFICAR GRUPO</button>
+            <button id="btnEliminarMultiples" class="btn btn-eliminar" style="display: none;" onclick="eliminarMultiplesSolicitudes()">🗑️ ELIMINAR SELECCIÓN</button>
         </div>
     </div>
 
     <div class="filtros-estado">
-        <strong>Mostrar:</strong>
-        <label><input type="checkbox" class="chk-f-est" value="PENDIENTE" checked onchange="filtrarTabla()"> PENDIENTE</label>
-        <label><input type="checkbox" class="chk-f-est" value="EN EJECUCION" checked onchange="filtrarTabla()"> EN EJECUCIÓN</label>
-        <label><input type="checkbox" class="chk-f-est" value="ENTREGADO" checked onchange="filtrarTabla()"> ENTREGADO</label>
-        <label><input type="checkbox" class="chk-f-est" value="TERMINADO" onchange="filtrarTabla()"> TERMINADO</label>
+        <strong>Filtrar por estado:</strong>
+        <label><input type="checkbox" class="chk-f-est" value="PENDIENTE" checked onchange="filtrarTabla()"> ⏳ PENDIENTE</label>
+        <label><input type="checkbox" class="chk-f-est" value="EN EJECUCION" checked onchange="filtrarTabla()"> 🔧 EN EJECUCIÓN</label>
+        <label><input type="checkbox" class="chk-f-est" value="ENTREGADO" checked onchange="filtrarTabla()"> ✅ ENTREGADO</label>
+        <label><input type="checkbox" class="chk-f-est" value="TERMINADO" onchange="filtrarTabla()"> 🏁 TERMINADO</label>
     </div>
 
-    <div style="overflow-x:auto;">
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th class="chk-col">Sel</th>
                     <th>UR / Solicitud / Activo / Detalle</th>
-                    <th>GIP / Exp. / Obs.</th>
+                    <th>GIP / Exp. / Observaciones</th>
                     <th>Proveedor / OC</th>
-                    <th>Factura / $</th>
+                    <th>Factura / Importe</th>
                     <th>Estado</th>
-                    <th>OK</th>
+                    <th>Actualizar</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="cuerpoSol"></tbody>
+            <tbody id="cuerpoSol">
+                <tr><td colspan="8" style="text-align: center; padding: 30px;">Cargando solicitudes...</td></tr>
+            </tbody>
         </table>
     </div>
 </div>
 
+<!-- ============================================= -->
+<!-- SCRIPT PRINCIPAL                               -->
+<!-- ============================================= -->
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxghpQe4MzNrY9WCtzrWBaBBq342zuAtmm9MWZQlux7SkQdYozi1Ctd1csHqA4iZEFM/exec"; 
-    const ACTIVOS = ["LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", "AE875UX (C.Blanco)", "FAK619 (C.Amarillo)", "AD150QB", "IXH694"];
+    // ╔══════════════════════════════════════════════════════════════════════╗
+    // ║                  ⭐⭐⭐ CONFIGURACIÓN IMPORTANTE ⭐⭐⭐                    ║
+    // ║                                                                      ║
+    // ║  PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (LÍNEA 527)                  ║
+    // ║  Reemplaza la línea de abajo con tu URL de despliegue                ║
+    // ╚══════════════════════════════════════════════════════════════════════╝
+    
+    // ========== PEGA TU URL DE APPS SCRIPT EN LA SIGUIENTE LÍNEA ==========
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwVq7pMnCSq_bkZgzQpCpGeAnb-Q6mOf3Dmv0mO8f0-74RAr841OtcZ4N22Cna092HQ/exec";
+    // ======================================================================
+    
+    // Lista de activos aeronáuticos
+    const ACTIVOS = [
+        "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
+        "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", 
+        "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", 
+        "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", 
+        "AE875UX (C.Blanco)", "FAK619 (C.Amarillo)", 
+        "AD150QB", "IXH694"
+    ];
 
-    window.onload = () => {
-        ACTIVOS.forEach(a => document.getElementById('listaActivos').innerHTML += `<div><input type="checkbox" class="chk-activo" value="${a}"> ${a}</div>`);
-        cargarDatos();
+    // =============================================
+    // INICIALIZACIÓN
+    // =============================================
+    window.onload = function() {
+        inicializarApp();
     };
 
-    async function cargarDatos() {
-        try {
-            const res = await fetch(WEB_APP_URL);
-            const data = await res.json();
-            renderFlota(data.flota);
-            renderSolicitudes(data.solicitudes);
-        } catch (e) { console.error("Error cargando datos:", e); }
+    function inicializarApp() {
+        mostrarFechaActual();
+        cargarActivos();
+        cargarDatos();
+        setInterval(mostrarFechaActual, 60000);
     }
 
-    // CORRECCIÓN: Función que limpia la fecha larga de Google
-    function limpiarFecha(txt) {
-        if (!txt) return "-";
-        let s = txt.toString();
-        // Si detectamos el formato largo de zona horaria, cortamos a 10 caracteres
-        if (s.includes("GMT") || s.length > 10) {
-            return s.substring(0, 10);
+    function mostrarFechaActual() {
+        const fecha = new Date();
+        const opciones = { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        };
+        document.getElementById('fechaActual').textContent = 
+            fecha.toLocaleDateString('es-AR', opciones);
+    }
+
+    function cargarActivos() {
+        const listaActivos = document.getElementById('listaActivos');
+        listaActivos.innerHTML = '';
+        ACTIVOS.forEach(activo => {
+            listaActivos.innerHTML += `
+                <div>
+                    <input type="checkbox" class="chk-activo" value="${activo}" id="act_${activo.replace(/[^a-zA-Z0-9]/g, '')}">
+                    <label for="act_${activo.replace(/[^a-zA-Z0-9]/g, '')}">🛩️ ${activo}</label>
+                </div>
+            `;
+        });
+    }
+
+    // =============================================
+    // FUNCIONES DE UTILIDAD UI
+    // =============================================
+    function mostrarLoader(mostrar) {
+        let loader = document.getElementById('globalLoader');
+        if (mostrar && !loader) {
+            loader = document.createElement('div');
+            loader.id = 'globalLoader';
+            loader.className = 'loader-overlay';
+            loader.innerHTML = '<div class="loader"></div>';
+            document.body.appendChild(loader);
+        } else if (!mostrar && loader) {
+            loader.remove();
         }
-        return s;
     }
 
-    function renderFlota(flota) {
-        const container = document.getElementById('panelFlota'); container.innerHTML = '';
+    function mostrarToast(mensaje, tipo = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${tipo}`;
+        toast.textContent = mensaje;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // =============================================
+    // CARGA DE DATOS
+    // =============================================
+    async function cargarDatos() {
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            
+            if (data && data.flota) {
+                renderFlota(data.flota);
+            } else {
+                renderFlota(getFlotaEjemplo());
+            }
+            
+            if (data && data.solicitudes) {
+                renderSolicitudes(data.solicitudes);
+            } else {
+                renderSolicitudes(getSolicitudesEjemplo());
+            }
+            
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+            mostrarToast('Usando datos de demostración', 'info');
+            renderFlota(getFlotaEjemplo());
+            renderSolicitudes(getSolicitudesEjemplo());
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    function getFlotaEjemplo() {
+        return [
+            { patente: 'LV-IHM (C206)', itv: '2025-06-15', pov: '2025-03-20', cisterna: '2025-08-10' },
+            { patente: 'LV-BFC (AT802)', itv: '2024-12-01', pov: '2025-01-15', cisterna: '2024-11-30' },
+            { patente: 'LV-CDE (AT802)', itv: '2025-09-22', pov: '2025-04-10', cisterna: '2025-07-05' },
+            { patente: 'LV-KOW (AT802)', itv: '2025-02-14', pov: '2024-10-05', cisterna: '2025-01-20' },
+            { patente: 'LQ-HBQ (LearJet)', itv: '2025-04-15', pov: '2024-12-10', cisterna: '2025-05-20' }
+        ];
+    }
+
+    function getSolicitudesEjemplo() {
+        return [
+            { nro_sol: 'SOL-2024-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', estado_app: 'PENDIENTE', gip: '', prov: '', oc: '', nro_factura: '', importe: '', observaciones: '', id_grupo: '', nombre_grupo: '', finalizado: 'NO' },
+            { nro_sol: 'SOL-2024-002', unidad: 'OPERACIONES', activo: 'LV-BFC (AT802)', detalle: 'Cambio de hélice', estado_app: 'EN EJECUCION', gip: 'GIP-001', prov: 'AeroParts SA', oc: 'OC-123', nro_factura: '', importe: '', observaciones: 'En taller', id_grupo: '', nombre_grupo: '', finalizado: 'NO' },
+            { nro_sol: 'SOL-2024-003', unidad: 'UOTA', activo: 'LQ-HBQ (LearJet)', detalle: 'Mantenimiento programado', estado_app: 'ENTREGADO', gip: 'GIP-002', prov: 'JetService', oc: 'OC-456', nro_factura: 'FAC-789', importe: '15000', observaciones: 'Completado', id_grupo: 'GRP-001', nombre_grupo: 'Manto. Noviembre', finalizado: 'NO' }
+        ];
+    }
+
+    function parsearFecha(fechaStr) {
+        if (!fechaStr) return null;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+            const [year, month, day] = fechaStr.split('-');
+            return new Date(year, month - 1, day);
+        }
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaStr)) {
+            const [day, month, year] = fechaStr.split('/');
+            return new Date(year, month - 1, day);
+        }
+        const date = new Date(fechaStr);
+        return isNaN(date) ? null : date;
+    }
+
+    function calcularDiasRestantes(fechaLimite) {
+        if (!fechaLimite) return 999;
+        const fecha = parsearFecha(fechaLimite);
+        if (!fecha) return 999;
         const hoy = new Date();
-        flota.forEach(v => {
-            const fStr = limpiarFecha(v.itv);
-            const p = fStr.split('/');
-            const dItv = Math.ceil((new Date(p[2], p[1]-1, p[0]) - hoy) / 86400000);
-            const est = dItv < 0 ? 'vence-rojo' : (dItv < 30 ? 'vence-amarillo' : 'vence-verde');
-            container.innerHTML += `<div class="flota-card ${est}"><strong>${v.patente}</strong><br>ITV: ${fStr}<br>POV: ${limpiarFecha(v.pov)}<br>CIST: ${limpiarFecha(v.cisterna)}<br><button onclick="editarVencimiento('${v.patente}')" style="font-size:10px; margin-top:5px; cursor:pointer;">ACTUALIZAR</button></div>`;
+        hoy.setHours(0, 0, 0, 0);
+        fecha.setHours(0, 0, 0, 0);
+        return Math.ceil((fecha - hoy) / 86400000);
+    }
+
+    // =============================================
+    // RENDERIZADO DE FLOTA
+    // =============================================
+    function renderFlota(flota) {
+        const container = document.getElementById('panelFlota');
+        if (!flota || flota.length === 0) {
+            container.innerHTML = '<div style="padding:20px;text-align:center;width:100%;">No hay datos de flota disponibles</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        flota.forEach(aeronave => {
+            const diasITV = calcularDiasRestantes(aeronave.itv);
+            const diasPOV = calcularDiasRestantes(aeronave.pov);
+            const diasCIST = calcularDiasRestantes(aeronave.cisterna);
+            const diasMinimos = Math.min(diasITV, diasPOV, diasCIST);
+            const estadoClase = diasMinimos < 0 ? 'vence-rojo' : (diasMinimos < 30 ? 'vence-amarillo' : 'vence-verde');
+            
+            container.innerHTML += `
+                <div class="flota-card ${estadoClase}">
+                    <strong style="font-size:1.1em;">✈️ ${aeronave.patente}</strong>
+                    <div style="margin: 10px 0;">
+                        ${crearIndicadorVencimiento('ITV', diasITV, aeronave.itv)}<br>
+                        ${crearIndicadorVencimiento('POV', diasPOV, aeronave.pov)}<br>
+                        ${crearIndicadorVencimiento('CIST', diasCIST, aeronave.cisterna)}
+                    </div>
+                    <button class="btn" style="background: var(--celeste); padding: 5px 10px; font-size: 0.8em; width: 100%;" onclick="editarVencimiento('${aeronave.patente}')">📅 Actualizar</button>
+                </div>
+            `;
         });
     }
 
-    function renderSolicitudes(sols) {
-        const cuerpo = document.getElementById('cuerpoSol'); cuerpo.innerHTML = '';
-        sols.reverse().forEach(s => {
-            const isFin = s.finalizado === "SI";
-            cuerpo.innerHTML += `
-                <tr class="${s.id_grupo ? 'row-grupo' : ''}" data-estado="${s.estado_app}">
-                    <td class="chk-col"><input type="checkbox" class="chk-sel" value="${s.nro_sol}"></td>
-                    <td>
-                        <span class="badge-ur">${s.unidad}</span> <strong>${s.nro_sol}</strong><br>
-                        <small><strong>Activo:</strong> ${s.activo || '-'}</small><br>
-                        <small><strong>Detalle:</strong> ${s.detalle || '-'}</small>
-                        ${s.id_grupo ? `<br><span class="badge-grupo" onclick="desagrupar('${s.nro_sol}')">${s.nombre_grupo} ✖</span>` : ''}
-                    </td>
-                    <td>
-                        <input type="text" id="gip_${s.nro_sol}" placeholder="GIP / Exp." value="${s.gip||''}" ${isFin?'disabled':''}>
-                        <textarea id="obs_${s.nro_sol}" class="obs-input" ${isFin?'disabled':''}>${s.observaciones||''}</textarea>
-                    </td>
-                    <td><input type="text" id="prov_${s.nro_sol}" value="${s.prov||''}" ${isFin?'disabled':''}> <input type="text" id="oc_${s.nro_sol}" value="${s.oc||''}" ${isFin?'disabled':''}></td>
-                    <td><input type="text" id="fac_${s.nro_sol}" value="${s.nro_factura||''}" ${isFin?'disabled':''}> <input type="number" id="imp_${s.nro_sol}" value="${s.importe||''}" ${isFin?'disabled':''}></td>
-                    <td><select id="sel_${s.nro_sol}" ${isFin?'disabled':''}>
-                        <option value="PENDIENTE" ${s.estado_app==='PENDIENTE'?'selected':''}>PENDIENTE</option>
-                        <option value="EN EJECUCION" ${s.estado_app==='EN EJECUCION'?'selected':''}>EN EJECUCIÓN</option>
-                        <option value="ENTREGADO" ${s.estado_app==='ENTREGADO'?'selected':''}>ENTREGADO</option>
-                        <option value="TERMINADO" ${s.estado_app==='TERMINADO'?'selected':''}>TERMINADO</option>
-                    </select></td>
-                    <td>${!isFin ? `<button class="btn" style="background:var(--verde)" onclick="actualizar('${s.nro_sol}','${s.id_grupo||''}')">OK</button>` : '✅'}</td>
-                </tr>`;
+    function crearIndicadorVencimiento(tipo, dias, fecha) {
+        const emoji = dias < 0 ? '🔴' : (dias < 30 ? '🟡' : '🟢');
+        const texto = dias < 0 ? 'VENCIDO' : `${dias} días`;
+        const fechaFormateada = fecha ? parsearFecha(fecha)?.toLocaleDateString('es-AR') : 'No definida';
+        return `${emoji} <strong>${tipo}:</strong> ${texto}<br><small style="margin-left:20px;">📆 ${fechaFormateada}</small>`;
+    }
+
+    // =============================================
+    // RENDERIZADO DE SOLICITUDES
+    // =============================================
+    function renderSolicitudes(solicitudes) {
+        const cuerpo = document.getElementById('cuerpoSol');
+        if (!solicitudes || solicitudes.length === 0) {
+            cuerpo.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;">No hay solicitudes registradas</td></tr>';
+            return;
+        }
+        
+        cuerpo.innerHTML = '';
+        solicitudes.reverse().forEach(sol => {
+            const finalizada = sol.finalizado === "SI";
+            const fila = document.createElement('tr');
+            fila.className = sol.id_grupo ? 'row-grupo' : '';
+            fila.setAttribute('data-estado', sol.estado_app || 'PENDIENTE');
+            
+            fila.innerHTML = `
+                <td class="chk-col"><input type="checkbox" class="chk-sel" value="${sol.nro_sol}"></td>
+                <td>
+                    <span class="badge-ur">${sol.unidad || '-'}</span>
+                    <strong style="font-size:1.05em;">${sol.nro_sol}</strong><br>
+                    <small><strong>🛩️ Activo:</strong> ${sol.activo || 'No especificado'}</small><br>
+                    <small><strong>📝 Detalle:</strong> ${sol.detalle || '-'}</small>
+                    ${sol.id_grupo ? `<br><span class="badge-grupo" onclick="desagrupar('${sol.nro_sol}')">🔗 ${sol.nombre_grupo} ✖</span>` : ''}
+                </td>
+                <td>
+                    <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP / Expediente" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
+                    <textarea id="obs_${sol.nro_sol}" class="obs-input" placeholder="Observaciones" ${finalizada ? 'disabled' : ''}>${sol.observaciones || ''}</textarea>
+                </td>
+                <td>
+                    <input type="text" id="prov_${sol.nro_sol}" placeholder="Proveedor" value="${sol.prov || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
+                    <input type="text" id="oc_${sol.nro_sol}" placeholder="OC" value="${sol.oc || ''}" ${finalizada ? 'disabled' : ''}>
+                </td>
+                <td>
+                    <input type="text" id="fac_${sol.nro_sol}" placeholder="Factura N°" value="${sol.nro_factura || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
+                    <input type="number" id="imp_${sol.nro_sol}" placeholder="Importe $" value="${sol.importe || ''}" ${finalizada ? 'disabled' : ''} step="0.01">
+                </td>
+                <td>
+                    <select id="sel_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="min-width:120px;">
+                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE' ? 'selected' : ''}>⏳ PENDIENTE</option>
+                        <option value="EN EJECUCION" ${sol.estado_app === 'EN EJECUCION' ? 'selected' : ''}>🔧 EN EJECUCIÓN</option>
+                        <option value="ENTREGADO" ${sol.estado_app === 'ENTREGADO' ? 'selected' : ''}>✅ ENTREGADO</option>
+                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO' ? 'selected' : ''}>🏁 TERMINADO</option>
+                    </select>
+                </td>
+                <td>
+                    ${!finalizada ? `<button class="btn" style="background: var(--verde); padding: 6px 10px;" onclick="actualizarSolicitud('${sol.nro_sol}', '${sol.id_grupo || ''}')">✓ ACTUALIZAR</button>` : '<span style="font-size:1.3em;">✅</span>'}
+                </td>
+                <td>
+                    <button class="btn-eliminar" onclick="eliminarSolicitud('${sol.nro_sol}', this.closest('tr'))" title="Eliminar solicitud permanentemente">🗑️ ELIMINAR</button>
+                </td>
+            `;
+            
+            cuerpo.appendChild(fila);
         });
+        
         filtrarTabla();
     }
 
-    async function actualizar(nro, idG) {
-        const p = { 
-            action: "update", nro_sol: nro, id_grupo: idG, update_block: false, 
-            gip: document.getElementById(`gip_${nro}`).value,
-            prov: document.getElementById(`prov_${nro}`).value, oc: document.getElementById(`oc_${nro}`).value, 
-            nro_factura: document.getElementById(`fac_${nro}`).value, importe: document.getElementById(`imp_${nro}`).value, 
-            estado_app: document.getElementById(`sel_${nro}`).value, observaciones: document.getElementById(`obs_${nro}`).value 
+    // =============================================
+    // FUNCIONES CRUD
+    // =============================================
+    async function registrarSolicitud() {
+        const unidad = document.getElementById('unidad').value;
+        const nroSol = document.getElementById('nro_sol').value.trim();
+        const fNec = document.getElementById('f_nec').value;
+        const detalle = document.getElementById('detalle').value.trim();
+        const activosSeleccionados = Array.from(document.querySelectorAll('.chk-activo:checked')).map(cb => cb.value);
+        
+        if (!nroSol) { mostrarToast('El número de solicitud es obligatorio', 'error'); return; }
+        if (!fNec) { mostrarToast('La fecha de necesidad es obligatoria', 'error'); return; }
+        if (activosSeleccionados.length === 0) { mostrarToast('Debe seleccionar al menos un activo', 'error'); return; }
+        if (!detalle) { mostrarToast('El detalle técnico es obligatorio', 'error'); return; }
+        
+        const datos = {
+            action: 'create',
+            unidad, nro_sol: nroSol, f_nec: fNec,
+            activo: activosSeleccionados.join(', '),
+            detalle, f_sol: new Date().toISOString().split('T')[0],
+            estado_app: 'PENDIENTE'
         };
-        if(idG && confirm("¿Aplicar cambios a todo el grupo unificado?")) p.update_block = true;
-        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(p) });
-        cargarDatos();
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast(`✅ Solicitud ${nroSol} registrada exitosamente`, 'success');
+                document.getElementById('nro_sol').value = '';
+                document.getElementById('f_nec').value = '';
+                document.getElementById('detalle').value = '';
+                document.querySelectorAll('.chk-activo:checked').forEach(cb => cb.checked = false);
+                setTimeout(() => cargarDatos(), 500);
+            } else {
+                throw new Error(resultado.message || 'Error al registrar');
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
     }
 
+    async function actualizarSolicitud(nroSol, idGrupo) {
+        const datos = {
+            action: 'update',
+            nro_sol: nroSol,
+            id_grupo: idGrupo,
+            update_block: false,
+            gip: document.getElementById(`gip_${nroSol}`).value,
+            prov: document.getElementById(`prov_${nroSol}`).value,
+            oc: document.getElementById(`oc_${nroSol}`).value,
+            nro_factura: document.getElementById(`fac_${nroSol}`).value,
+            importe: document.getElementById(`imp_${nroSol}`).value,
+            estado_app: document.getElementById(`sel_${nroSol}`).value,
+            observaciones: document.getElementById(`obs_${nroSol}`).value
+        };
+        
+        if (idGrupo && confirm('¿Aplicar cambios a todo el grupo unificado?')) {
+            datos.update_block = true;
+        }
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast('✅ Actualización exitosa', 'success');
+                cargarDatos();
+            } else {
+                throw new Error(resultado.message || 'Error al actualizar');
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    async function eliminarSolicitud(nroSol, elementoFila) {
+        if (!confirm(`¿Está seguro de eliminar la solicitud ${nroSol}?\nEsta acción no se puede deshacer.`)) return;
+        if (!confirm('❗ CONFIRMACIÓN FINAL: ¿Eliminar permanentemente?')) return;
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', nro_sol: nroSol })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                if (elementoFila) {
+                    elementoFila.classList.add('fila-eliminada');
+                    setTimeout(() => {
+                        elementoFila.remove();
+                        mostrarToast(`✅ Solicitud ${nroSol} eliminada`, 'success');
+                    }, 300);
+                } else {
+                    mostrarToast(`✅ Solicitud ${nroSol} eliminada`, 'success');
+                    cargarDatos();
+                }
+            } else {
+                throw new Error(resultado.message || 'Error al eliminar');
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+            if (elementoFila) elementoFila.classList.remove('fila-eliminada');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    async function eliminarMultiplesSolicitudes() {
+        const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
+        if (seleccionadas.length === 0) { mostrarToast('Seleccione al menos una solicitud', 'error'); return; }
+        if (!confirm(`⚠️ ¿Eliminar ${seleccionadas.length} solicitudes?\nEsta acción NO se puede deshacer.`)) return;
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'batch_delete', nros_sol: seleccionadas })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast(`✅ ${resultado.eliminadas} solicitudes eliminadas`, 'success');
+                cargarDatos();
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    // =============================================
+    // FUNCIONES DE AGRUPACIÓN
+    // =============================================
+    async function ejecutarUnificacion() {
+        const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
+        if (seleccionadas.length < 2) { mostrarToast('Seleccione al menos 2 ítems para unificar', 'error'); return; }
+        
+        const nombreGrupo = prompt('Nombre del grupo:');
+        if (!nombreGrupo) return;
+        
+        const idGrupo = 'GRP-' + Date.now();
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'unificar', nros_sol: seleccionadas, id_grupo: idGrupo, nombre_grupo: nombreGrupo })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast(`✅ ${resultado.unificadas} solicitudes unificadas en grupo "${nombreGrupo}"`, 'success');
+                cargarDatos();
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    async function desagrupar(nroSol) {
+        if (!confirm('¿Quitar del grupo?')) return;
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'desagrupar', nro_sol: nroSol })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast('✅ Solicitud removida del grupo', 'success');
+                cargarDatos();
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
+    // =============================================
+    // FUNCIONES DE FILTRADO Y UI
+    // =============================================
     function filtrarTabla() {
-        const bus = document.getElementById('busqueda').value.toUpperCase();
+        const busqueda = document.getElementById('busqueda').value.toUpperCase();
         const ur = document.getElementById('filtroUR').value.toUpperCase();
-        const ests = Array.from(document.querySelectorAll('.chk-f-est:checked')).map(c => c.value);
-        document.querySelectorAll('#cuerpoSol tr').forEach(f => {
-            const txt = f.innerText.toUpperCase();
-            const cumple = ests.includes(f.getAttribute('data-estado')) && txt.includes(bus) && (ur === "" || txt.includes(ur));
-            f.style.display = cumple ? "" : "none";
+        const estados = Array.from(document.querySelectorAll('.chk-f-est:checked')).map(c => c.value);
+        
+        document.querySelectorAll('#cuerpoSol tr').forEach(fila => {
+            const texto = fila.innerText.toUpperCase();
+            const estadoFila = fila.getAttribute('data-estado');
+            const cumpleEstado = estados.includes(estadoFila);
+            const cumpleBusqueda = busqueda === '' || texto.includes(busqueda);
+            const cumpleUR = ur === '' || texto.includes(ur);
+            
+            fila.style.display = (cumpleEstado && cumpleBusqueda && cumpleUR) ? '' : 'none';
         });
     }
 
-    async function registrarSolicitud() {
-        const selects = Array.from(document.querySelectorAll('.chk-activo:checked')).map(c => c.value);
-        if(!document.getElementById('nro_sol').value) return alert("Falta N° de Solicitud");
-        const d = { 
-            unidad: document.getElementById('unidad').value, 
-            nro_sol: document.getElementById('nro_sol').value, 
-            f_nec: document.getElementById('f_nec').value, 
-            activo: selects.join(", "), 
-            detalle: document.getElementById('detalle').value, 
-            f_sol: new Date().toLocaleDateString('es-AR') 
-        };
-        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        location.reload();
+    function toggleModoSeleccion() {
+        const columnas = document.querySelectorAll('.chk-col');
+        const estaVisible = columnas[0]?.style.display === 'table-cell';
+        
+        columnas.forEach(col => col.style.display = estaVisible ? 'none' : 'table-cell');
+        
+        document.getElementById('btnUnificar').style.display = estaVisible ? 'none' : 'inline-block';
+        document.getElementById('btnEliminarMultiples').style.display = estaVisible ? 'none' : 'inline-block';
     }
 
-    async function ejecutarUnificacion() { 
-        const sels = Array.from(document.querySelectorAll('.chk-sel:checked')).map(c => c.value); 
-        if(sels.length < 2) return alert("Seleccione al menos 2 ítems"); 
-        const nom = prompt("Nombre del grupo:"); 
-        if(!nom) return;
-        const idG = "GRP-" + Date.now(); 
-        for(let nro of sels) {
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: idG, nombre_grupo: nom }) });
+    async function editarVencimiento(patente) {
+        const tipo = prompt('Tipo de vencimiento (itv / pov / cisterna):')?.toLowerCase();
+        if (!tipo || !['itv', 'pov', 'cisterna'].includes(tipo)) {
+            mostrarToast('Tipo no válido', 'error');
+            return;
         }
-        location.reload(); 
-    }
-
-    async function editarVencimiento(patente) { 
-        const tipo = prompt("itv / pov / cisterna:").toLowerCase(); 
-        const fecha = prompt("Nueva Fecha (AAAA-MM-DD):"); 
-        if(fecha) { 
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update_vencimiento", patente: patente, tipo: tipo, fecha: fecha }) }); 
-            cargarDatos(); 
-        } 
-    }
-
-    function toggleModoGrupo() { 
-        const cols = document.querySelectorAll('.chk-col'); 
-        cols.forEach(c => c.style.display = c.style.display === 'table-cell' ? 'none' : 'table-cell'); 
-        document.getElementById('btnUnificar').style.display = (document.getElementById('btnUnificar').style.display === 'none') ? 'inline-block' : 'none'; 
-    }
-
-    async function desagrupar(nro) { 
-        if(confirm("¿Quitar del grupo?")) { 
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "update", nro_sol: nro, id_grupo: "", nombre_grupo: "" }) }); 
-            cargarDatos(); 
-        } 
+        
+        const fecha = prompt('Nueva fecha (YYYY-MM-DD):');
+        if (!fecha) return;
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_vencimiento', patente, tipo, fecha })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast('✅ Vencimiento actualizado', 'success');
+                cargarDatos();
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
     }
 </script>
+
 </body>
 </html>
