@@ -312,7 +312,7 @@
     </div>
     <div class="header-right">
         <div class="fecha-actual" id="fechaActual"></div>
-        <div class="version-badge">v2.1.0 | SGA</div>
+        <div class="version-badge">v2.2.0 | SGA</div>
     </div>
 </header>
 
@@ -419,9 +419,8 @@
     // ║  PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (LÍNEA 527)                  ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCzy79rDiluYroKxgUkZy_Ky_Uoajtwck-ZeFKapbGnGviKZPio1KJvaP9TVnKjd0/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxh85gv7cFqph-1Bawwp2EQiIamtFwzvbVcG4y6q41n-1nEL5akgLryKwcZpd5_emg_/exec";
     
-    // Lista de activos aeronáuticos
     const ACTIVOS = [
         "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
         "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", 
@@ -466,9 +465,6 @@
         });
     }
 
-    // =============================================
-    // UTILIDADES UI
-    // =============================================
     function mostrarLoader(mostrar) {
         let loader = document.getElementById('globalLoader');
         if (mostrar && !loader) {
@@ -490,9 +486,6 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // =============================================
-    // CARGA DE DATOS
-    // =============================================
     async function cargarDatos() {
         mostrarLoader(true);
         
@@ -526,28 +519,27 @@
 
     function getFlotaEjemplo() {
         return [
-            { patente: 'AE875UX (C. Blanco)', itv: '2025-03-15', pov: '2025-01-20', cisterna: '2025-06-10' },
-            { patente: 'FAK619 (C. Amarillo)', itv: '2025-04-22', pov: '2025-02-10', cisterna: '2025-07-05' },
-            { patente: 'AD150QB (Hilux)', itv: '2024-12-01', pov: '2024-11-15', cisterna: '2025-01-30' },
-            { patente: 'IXH694 (Logan)', itv: '2025-05-18', pov: '2025-03-05', cisterna: '2025-08-20' }
+            { patente: 'AE875UX (C. Blanco)', itv: '15-03-2025', pov: '20-01-2025', cisterna: '10-06-2025' },
+            { patente: 'FAK619 (C. Amarillo)', itv: '22-04-2025', pov: '10-02-2025', cisterna: '05-07-2025' },
+            { patente: 'AD150QB (Hilux)', itv: '01-12-2024', pov: '15-11-2024', cisterna: '30-01-2025' },
+            { patente: 'IXH694 (Logan)', itv: '18-05-2025', pov: '05-03-2025', cisterna: '20-08-2025' }
         ];
     }
 
     function getSolicitudesEjemplo() {
         return [
-            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento preventivo', estado_app: 'PENDIENTE', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' },
-            { nro_sol: '24-002', unidad: 'OPERACIONES', activo: 'LV-BFC (AT802)', detalle: 'Cambio de hélice', motivo: 'Daño por impacto', estado_app: 'EN EJECUCIÓN', gip: 'GIP-001', fecha_gip: '15/01/2024', prov: 'AeroParts SA', oc: 'OC-123', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: 'En taller', id_grupo: '', nombre_grupo: '' }
+            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento preventivo', estado_app: 'PENDIENTE', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' }
         ];
     }
 
     function parsearFecha(fechaStr) {
         if (!fechaStr) return null;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
-            const [year, month, day] = fechaStr.split('-');
+        if (/^\d{2}-\d{2}-\d{4}$/.test(fechaStr)) {
+            const [day, month, year] = fechaStr.split('-');
             return new Date(year, month - 1, day);
         }
-        if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaStr)) {
-            const [day, month, year] = fechaStr.split('/');
+        if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
+            const [year, month, day] = fechaStr.split('-');
             return new Date(year, month - 1, day);
         }
         const date = new Date(fechaStr);
@@ -564,9 +556,6 @@
         return Math.ceil((fecha - hoy) / 86400000);
     }
 
-    // =============================================
-    // RENDERIZADO DE FLOTA
-    // =============================================
     function renderFlota(flota) {
         const container = document.getElementById('panelFlota');
         if (!flota || flota.length === 0) {
@@ -599,13 +588,9 @@
     function crearIndicadorVencimiento(tipo, dias, fecha) {
         const emoji = dias < 0 ? '🔴' : (dias < 30 ? '🟡' : '🟢');
         const texto = dias < 0 ? 'VENCIDO' : `${dias} días`;
-        const fechaFormateada = fecha ? parsearFecha(fecha)?.toLocaleDateString('es-AR') : 'No definida';
-        return `${emoji} <strong>${tipo}:</strong> ${texto}<br><small style="margin-left:20px;">📆 ${fechaFormateada}</small>`;
+        return `${emoji} <strong>${tipo}:</strong> ${texto}<br><small style="margin-left:20px;">📆 ${fecha || 'No definida'}</small>`;
     }
 
-    // =============================================
-    // RENDERIZADO DE SOLICITUDES
-    // =============================================
     function renderSolicitudes(solicitudes) {
         const cuerpo = document.getElementById('cuerpoSol');
         if (!solicitudes || solicitudes.length === 0) {
@@ -634,7 +619,7 @@
                 </td>
                 <td>
                     <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP/Exp" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
-                    <input type="text" id="fecha_gip_${sol.nro_sol}" placeholder="Fecha" value="${sol.fecha_gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;">
+                    <input type="text" id="fecha_gip_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_gip || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
                 </td>
                 <td>
                     <input type="text" id="prov_${sol.nro_sol}" placeholder="Proveedor" value="${sol.prov || ''}" ${finalizada ? 'disabled' : ''} style="width:100px;"><br>
@@ -642,7 +627,7 @@
                 </td>
                 <td>
                     <input type="text" id="fac_${sol.nro_sol}" placeholder="N° Fact" value="${sol.nro_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
-                    <input type="text" id="fecha_fact_${sol.nro_sol}" placeholder="Fecha" value="${sol.fecha_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;"><br>
+                    <input type="text" id="fecha_fact_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;"><br>
                     <input type="number" id="imp_${sol.nro_sol}" placeholder="$" value="${sol.importe || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;" step="0.01">
                 </td>
                 <td>
@@ -658,7 +643,7 @@
                         <option value="ENTREGADO" ${sol.estado_app === 'ENTREGADO' ? 'selected' : ''}>✅ ENTREGADO</option>
                         <option value="TERMINADO" ${sol.estado_app === 'TERMINADO' ? 'selected' : ''}>🏁 TERMINADO</option>
                     </select><br>
-                    <input type="text" id="fecha_ent_${sol.nro_sol}" placeholder="F. Entrega" value="${sol.fecha_entrega || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
+                    <input type="text" id="fecha_ent_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_entrega || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
                 </td>
                 <td>
                     <select id="fin_${sol.nro_sol}" onchange="toggleFinalizado('${sol.nro_sol}')" style="width:70px;">
@@ -682,14 +667,9 @@
         filtrarTabla();
     }
 
-    // =============================================
-    // FUNCIÓN TOGGLE FINALIZADO
-    // =============================================
     function toggleFinalizado(nroSol) {
         const selectFin = document.getElementById(`fin_${nroSol}`);
         const finalizado = selectFin.value === 'SI';
-        
-        // Habilitar/deshabilitar campos
         const campos = ['gip', 'fecha_gip', 'prov', 'oc', 'fac', 'fecha_fact', 'imp', 'pagado', 'sel', 'fecha_ent', 'obs'];
         campos.forEach(campo => {
             const elem = document.getElementById(`${campo}_${nroSol}`);
@@ -697,9 +677,6 @@
         });
     }
 
-    // =============================================
-    // FUNCIONES CRUD
-    // =============================================
     async function registrarSolicitud() {
         const unidad = document.getElementById('unidad').value;
         const nroSol = document.getElementById('nro_sol').value.trim();
@@ -719,8 +696,7 @@
             action: 'create',
             unidad, nro_sol: nroSol, f_nec: fNec,
             activo: activosSeleccionados.join(', '),
-            detalle, motivo, observaciones,
-            f_sol: new Date().toISOString().split('T')[0]
+            detalle, motivo, observaciones
         };
         
         mostrarLoader(true);
@@ -873,9 +849,6 @@
         }
     }
 
-    // =============================================
-    // FUNCIONES DE AGRUPACIÓN
-    // =============================================
     async function ejecutarUnificacion() {
         const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
         if (seleccionadas.length < 2) { mostrarToast('Seleccione al menos 2 ítems', 'error'); return; }
@@ -961,9 +934,6 @@
         }
     }
 
-    // =============================================
-    // FILTRADO Y UI
-    // =============================================
     function filtrarTabla() {
         const busqueda = document.getElementById('busqueda').value.toUpperCase();
         const ur = document.getElementById('filtroUR').value.toUpperCase();
@@ -997,8 +967,12 @@
             return;
         }
         
-        const fecha = prompt('Nueva fecha (YYYY-MM-DD):');
+        const fecha = prompt('Nueva fecha (DD-MM-AAAA):');
         if (!fecha) return;
+        if (!/^\d{2}-\d{2}-\d{4}$/.test(fecha)) {
+            mostrarToast('Formato inválido. Use: DD-MM-AAAA', 'error');
+            return;
+        }
         
         mostrarLoader(true);
         
