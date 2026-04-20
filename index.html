@@ -338,7 +338,7 @@
     </div>
     <div class="header-right">
         <div class="fecha-actual" id="fechaActual"></div>
-        <div class="version-badge">v3.0.0 | SGA</div>
+        <div class="version-badge">v3.1.0 | SGA</div>
     </div>
 </header>
 
@@ -440,12 +440,10 @@
 
 <script>
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                  CONFIGURACIÓN - URL DE APPS SCRIPT                   ║
+    // ║                  ⭐⭐⭐ PEGA AQUÍ TU URL DE APPS SCRIPT ⭐⭐⭐              ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkceysT_K0Y8a8Ez0NuPkgpYGzfnKYwc53Laosr11W2MKLVzvOwpEPhyQF-1ZLeyWD/exec";
-    
-    // NOTA: Debes reemplazar la URL de arriba con tu URL real de despliegue de Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec";
     
     const ACTIVOS = [
         "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
@@ -586,7 +584,6 @@
         const clases = { fondo: '', borde: '', textoAlerta: '', claseAlerta: '' };
         const ignoraVencimiento = (estado === 'ENTREGADO' || estado === 'TERMINADO');
         
-        // Fondo por estado
         switch(estado) {
             case 'PENDIENTE': clases.fondo = 'estado-pendiente'; break;
             case 'EN EJECUCIÓN': clases.fondo = 'estado-ejecucion'; break;
@@ -595,7 +592,6 @@
             default: clases.fondo = 'estado-pendiente';
         }
         
-        // Borde por vencimiento (o ignorado)
         if (ignoraVencimiento) {
             clases.borde = 'borde-ignorado';
             clases.textoAlerta = '';
