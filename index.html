@@ -15,6 +15,7 @@
             --verde: #27ae60;
             --rojo: #c0392b;
             --amarillo: #f1c40f;
+            --gris: #95a5a6;
             --fondo: #f4f7f6;
             --gris-claro: #ecf0f1;
         }
@@ -154,8 +155,23 @@
         table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
         th { background: var(--azul-aeronautica); color: white; padding: 12px 8px; text-transform: uppercase; font-size: 0.75em; text-align: left; white-space: nowrap; }
         td { padding: 10px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
-        tr:hover { background: #f8f9fa; }
-        .row-grupo { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
+        tbody tr:hover { filter: brightness(0.97); cursor: pointer; }
+        .row-grupo { border-left: 6px solid var(--naranja) !important; }
+        
+        /* FONDOS POR ESTADO */
+        .estado-pendiente { background-color: #fdedec !important; }
+        .estado-ejecucion { background-color: #ebf5fb !important; }
+        .estado-entregado { background-color: #d5f5e3 !important; }
+        .estado-terminado { background-color: #a9dfbf !important; }
+        
+        /* BORDES POR VENCIMIENTO */
+        tr.borde-vencido { border-left: 6px solid #c0392b !important; }
+        tr.borde-proximo { border-left: 6px solid #f1c40f !important; }
+        tr.borde-aldia { border-left: 6px solid #27ae60 !important; }
+        tr.borde-ignorado { border-left: 6px solid #95a5a6 !important; }
+        
+        /* FINALIZADA */
+        tr.finalizada { opacity: 0.7; }
         
         .badge-ur {
             background: #ebf5fb;
@@ -184,6 +200,16 @@
         .badge-pagado { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600; }
         .pagado-si { background: #d5f5e3; color: #1e8449; }
         .pagado-no { background: #fadbd8; color: #922b21; }
+        
+        .alerta-vencimiento {
+            font-size: 0.75em;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        
+        .alerta-vencido { color: #c0392b; }
+        .alerta-proximo { color: #d4ac0d; }
+        .alerta-aldia { color: #27ae60; }
         
         .filtros-estado {
             background: var(--gris-claro);
@@ -312,7 +338,7 @@
     </div>
     <div class="header-right">
         <div class="fecha-actual" id="fechaActual"></div>
-        <div class="version-badge">v2.2.0 | SGA</div>
+        <div class="version-badge">v3.0.0 | SGA</div>
     </div>
 </header>
 
@@ -414,12 +440,12 @@
 
 <script>
     // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                  ⭐⭐⭐ CONFIGURACIÓN IMPORTANTE ⭐⭐⭐                    ║
-    // ║                                                                      ║
-    // ║  PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (LÍNEA 527)                  ║
+    // ║                  CONFIGURACIÓN - URL DE APPS SCRIPT                   ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyc-xVuR0FL9esU0-uuDnK3o_I8iPSMRtk_jZp_Jdg0N1S4c6B3nqVHtS5wQnN3gtD_/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkceysT_K0Y8a8Ez0NuPkgpYGzfnKYwc53Laosr11W2MKLVzvOwpEPhyQF-1ZLeyWD/exec";
+    
+    // NOTA: Debes reemplazar la URL de arriba con tu URL real de despliegue de Apps Script
     
     const ACTIVOS = [
         "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
@@ -528,7 +554,7 @@
 
     function getSolicitudesEjemplo() {
         return [
-            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento preventivo', estado_app: 'PENDIENTE', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' }
+            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento', estado_app: 'PENDIENTE', f_nec: '15-03-2025', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' }
         ];
     }
 
@@ -554,6 +580,43 @@
         hoy.setHours(0, 0, 0, 0);
         fecha.setHours(0, 0, 0, 0);
         return Math.ceil((fecha - hoy) / 86400000);
+    }
+
+    function obtenerClasesPorEstadoYVencimiento(estado, fNec) {
+        const clases = { fondo: '', borde: '', textoAlerta: '', claseAlerta: '' };
+        const ignoraVencimiento = (estado === 'ENTREGADO' || estado === 'TERMINADO');
+        
+        // Fondo por estado
+        switch(estado) {
+            case 'PENDIENTE': clases.fondo = 'estado-pendiente'; break;
+            case 'EN EJECUCIÓN': clases.fondo = 'estado-ejecucion'; break;
+            case 'ENTREGADO': clases.fondo = 'estado-entregado'; break;
+            case 'TERMINADO': clases.fondo = 'estado-terminado'; break;
+            default: clases.fondo = 'estado-pendiente';
+        }
+        
+        // Borde por vencimiento (o ignorado)
+        if (ignoraVencimiento) {
+            clases.borde = 'borde-ignorado';
+            clases.textoAlerta = '';
+        } else {
+            const dias = calcularDiasRestantes(fNec);
+            if (dias < 0) {
+                clases.borde = 'borde-vencido';
+                clases.textoAlerta = `⚠️ VENCIDO HACE ${Math.abs(dias)} DÍAS`;
+                clases.claseAlerta = 'alerta-vencido';
+            } else if (dias < 45) {
+                clases.borde = 'borde-proximo';
+                clases.textoAlerta = `⏰ QUEDAN ${dias} DÍAS`;
+                clases.claseAlerta = 'alerta-proximo';
+            } else {
+                clases.borde = 'borde-aldia';
+                clases.textoAlerta = `✅ QUEDAN ${dias} DÍAS`;
+                clases.claseAlerta = 'alerta-aldia';
+            }
+        }
+        
+        return clases;
     }
 
     function renderFlota(flota) {
@@ -601,8 +664,12 @@
         cuerpo.innerHTML = '';
         solicitudes.reverse().forEach(sol => {
             const finalizada = sol.finalizado === 'SI';
+            const clases = obtenerClasesPorEstadoYVencimiento(sol.estado_app, sol.f_nec);
             const fila = document.createElement('tr');
-            fila.className = sol.id_grupo ? 'row-grupo' : '';
+            
+            fila.className = `${clases.fondo} ${clases.borde}`;
+            if (sol.id_grupo) fila.classList.add('row-grupo');
+            if (finalizada) fila.classList.add('finalizada');
             fila.setAttribute('data-estado', sol.estado_app || 'PENDIENTE');
             
             const detalleCompleto = [sol.detalle, sol.motivo].filter(Boolean).join(' - ');
@@ -616,6 +683,7 @@
                     <small>🛩️ ${sol.activo || '-'}</small><br>
                     <small>📝 ${detalleCompleto || '-'}</small>
                     ${sol.id_grupo ? `<br><span class="badge-grupo" onclick="renombrarGrupoPrompt('${sol.id_grupo}', '${sol.nombre_grupo}')">🔗 ${sol.nombre_grupo} ✏️</span>` : ''}
+                    ${clases.textoAlerta ? `<br><span class="alerta-vencimiento ${clases.claseAlerta}">${clases.textoAlerta}</span>` : ''}
                 </td>
                 <td>
                     <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP/Exp" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
