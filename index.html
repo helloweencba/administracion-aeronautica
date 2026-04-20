@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de Gestión de Solicitudes - Dirección de Aeronáutica de Córdoba">
+    <meta name="description" content="Sistema de Gestión de Solicitudes - Dirección Provincial de Aeronáutica Córdoba">
     <meta name="theme-color" content="#003366">
-    <meta name="author" content="Dirección de Aeronáutica Córdoba">
-    <title>SGA - Dirección de Aeronáutica Córdoba</title>
+    <title>SGA - Dirección Provincial de Aeronáutica Córdoba</title>
     <style>
-        /* ============================================= */
-        /* VARIABLES Y RESET                              */
-        /* ============================================= */
         :root {
             --azul-aeronautica: #003366;
             --azul-secundario: #1a5276;
@@ -21,32 +17,21 @@
             --amarillo: #f1c40f;
             --fondo: #f4f7f6;
             --gris-claro: #ecf0f1;
-            --sombra: 0 4px 12px rgba(0,0,0,0.08);
-            --sombra-hover: 0 6px 16px rgba(0,0,0,0.12);
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--fondo);
-            margin: 0;
             padding: 20px;
             font-size: 14px;
-            line-height: 1.5;
         }
         
-        /* ============================================= */
-        /* HEADER CON LOGO Y TÍTULO                       */
-        /* ============================================= */
         .app-header {
             background: linear-gradient(135deg, var(--azul-aeronautica) 0%, var(--azul-secundario) 100%);
             color: white;
-            padding: 25px 30px;
+            padding: 20px 30px;
             border-radius: 15px;
             margin-bottom: 25px;
             box-shadow: 0 4px 20px rgba(0,51,102,0.3);
@@ -57,52 +42,25 @@
             gap: 20px;
         }
         
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
+        .header-left { display: flex; align-items: center; gap: 20px; }
         
         .logo-container {
             background: white;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            border-radius: 12px;
+            width: 220px;
+            height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
-        .logo-aeronautica {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-        }
-        
-        .app-title h1 {
-            font-size: 2em;
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .app-title p {
-            font-size: 1em;
-            opacity: 0.95;
-            margin-top: 5px;
-            font-weight: 300;
-        }
-        
-        .header-right {
-            text-align: right;
-        }
-        
-        .fecha-actual {
-            font-size: 1.2em;
-            font-weight: 500;
-        }
+        .logo-aeronautica { width: 100%; height: 100%; object-fit: contain; }
+        .app-title h1 { font-size: 1.8em; font-weight: 600; }
+        .app-title p { font-size: 0.95em; opacity: 0.95; margin-top: 5px; }
+        .header-right { text-align: right; }
+        .fecha-actual { font-size: 1.2em; font-weight: 500; }
         
         .version-badge {
             background: rgba(255,255,255,0.2);
@@ -111,24 +69,15 @@
             font-size: 0.85em;
             margin-top: 8px;
             display: inline-block;
-            backdrop-filter: blur(5px);
         }
         
-        /* ============================================= */
-        /* CARDS Y CONTENEDORES                           */
-        /* ============================================= */
         .card {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: var(--sombra);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             margin-bottom: 25px;
             border-top: 4px solid var(--azul-aeronautica);
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            box-shadow: var(--sombra-hover);
         }
         
         .card h2 {
@@ -142,14 +91,7 @@
             padding-bottom: 15px;
         }
         
-        /* ============================================= */
-        /* FORMULARIOS Y GRID                             */
-        /* ============================================= */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
         
         label {
             font-weight: 600;
@@ -158,7 +100,6 @@
             display: block;
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         input, select, textarea {
@@ -167,7 +108,6 @@
             border: 2px solid #d5dbdb;
             border-radius: 8px;
             font-size: 0.95em;
-            transition: all 0.3s ease;
             font-family: inherit;
         }
         
@@ -177,9 +117,6 @@
             box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
         }
         
-        /* ============================================= */
-        /* BOTONES                                        */
-        /* ============================================= */
         .btn {
             padding: 10px 18px;
             border: none;
@@ -188,60 +125,16 @@
             color: white;
             font-weight: 600;
             font-size: 0.9em;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: inline-block;
-            text-align: center;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .btn-main { background: var(--azul-aeronautica); width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1em; text-transform: uppercase; }
+        .btn-eliminar { background: var(--rojo); padding: 6px 12px; font-size: 0.85em; }
+        .btn-eliminar:hover { background: #a93226; }
         
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-main {
-            background: var(--azul-aeronautica);
-            width: 100%;
-            margin-top: 20px;
-            padding: 15px;
-            font-size: 1.1em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .btn-eliminar {
-            background: var(--rojo);
-            padding: 6px 12px;
-            font-size: 0.85em;
-        }
-        
-        .btn-eliminar:hover {
-            background: #a93226;
-        }
-        
-        /* ============================================= */
-        /* FLOTA DE AERONAVES                             */
-        /* ============================================= */
-        .flota-container {
-            display: flex;
-            gap: 18px;
-            overflow-x: auto;
-            padding-bottom: 15px;
-            scrollbar-width: thin;
-        }
-        
-        .flota-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        .flota-container::-webkit-scrollbar-thumb {
-            background: var(--celeste);
-            border-radius: 10px;
-        }
+        .flota-container { display: flex; gap: 18px; overflow-x: auto; padding-bottom: 15px; }
         
         .flota-card {
             min-width: 220px;
@@ -249,75 +142,21 @@
             border-radius: 12px;
             border: 1px solid #e0e0e0;
             background: white;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
         
-        .flota-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
+        .flota-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .vence-rojo { border-left: 6px solid var(--rojo); background: #fff5f5; }
+        .vence-amarillo { border-left: 6px solid var(--amarillo); background: #fffdf0; }
+        .vence-verde { border-left: 6px solid var(--verde); background: #f5fff5; }
         
-        .vence-rojo {
-            border-left: 6px solid var(--rojo);
-            background: #fff5f5;
-        }
+        .table-container { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        th { background: var(--azul-aeronautica); color: white; padding: 12px 8px; text-transform: uppercase; font-size: 0.75em; text-align: left; white-space: nowrap; }
+        td { padding: 10px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+        tr:hover { background: #f8f9fa; }
+        .row-grupo { background-color: #fff4e6 !important; border-left: 6px solid var(--naranja) !important; }
         
-        .vence-amarillo {
-            border-left: 6px solid var(--amarillo);
-            background: #fffdf0;
-        }
-        
-        .vence-verde {
-            border-left: 6px solid var(--verde);
-            background: #f5fff5;
-        }
-        
-        /* ============================================= */
-        /* TABLA DE TRAZABILIDAD                          */
-        /* ============================================= */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 15px;
-            border-radius: 8px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9em;
-        }
-        
-        th {
-            background: var(--azul-aeronautica);
-            color: white;
-            padding: 14px 12px;
-            text-transform: uppercase;
-            font-size: 0.8em;
-            letter-spacing: 0.5px;
-            text-align: left;
-            white-space: nowrap;
-            font-weight: 600;
-        }
-        
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: top;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .row-grupo {
-            background-color: #fff4e6 !important;
-            border-left: 6px solid var(--naranja) !important;
-        }
-        
-        /* ============================================= */
-        /* BADGES Y ETIQUETAS                             */
-        /* ============================================= */
         .badge-ur {
             background: #ebf5fb;
             color: #2874a6;
@@ -336,19 +175,16 @@
             padding: 3px 10px;
             border-radius: 15px;
             font-size: 0.75em;
-            cursor: pointer;
             display: inline-block;
             margin-top: 5px;
             font-weight: 600;
+            cursor: pointer;
         }
         
-        .badge-grupo:hover {
-            background: #d35400;
-        }
+        .badge-pagado { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600; }
+        .pagado-si { background: #d5f5e3; color: #1e8449; }
+        .pagado-no { background: #fadbd8; color: #922b21; }
         
-        /* ============================================= */
-        /* FILTROS Y BÚSQUEDA                             */
-        /* ============================================= */
         .filtros-estado {
             background: var(--gris-claro);
             padding: 15px 20px;
@@ -370,17 +206,7 @@
             margin: 0;
         }
         
-        .filtros-estado input[type="checkbox"] {
-            width: auto;
-            cursor: pointer;
-        }
-        
-        /* ============================================= */
-        /* COMPONENTES ESPECIALES                         */
-        /* ============================================= */
-        .chk-col {
-            display: none;
-        }
+        .chk-col { display: none; }
         
         .multi-select {
             height: 130px;
@@ -395,46 +221,12 @@
             grid-column: span 2;
         }
         
-        .multi-select div {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .multi-select div { display: flex; align-items: center; gap: 8px; }
+        .multi-select input[type="checkbox"] { width: auto; }
         
-        .multi-select input[type="checkbox"] {
-            width: auto;
-        }
+        .obs-input { width: 100%; margin-top: 5px; min-height: 45px; border: 2px dashed #bdc3c7; font-size: 0.85em; resize: vertical; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         
-        .multi-select label {
-            text-transform: none;
-            font-weight: normal;
-            cursor: pointer;
-            margin: 0;
-        }
-        
-        .obs-input {
-            width: 100%;
-            margin-top: 5px;
-            min-height: 45px;
-            border: 2px dashed #bdc3c7;
-            font-size: 0.85em;
-            resize: vertical;
-        }
-        
-        /* ============================================= */
-        /* UTILIDADES                                     */
-        /* ============================================= */
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        /* ============================================= */
-        /* TOAST NOTIFICATIONS                            */
-        /* ============================================= */
         .toast {
             position: fixed;
             top: 20px;
@@ -446,29 +238,20 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
             z-index: 9999;
             animation: slideIn 0.3s ease;
-            max-width: 380px;
-            backdrop-filter: blur(10px);
         }
         
         .toast-success { background: var(--verde); }
         .toast-error { background: var(--rojo); }
         .toast-info { background: var(--celeste); }
-        .toast-warning { background: var(--naranja); }
         
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* ============================================= */
-        /* LOADER                                         */
-        /* ============================================= */
         .loader-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(255,255,255,0.95);
             display: flex;
             justify-content: center;
@@ -490,79 +273,61 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* ============================================= */
-        /* ANIMACIONES                                    */
-        /* ============================================= */
         @keyframes eliminarFila {
             0% { opacity: 1; transform: translateX(0); }
             100% { opacity: 0; transform: translateX(-100%); }
         }
         
-        .fila-eliminada {
-            animation: eliminarFila 0.3s ease forwards;
-        }
+        .fila-eliminada { animation: eliminarFila 0.3s ease forwards; }
         
-        /* ============================================= */
-        /* RESPONSIVE                                     */
-        /* ============================================= */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .app-header { padding: 15px; }
             .app-title h1 { font-size: 1.4em; }
-            .logo-container { width: 60px; height: 60px; }
-            .logo-aeronautica { width: 50px; height: 50px; }
+            .logo-container { width: 180px; height: 60px; }
             .grid { grid-template-columns: 1fr; }
             .multi-select { grid-template-columns: 1fr; grid-column: span 1; }
             .filtros-estado { flex-direction: column; align-items: flex-start; }
-            .flota-card { min-width: 180px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ============================================= -->
-<!-- HEADER CON LOGO Y TÍTULO                       -->
-<!-- ============================================= -->
 <header class="app-header">
     <div class="header-left">
         <div class="logo-container">
-            <svg width="65" height="65" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#003366"/>
-                <path d="M50 20 L65 35 L60 35 L60 55 L65 55 L50 70 L35 55 L40 55 L40 35 L35 35 Z" fill="#ffffff"/>
-                <circle cx="50" cy="45" r="8" fill="#e67e22"/>
-                <path d="M30 60 L40 50 M70 60 L60 50" stroke="#ffffff" stroke-width="3"/>
-                <text x="50" y="90" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">CBA</text>
+            <svg class="logo-aeronautica" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="120" fill="#003366" rx="8"/>
+                <text x="200" y="38" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">DIRECCIÓN PROVINCIAL DE</text>
+                <text x="200" y="65" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="Arial">AERONÁUTICA</text>
+                <text x="200" y="92" text-anchor="middle" fill="#e67e22" font-size="14" font-weight="bold" font-family="Arial">CÓRDOBA</text>
+                <path d="M30 35 L50 20 L70 35 L65 35 L65 60 L70 60 L50 75 L30 60 L35 60 L35 35 Z" fill="#e67e22" opacity="0.8"/>
+                <circle cx="50" cy="48" r="6" fill="white"/>
             </svg>
         </div>
         <div class="app-title">
             <h1>🛩️ Gestor de Solicitudes</h1>
-            <p>Dirección de Aeronáutica - Provincia de Córdoba</p>
+            <p>Sistema de Gestión Aeronáutica - Córdoba</p>
         </div>
     </div>
     <div class="header-right">
         <div class="fecha-actual" id="fechaActual"></div>
-        <div class="version-badge">v2.0.1 | SGA</div>
+        <div class="version-badge">v2.1.0 | SGA</div>
     </div>
 </header>
 
-<!-- ============================================= -->
-<!-- PANEL DE FLOTA                                 -->
-<!-- ============================================= -->
 <div class="card">
-    <h2><span>🚦</span> Estado de Vencimientos - Flota Aeronáutica</h2>
+    <h2><span>🚛</span> Estado de Vencimientos - Flota Terrestre</h2>
     <div class="flota-container" id="panelFlota">
         <div style="padding:20px;text-align:center;width:100%;">Cargando información de flota...</div>
     </div>
 </div>
 
-<!-- ============================================= -->
-<!-- NUEVA SOLICITUD                                -->
-<!-- ============================================= -->
 <div class="card">
     <h2><span>🚀</span> Nueva Solicitud de Mantenimiento</h2>
     <div class="grid">
         <div>
-            <label for="unidad">Unidad (UR)</label>
+            <label for="unidad">Unidad Requirente</label>
             <select id="unidad">
                 <option value="TÉCNICA">TÉCNICA</option>
                 <option value="OPERACIONES">OPERACIONES</option>
@@ -571,28 +336,33 @@
             </select>
         </div>
         <div>
-            <label for="nro_sol">N° Solicitud *</label>
-            <input type="text" id="nro_sol" placeholder="Ej: SOL-2024-001" required>
+            <label for="nro_sol">N° Solicitud * (AA-NNN)</label>
+            <input type="text" id="nro_sol" placeholder="Ej: 24-003, 25-120" required>
         </div>
         <div>
             <label for="f_nec">Fecha Necesidad *</label>
             <input type="date" id="f_nec" required>
+        </div>
+        <div>
+            <label for="detalle">Detalle *</label>
+            <input type="text" id="detalle" placeholder="Detalle del trabajo" required>
+        </div>
+        <div>
+            <label for="motivo">Motivo Solicitud</label>
+            <input type="text" id="motivo" placeholder="Justificación del motivo">
         </div>
         <div style="grid-column: span 2;">
             <label>Activos Aeronáuticos *</label>
             <div class="multi-select" id="listaActivos"></div>
         </div>
         <div style="grid-column: 1/-1;">
-            <label for="detalle">Detalle Técnico / Motivo *</label>
-            <textarea id="detalle" rows="3" placeholder="Describa el trabajo técnico requerido..."></textarea>
+            <label for="observaciones">Observaciones</label>
+            <textarea id="observaciones" rows="2" placeholder="Observaciones adicionales..."></textarea>
         </div>
     </div>
     <button class="btn btn-main" onclick="registrarSolicitud()">📝 REGISTRAR SOLICITUD EN SISTEMA</button>
 </div>
 
-<!-- ============================================= -->
-<!-- TRAZABILIDAD DE SOLICITUDES                    -->
-<!-- ============================================= -->
 <div class="card">
     <div class="flex-between">
         <h2><span>📋</span> Trazabilidad y Seguimiento</h2>
@@ -614,7 +384,7 @@
     <div class="filtros-estado">
         <strong>Filtrar por estado:</strong>
         <label><input type="checkbox" class="chk-f-est" value="PENDIENTE" checked onchange="filtrarTabla()"> ⏳ PENDIENTE</label>
-        <label><input type="checkbox" class="chk-f-est" value="EN EJECUCION" checked onchange="filtrarTabla()"> 🔧 EN EJECUCIÓN</label>
+        <label><input type="checkbox" class="chk-f-est" value="EN EJECUCIÓN" checked onchange="filtrarTabla()"> 🔧 EN EJECUCIÓN</label>
         <label><input type="checkbox" class="chk-f-est" value="ENTREGADO" checked onchange="filtrarTabla()"> ✅ ENTREGADO</label>
         <label><input type="checkbox" class="chk-f-est" value="TERMINADO" onchange="filtrarTabla()"> 🏁 TERMINADO</label>
     </div>
@@ -624,45 +394,39 @@
             <thead>
                 <tr>
                     <th class="chk-col">Sel</th>
-                    <th>UR / Solicitud / Activo / Detalle</th>
-                    <th>GIP / Exp. / Observaciones</th>
+                    <th>UR / Solicitud / Activo</th>
+                    <th>GIP / Exp / Fecha</th>
                     <th>Proveedor / OC</th>
-                    <th>Factura / Importe</th>
-                    <th>Estado</th>
-                    <th>Actualizar</th>
+                    <th>Factura / Fecha / Importe</th>
+                    <th>Pagado</th>
+                    <th>Estado / Entrega</th>
+                    <th>Finalizado</th>
+                    <th>Observaciones</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="cuerpoSol">
-                <tr><td colspan="8" style="text-align: center; padding: 30px;">Cargando solicitudes...</td></tr>
+                <tr><td colspan="10" style="text-align: center; padding: 30px;">Cargando solicitudes...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- ============================================= -->
-<!-- SCRIPT PRINCIPAL                               -->
-<!-- ============================================= -->
 <script>
     // ╔══════════════════════════════════════════════════════════════════════╗
     // ║                  ⭐⭐⭐ CONFIGURACIÓN IMPORTANTE ⭐⭐⭐                    ║
     // ║                                                                      ║
     // ║  PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (LÍNEA 527)                  ║
-    // ║  Reemplaza la línea de abajo con tu URL de despliegue                ║
     // ╚══════════════════════════════════════════════════════════════════════╝
     
-    // ========== PEGA TU URL DE APPS SCRIPT EN LA SIGUIENTE LÍNEA ==========
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwVq7pMnCSq_bkZgzQpCpGeAnb-Q6mOf3Dmv0mO8f0-74RAr841OtcZ4N22Cna092HQ/exec";
-    // ======================================================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyCzy79rDiluYroKxgUkZy_Ky_Uoajtwck-ZeFKapbGnGviKZPio1KJvaP9TVnKjd0/exec";
     
     // Lista de activos aeronáuticos
     const ACTIVOS = [
         "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
         "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", 
         "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", 
-        "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)", 
-        "AE875UX (C.Blanco)", "FAK619 (C.Amarillo)", 
-        "AD150QB", "IXH694"
+        "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)"
     ];
 
     // =============================================
@@ -703,7 +467,7 @@
     }
 
     // =============================================
-    // FUNCIONES DE UTILIDAD UI
+    // UTILIDADES UI
     // =============================================
     function mostrarLoader(mostrar) {
         let loader = document.getElementById('globalLoader');
@@ -762,19 +526,17 @@
 
     function getFlotaEjemplo() {
         return [
-            { patente: 'LV-IHM (C206)', itv: '2025-06-15', pov: '2025-03-20', cisterna: '2025-08-10' },
-            { patente: 'LV-BFC (AT802)', itv: '2024-12-01', pov: '2025-01-15', cisterna: '2024-11-30' },
-            { patente: 'LV-CDE (AT802)', itv: '2025-09-22', pov: '2025-04-10', cisterna: '2025-07-05' },
-            { patente: 'LV-KOW (AT802)', itv: '2025-02-14', pov: '2024-10-05', cisterna: '2025-01-20' },
-            { patente: 'LQ-HBQ (LearJet)', itv: '2025-04-15', pov: '2024-12-10', cisterna: '2025-05-20' }
+            { patente: 'AE875UX (C. Blanco)', itv: '2025-03-15', pov: '2025-01-20', cisterna: '2025-06-10' },
+            { patente: 'FAK619 (C. Amarillo)', itv: '2025-04-22', pov: '2025-02-10', cisterna: '2025-07-05' },
+            { patente: 'AD150QB (Hilux)', itv: '2024-12-01', pov: '2024-11-15', cisterna: '2025-01-30' },
+            { patente: 'IXH694 (Logan)', itv: '2025-05-18', pov: '2025-03-05', cisterna: '2025-08-20' }
         ];
     }
 
     function getSolicitudesEjemplo() {
         return [
-            { nro_sol: 'SOL-2024-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', estado_app: 'PENDIENTE', gip: '', prov: '', oc: '', nro_factura: '', importe: '', observaciones: '', id_grupo: '', nombre_grupo: '', finalizado: 'NO' },
-            { nro_sol: 'SOL-2024-002', unidad: 'OPERACIONES', activo: 'LV-BFC (AT802)', detalle: 'Cambio de hélice', estado_app: 'EN EJECUCION', gip: 'GIP-001', prov: 'AeroParts SA', oc: 'OC-123', nro_factura: '', importe: '', observaciones: 'En taller', id_grupo: '', nombre_grupo: '', finalizado: 'NO' },
-            { nro_sol: 'SOL-2024-003', unidad: 'UOTA', activo: 'LQ-HBQ (LearJet)', detalle: 'Mantenimiento programado', estado_app: 'ENTREGADO', gip: 'GIP-002', prov: 'JetService', oc: 'OC-456', nro_factura: 'FAC-789', importe: '15000', observaciones: 'Completado', id_grupo: 'GRP-001', nombre_grupo: 'Manto. Noviembre', finalizado: 'NO' }
+            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento preventivo', estado_app: 'PENDIENTE', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' },
+            { nro_sol: '24-002', unidad: 'OPERACIONES', activo: 'LV-BFC (AT802)', detalle: 'Cambio de hélice', motivo: 'Daño por impacto', estado_app: 'EN EJECUCIÓN', gip: 'GIP-001', fecha_gip: '15/01/2024', prov: 'AeroParts SA', oc: 'OC-123', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: 'En taller', id_grupo: '', nombre_grupo: '' }
         ];
     }
 
@@ -813,22 +575,22 @@
         }
         
         container.innerHTML = '';
-        flota.forEach(aeronave => {
-            const diasITV = calcularDiasRestantes(aeronave.itv);
-            const diasPOV = calcularDiasRestantes(aeronave.pov);
-            const diasCIST = calcularDiasRestantes(aeronave.cisterna);
+        flota.forEach(vehiculo => {
+            const diasITV = calcularDiasRestantes(vehiculo.itv);
+            const diasPOV = calcularDiasRestantes(vehiculo.pov);
+            const diasCIST = calcularDiasRestantes(vehiculo.cisterna);
             const diasMinimos = Math.min(diasITV, diasPOV, diasCIST);
             const estadoClase = diasMinimos < 0 ? 'vence-rojo' : (diasMinimos < 30 ? 'vence-amarillo' : 'vence-verde');
             
             container.innerHTML += `
                 <div class="flota-card ${estadoClase}">
-                    <strong style="font-size:1.1em;">✈️ ${aeronave.patente}</strong>
+                    <strong style="font-size:1.1em;">🚛 ${vehiculo.patente}</strong>
                     <div style="margin: 10px 0;">
-                        ${crearIndicadorVencimiento('ITV', diasITV, aeronave.itv)}<br>
-                        ${crearIndicadorVencimiento('POV', diasPOV, aeronave.pov)}<br>
-                        ${crearIndicadorVencimiento('CIST', diasCIST, aeronave.cisterna)}
+                        ${crearIndicadorVencimiento('ITV', diasITV, vehiculo.itv)}<br>
+                        ${crearIndicadorVencimiento('POV', diasPOV, vehiculo.pov)}<br>
+                        ${crearIndicadorVencimiento('CIST', diasCIST, vehiculo.cisterna)}
                     </div>
-                    <button class="btn" style="background: var(--celeste); padding: 5px 10px; font-size: 0.8em; width: 100%;" onclick="editarVencimiento('${aeronave.patente}')">📅 Actualizar</button>
+                    <button class="btn" style="background: var(--celeste); padding: 5px 10px; font-size: 0.8em; width: 100%;" onclick="editarVencimiento('${vehiculo.patente}')">📅 Actualizar</button>
                 </div>
             `;
         });
@@ -847,51 +609,70 @@
     function renderSolicitudes(solicitudes) {
         const cuerpo = document.getElementById('cuerpoSol');
         if (!solicitudes || solicitudes.length === 0) {
-            cuerpo.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;">No hay solicitudes registradas</td></tr>';
+            cuerpo.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;">No hay solicitudes registradas</td></tr>';
             return;
         }
         
         cuerpo.innerHTML = '';
         solicitudes.reverse().forEach(sol => {
-            const finalizada = sol.finalizado === "SI";
+            const finalizada = sol.finalizado === 'SI';
             const fila = document.createElement('tr');
             fila.className = sol.id_grupo ? 'row-grupo' : '';
             fila.setAttribute('data-estado', sol.estado_app || 'PENDIENTE');
             
+            const detalleCompleto = [sol.detalle, sol.motivo].filter(Boolean).join(' - ');
+            const clasePagado = sol.pagado === 'SI' ? 'pagado-si' : 'pagado-no';
+            
             fila.innerHTML = `
-                <td class="chk-col"><input type="checkbox" class="chk-sel" value="${sol.nro_sol}"></td>
+                <td class="chk-col"><input type="checkbox" class="chk-sel" value="${sol.nro_sol}" ${finalizada ? 'disabled' : ''}></td>
                 <td>
                     <span class="badge-ur">${sol.unidad || '-'}</span>
-                    <strong style="font-size:1.05em;">${sol.nro_sol}</strong><br>
-                    <small><strong>🛩️ Activo:</strong> ${sol.activo || 'No especificado'}</small><br>
-                    <small><strong>📝 Detalle:</strong> ${sol.detalle || '-'}</small>
-                    ${sol.id_grupo ? `<br><span class="badge-grupo" onclick="desagrupar('${sol.nro_sol}')">🔗 ${sol.nombre_grupo} ✖</span>` : ''}
+                    <strong>${sol.nro_sol}</strong><br>
+                    <small>🛩️ ${sol.activo || '-'}</small><br>
+                    <small>📝 ${detalleCompleto || '-'}</small>
+                    ${sol.id_grupo ? `<br><span class="badge-grupo" onclick="renombrarGrupoPrompt('${sol.id_grupo}', '${sol.nombre_grupo}')">🔗 ${sol.nombre_grupo} ✏️</span>` : ''}
                 </td>
                 <td>
-                    <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP / Expediente" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
-                    <textarea id="obs_${sol.nro_sol}" class="obs-input" placeholder="Observaciones" ${finalizada ? 'disabled' : ''}>${sol.observaciones || ''}</textarea>
+                    <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP/Exp" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
+                    <input type="text" id="fecha_gip_${sol.nro_sol}" placeholder="Fecha" value="${sol.fecha_gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;">
                 </td>
                 <td>
-                    <input type="text" id="prov_${sol.nro_sol}" placeholder="Proveedor" value="${sol.prov || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
-                    <input type="text" id="oc_${sol.nro_sol}" placeholder="OC" value="${sol.oc || ''}" ${finalizada ? 'disabled' : ''}>
+                    <input type="text" id="prov_${sol.nro_sol}" placeholder="Proveedor" value="${sol.prov || ''}" ${finalizada ? 'disabled' : ''} style="width:100px;"><br>
+                    <input type="text" id="oc_${sol.nro_sol}" placeholder="OC" value="${sol.oc || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
                 </td>
                 <td>
-                    <input type="text" id="fac_${sol.nro_sol}" placeholder="Factura N°" value="${sol.nro_factura || ''}" ${finalizada ? 'disabled' : ''} style="margin-bottom:5px;">
-                    <input type="number" id="imp_${sol.nro_sol}" placeholder="Importe $" value="${sol.importe || ''}" ${finalizada ? 'disabled' : ''} step="0.01">
+                    <input type="text" id="fac_${sol.nro_sol}" placeholder="N° Fact" value="${sol.nro_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
+                    <input type="text" id="fecha_fact_${sol.nro_sol}" placeholder="Fecha" value="${sol.fecha_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;"><br>
+                    <input type="number" id="imp_${sol.nro_sol}" placeholder="$" value="${sol.importe || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;" step="0.01">
                 </td>
                 <td>
-                    <select id="sel_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="min-width:120px;">
-                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE' ? 'selected' : ''}>⏳ PENDIENTE</option>
-                        <option value="EN EJECUCION" ${sol.estado_app === 'EN EJECUCION' ? 'selected' : ''}>🔧 EN EJECUCIÓN</option>
-                        <option value="ENTREGADO" ${sol.estado_app === 'ENTREGADO' ? 'selected' : ''}>✅ ENTREGADO</option>
-                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO' ? 'selected' : ''}>🏁 TERMINADO</option>
+                    <select id="pagado_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="width:70px;">
+                        <option value="NO" ${sol.pagado === 'NO' ? 'selected' : ''}>NO</option>
+                        <option value="SI" ${sol.pagado === 'SI' ? 'selected' : ''}>SI</option>
                     </select>
                 </td>
                 <td>
-                    ${!finalizada ? `<button class="btn" style="background: var(--verde); padding: 6px 10px;" onclick="actualizarSolicitud('${sol.nro_sol}', '${sol.id_grupo || ''}')">✓ ACTUALIZAR</button>` : '<span style="font-size:1.3em;">✅</span>'}
+                    <select id="sel_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="width:110px;">
+                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE' ? 'selected' : ''}>⏳ PENDIENTE</option>
+                        <option value="EN EJECUCIÓN" ${sol.estado_app === 'EN EJECUCIÓN' ? 'selected' : ''}>🔧 EN EJECUCIÓN</option>
+                        <option value="ENTREGADO" ${sol.estado_app === 'ENTREGADO' ? 'selected' : ''}>✅ ENTREGADO</option>
+                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO' ? 'selected' : ''}>🏁 TERMINADO</option>
+                    </select><br>
+                    <input type="text" id="fecha_ent_${sol.nro_sol}" placeholder="F. Entrega" value="${sol.fecha_entrega || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
                 </td>
                 <td>
-                    <button class="btn-eliminar" onclick="eliminarSolicitud('${sol.nro_sol}', this.closest('tr'))" title="Eliminar solicitud permanentemente">🗑️ ELIMINAR</button>
+                    <select id="fin_${sol.nro_sol}" onchange="toggleFinalizado('${sol.nro_sol}')" style="width:70px;">
+                        <option value="NO" ${sol.finalizado === 'NO' ? 'selected' : ''}>NO</option>
+                        <option value="SI" ${sol.finalizado === 'SI' ? 'selected' : ''}>SI</option>
+                    </select>
+                </td>
+                <td>
+                    <textarea id="obs_${sol.nro_sol}" class="obs-input" placeholder="Obs." ${finalizada ? 'disabled' : ''}>${sol.observaciones || ''}</textarea>
+                </td>
+                <td style="white-space: nowrap;">
+                    <button class="btn" style="background: var(--verde); padding: 4px 8px; font-size:0.75em;" onclick="actualizarSolicitud('${sol.nro_sol}', '${sol.id_grupo || ''}')">✓ ACT</button>
+                    ${sol.id_grupo ? `<button class="btn" style="background: var(--naranja); padding: 4px 8px; font-size:0.75em; margin-left:3px;" onclick="desagrupar('${sol.nro_sol}')">✖ DES</button>` : ''}
+                    <button class="btn-eliminar" style="padding: 4px 8px; font-size:0.75em; margin-left:3px;" onclick="eliminarSolicitud('${sol.nro_sol}', this.closest('tr'))">🗑️</button>
                 </td>
             `;
             
@@ -902,6 +683,21 @@
     }
 
     // =============================================
+    // FUNCIÓN TOGGLE FINALIZADO
+    // =============================================
+    function toggleFinalizado(nroSol) {
+        const selectFin = document.getElementById(`fin_${nroSol}`);
+        const finalizado = selectFin.value === 'SI';
+        
+        // Habilitar/deshabilitar campos
+        const campos = ['gip', 'fecha_gip', 'prov', 'oc', 'fac', 'fecha_fact', 'imp', 'pagado', 'sel', 'fecha_ent', 'obs'];
+        campos.forEach(campo => {
+            const elem = document.getElementById(`${campo}_${nroSol}`);
+            if (elem) elem.disabled = finalizado;
+        });
+    }
+
+    // =============================================
     // FUNCIONES CRUD
     // =============================================
     async function registrarSolicitud() {
@@ -909,19 +705,22 @@
         const nroSol = document.getElementById('nro_sol').value.trim();
         const fNec = document.getElementById('f_nec').value;
         const detalle = document.getElementById('detalle').value.trim();
+        const motivo = document.getElementById('motivo').value.trim();
+        const observaciones = document.getElementById('observaciones').value.trim();
         const activosSeleccionados = Array.from(document.querySelectorAll('.chk-activo:checked')).map(cb => cb.value);
         
         if (!nroSol) { mostrarToast('El número de solicitud es obligatorio', 'error'); return; }
+        if (!/^\d{2}-\d{3}$/.test(nroSol)) { mostrarToast('Formato inválido. Use: AA-NNN (ej: 24-003)', 'error'); return; }
         if (!fNec) { mostrarToast('La fecha de necesidad es obligatoria', 'error'); return; }
+        if (!detalle) { mostrarToast('El detalle es obligatorio', 'error'); return; }
         if (activosSeleccionados.length === 0) { mostrarToast('Debe seleccionar al menos un activo', 'error'); return; }
-        if (!detalle) { mostrarToast('El detalle técnico es obligatorio', 'error'); return; }
         
         const datos = {
             action: 'create',
             unidad, nro_sol: nroSol, f_nec: fNec,
             activo: activosSeleccionados.join(', '),
-            detalle, f_sol: new Date().toISOString().split('T')[0],
-            estado_app: 'PENDIENTE'
+            detalle, motivo, observaciones,
+            f_sol: new Date().toISOString().split('T')[0]
         };
         
         mostrarLoader(true);
@@ -937,10 +736,12 @@
             const resultado = await response.json();
             
             if (resultado.success) {
-                mostrarToast(`✅ Solicitud ${nroSol} registrada exitosamente`, 'success');
+                mostrarToast(`✅ Solicitud ${nroSol} registrada`, 'success');
                 document.getElementById('nro_sol').value = '';
                 document.getElementById('f_nec').value = '';
                 document.getElementById('detalle').value = '';
+                document.getElementById('motivo').value = '';
+                document.getElementById('observaciones').value = '';
                 document.querySelectorAll('.chk-activo:checked').forEach(cb => cb.checked = false);
                 setTimeout(() => cargarDatos(), 500);
             } else {
@@ -954,18 +755,27 @@
     }
 
     async function actualizarSolicitud(nroSol, idGrupo) {
+        const finalizadoSelect = document.getElementById(`fin_${nroSol}`);
+        const finalizado = finalizadoSelect ? finalizadoSelect.value : 'NO';
+        
         const datos = {
             action: 'update',
             nro_sol: nroSol,
             id_grupo: idGrupo,
             update_block: false,
-            gip: document.getElementById(`gip_${nroSol}`).value,
-            prov: document.getElementById(`prov_${nroSol}`).value,
-            oc: document.getElementById(`oc_${nroSol}`).value,
-            nro_factura: document.getElementById(`fac_${nroSol}`).value,
-            importe: document.getElementById(`imp_${nroSol}`).value,
-            estado_app: document.getElementById(`sel_${nroSol}`).value,
-            observaciones: document.getElementById(`obs_${nroSol}`).value
+            force_update: finalizado === 'NO',
+            finalizado: finalizado,
+            gip: document.getElementById(`gip_${nroSol}`)?.value || '',
+            fecha_gip: document.getElementById(`fecha_gip_${nroSol}`)?.value || '',
+            prov: document.getElementById(`prov_${nroSol}`)?.value || '',
+            oc: document.getElementById(`oc_${nroSol}`)?.value || '',
+            fecha_factura: document.getElementById(`fecha_fact_${nroSol}`)?.value || '',
+            nro_factura: document.getElementById(`fac_${nroSol}`)?.value || '',
+            importe: document.getElementById(`imp_${nroSol}`)?.value || '',
+            pagado: document.getElementById(`pagado_${nroSol}`)?.value || 'NO',
+            estado_app: document.getElementById(`sel_${nroSol}`)?.value || 'PENDIENTE',
+            fecha_entrega: document.getElementById(`fecha_ent_${nroSol}`)?.value || '',
+            observaciones: document.getElementById(`obs_${nroSol}`)?.value || ''
         };
         
         if (idGrupo && confirm('¿Aplicar cambios a todo el grupo unificado?')) {
@@ -998,8 +808,8 @@
     }
 
     async function eliminarSolicitud(nroSol, elementoFila) {
-        if (!confirm(`¿Está seguro de eliminar la solicitud ${nroSol}?\nEsta acción no se puede deshacer.`)) return;
-        if (!confirm('❗ CONFIRMACIÓN FINAL: ¿Eliminar permanentemente?')) return;
+        if (!confirm(`¿Eliminar solicitud ${nroSol}?`)) return;
+        if (!confirm('❗ CONFIRMACIÓN FINAL')) return;
         
         mostrarLoader(true);
         
@@ -1038,7 +848,7 @@
     async function eliminarMultiplesSolicitudes() {
         const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
         if (seleccionadas.length === 0) { mostrarToast('Seleccione al menos una solicitud', 'error'); return; }
-        if (!confirm(`⚠️ ¿Eliminar ${seleccionadas.length} solicitudes?\nEsta acción NO se puede deshacer.`)) return;
+        if (!confirm(`⚠️ ¿Eliminar ${seleccionadas.length} solicitudes?`)) return;
         
         mostrarLoader(true);
         
@@ -1068,7 +878,7 @@
     // =============================================
     async function ejecutarUnificacion() {
         const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
-        if (seleccionadas.length < 2) { mostrarToast('Seleccione al menos 2 ítems para unificar', 'error'); return; }
+        if (seleccionadas.length < 2) { mostrarToast('Seleccione al menos 2 ítems', 'error'); return; }
         
         const nombreGrupo = prompt('Nombre del grupo:');
         if (!nombreGrupo) return;
@@ -1088,7 +898,7 @@
             const resultado = await response.json();
             
             if (resultado.success) {
-                mostrarToast(`✅ ${resultado.unificadas} solicitudes unificadas en grupo "${nombreGrupo}"`, 'success');
+                mostrarToast(`✅ ${resultado.unificadas} solicitudes unificadas en "${nombreGrupo}"`, 'success');
                 cargarDatos();
             }
         } catch (error) {
@@ -1124,8 +934,35 @@
         }
     }
 
+    async function renombrarGrupoPrompt(idGrupo, nombreActual) {
+        const nuevoNombre = prompt('Editar nombre del grupo:', nombreActual);
+        if (!nuevoNombre || nuevoNombre === nombreActual) return;
+        
+        mostrarLoader(true);
+        
+        try {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'renombrar_grupo', id_grupo: idGrupo, nuevo_nombre: nuevoNombre })
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                mostrarToast(`✅ Grupo renombrado a "${nuevoNombre}"`, 'success');
+                cargarDatos();
+            }
+        } catch (error) {
+            mostrarToast(`❌ Error: ${error.message}`, 'error');
+        } finally {
+            mostrarLoader(false);
+        }
+    }
+
     // =============================================
-    // FUNCIONES DE FILTRADO Y UI
+    // FILTRADO Y UI
     // =============================================
     function filtrarTabla() {
         const busqueda = document.getElementById('busqueda').value.toUpperCase();
@@ -1154,7 +991,7 @@
     }
 
     async function editarVencimiento(patente) {
-        const tipo = prompt('Tipo de vencimiento (itv / pov / cisterna):')?.toLowerCase();
+        const tipo = prompt('Tipo (itv / pov / cisterna):')?.toLowerCase();
         if (!tipo || !['itv', 'pov', 'cisterna'].includes(tipo)) {
             mostrarToast('Tipo no válido', 'error');
             return;
