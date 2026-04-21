@@ -2,39 +2,62 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestor de Pedidos - Administracion - Direccion de Aeronáutica Córdoba</title>
+    <title>SGA - Aeronáutica Córdoba</title>
     <style>
-        :root { --azul: #003366; --verde: #27ae60; --rojo: #e74c3c; --amarillo: #f1c40f; --gris: #f4f7f6; }
+        :root {
+            --azul: #003366; --verde-ok: #27ae60; --verde-claro: #c8e6c9; --rojo: #e74c3c; 
+            --amarillo: #f1c40f; --rosa: #fce4ec; --celeste: #e3f2fd; --gris: #f4f7f6;
+        }
         body { font-family: 'Segoe UI', sans-serif; background: var(--gris); margin: 0; padding: 0; }
-        #login-screen { position: fixed; inset: 0; background: var(--azul); display: flex; justify-content: center; align-items: center; z-index: 2000; color: white; }
-        .login-card { background: white; color: #333; padding: 40px; border-radius: 15px; text-align: center; }
-        .app-container { display: none; padding: 20px; }
-        .app-header { background: var(--azul); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--amarillo); }
+        
+        #login-screen { position: fixed; inset: 0; background: var(--azul); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-card { background: white; padding: 40px; border-radius: 15px; text-align: center; width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .login-logo { width: 160px; margin-bottom: 20px; }
+
+        .app-header { background: var(--azul); color: white; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--amarillo); position: sticky; top: 0; z-index: 1000; }
+        .header-logo { height: 45px; filter: brightness(0) invert(1); }
+
+        .app-container { display: none; padding: 20px; max-width: 1500px; margin: auto; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .semaforo { padding: 5px 12px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; display: inline-block; }
-        .bg-vencido { background: var(--rojo); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; color: var(--azul); border-bottom: 2px solid #ddd; }
+        td { padding: 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+
+        .status-pendiente { background-color: var(--rosa) !important; }
+        .status-ejecucion { background-color: var(--celeste) !important; }
+        .status-entrega-parcial { background-color: #fff9c4 !important; }
+        .status-entregado { background-color: var(--verde-claro) !important; }
+        .status-terminado { background-color: #a5d6a7 !important; border-left: 6px solid var(--verde-ok); }
+        .status-anulado { background-color: #b71c1c !important; color: white !important; }
+
+        .semaforo { padding: 5px 10px; border-radius: 4px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 120px; }
+        .bg-vencido { background: var(--rojo); color: white; }
         .bg-aviso { background: var(--amarillo); color: #333; }
-        .bg-ok { background: var(--verde); }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #ddd; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn { border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .status-anulado { background: #333 !important; color: white !important; }
+        .bg-ok { background: var(--verde-ok); color: white; }
+        
+        .urgente { border: 2px solid var(--rojo) !important; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { border-color: var(--rojo); } 50% { border-color: transparent; } 100% { border-color: var(--rojo); } }
+
+        .btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        input, select, textarea { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        .edit-icon { cursor: pointer; font-size: 14px; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-card">
-        <h2>SGA - Ingreso</h2>
+        <img src="Logo aeronautica.png" class="login-logo" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
+        <h2>Acceso SGA</h2>
         <select id="user-select" style="width:100%; padding:10px; margin:20px 0;">
-            <option value="">Seleccione Usuario...</option>
-            <option value="Federico">Federico</option>
+            <option value="">Seleccione Usuario</option>
+            <option value="Federico">Federico (Admin)</option>
             <option value="Lorena">Lorena</option>
             <option value="Santiago">Santiago</option>
             <option value="Andres">Andres</option>
-            <option value="INGENIERIA">INGENIERÍA / TÉCNICA</option>
+            <option value="TECNICA">Área TÉCNICA</option>
         </select>
         <button class="btn" style="background:var(--azul); color:white; width:100%" onclick="entrar()">INGRESAR</button>
     </div>
@@ -43,24 +66,25 @@
 <div class="app-container" id="main-app">
     <header class="app-header">
         <div style="display:flex; align-items:center; gap:15px;">
-            <img src="Logo aeronautica.png" id="main-logo" style="height:60px; filter: brightness(0) invert(1);" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
-            <div><h1 style="margin:0; font-size:1.2em;">Gestor de Solicitudes</h1><small id="welcome-msg"></small></div>
+            <img src="Logo aeronautica.png" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
+            <div><h2 style="margin:0; font-size:1.1em;">Gestor Aeronáutica</h2><small id="welcome-msg"></small></div>
         </div>
         <button class="btn" style="background:var(--amarillo)" onclick="cargarDatos()">🔄 Sincronizar</button>
     </header>
 
     <div class="card" id="seccion-flota">
         <h3>🚢 Estado de Flota (ITV / POV / Cisterna)</h3>
-        <table>
-            <thead><tr><th>Patente</th><th>ITV</th><th>POV</th><th>Cisterna</th><th>Acción</th></tr></thead>
+        <table id="tablaFlota">
+            <thead><tr><th>Vehículo</th><th>ITV</th><th>POV</th><th>Cisterna</th></tr></thead>
             <tbody id="cuerpoFlota"></tbody>
         </table>
     </div>
 
     <div class="card">
         <h3>📋 Trazabilidad de Solicitudes</h3>
-        <table id="tablaSol">
-            <thead><tr><th>Datos</th><th>Detalle</th><th>Seguimiento</th><th>Estado</th><th>Acción</th></tr></thead>
+        <input type="text" id="buscador" placeholder="🔍 Buscar..." onkeyup="filtrar()" style="width:100%; padding:10px; margin-bottom:15px;">
+        <table>
+            <thead><tr><th>Solicitud</th><th>Detalle</th><th>Seguimiento</th><th>Observaciones</th><th>Estado</th><th>💾</th></tr></thead>
             <tbody id="cuerpoSol"></tbody>
         </table>
     </div>
@@ -76,20 +100,20 @@
         USUARIO_ACTUAL = u;
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcome-msg').innerText = "Operador: " + u;
-        if(u === 'INGENIERIA') document.getElementById('seccion-flota').style.display = 'none';
+        document.getElementById('welcome-msg').innerText = "Usuario: " + u;
+        if(u === 'TECNICA') document.getElementById('seccion-flota').style.display = 'none';
         cargarDatos();
     }
 
     function formatFecha(f) {
-        if (!f || f === "-") return "-";
-        // Si viene como fecha larga de JS, la limpiamos
+        if (!f || f === "-" || f === "undefined") return "-";
+        if (typeof f === 'string' && f.includes('-') && f.length === 10) return f;
         let d = new Date(f);
-        if (isNaN(d)) return f; // Si ya es dd-mm-yyyy lo deja igual
+        if (isNaN(d)) return f;
         return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
     }
 
-    function calcularSem(fStr) {
+    function getSemaforo(fStr) {
         const f = formatFecha(fStr);
         if (f === "-") return { c: 'bg-ok', t: '-' };
         const p = f.split('-');
@@ -102,67 +126,92 @@
 
     function cargarDatos() {
         const s = document.createElement('script');
-        s.src = `${WEB_APP_URL}?action=read&callback=render`;
+        s.src = `${WEB_APP_URL}?action=read&callback=renderTodo`;
         document.body.appendChild(s);
     }
 
-    window.render = function(data) {
+    window.renderTodo = function(data) {
         const cF = document.getElementById('cuerpoFlota');
         cF.innerHTML = '';
         data.flota.forEach(f => {
-            const i = calcularSem(f.itv), p = calcularSem(f.pov), c = calcularSem(f.cisterna);
             cF.innerHTML += `<tr><td><strong>${f.patente}</strong></td>
-                <td><span class="semaforo ${i.c}">${i.t}</span></td>
-                <td><span class="semaforo ${p.c}">${p.t}</span></td>
-                <td><span class="semaforo ${c.c}">${c.t}</span></td>
-                <td><button onclick="modFlota('${f.patente}','${i.t}','${p.t}','${c.t}')">📝</button></td></tr>`;
+                <td>${celdaF(f.patente, 'itv', f.itv)}</td>
+                <td>${celdaF(f.patente, 'pov', f.pov)}</td>
+                <td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td></tr>`;
         });
 
         const cS = document.getElementById('cuerpoSol');
         cS.innerHTML = '';
         data.solicitudes.forEach(s => {
-            if (USUARIO_ACTUAL === 'INGENIERIA' && s.unidad !== 'TÉCNICA') return;
-            const clase = "status-" + s.estado.toLowerCase();
-            cS.innerHTML += `<tr class="${clase}">
+            if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TÉCNICA') return;
+            const sem = getSemaforo(s.f_nec);
+            const urg = (s.estado === 'PENDIENTE' || s.estado === 'EN EJECUCION') && sem.c !== 'bg-ok';
+            const clase = "status-" + s.estado.toLowerCase().replace(/ /g, '-');
+            const isT = USUARIO_ACTUAL === 'TECNICA';
+
+            cS.innerHTML += `<tr class="fila-sol ${clase} ${urg?'urgente':''}">
                 <td><small>${s.unidad}</small><br><strong>${s.nro_sol}</strong><br><small>${formatFecha(s.f_nec)}</small></td>
                 <td><div style="font-weight:bold">${s.activo}</div><div style="font-size:11px">${s.detalle}</div></td>
                 <td>
-                    GIP: <input type="text" id="gip_${s.nro_sol}" value="${s.gip}" style="width:60px" ${USUARIO_ACTUAL==='INGENIERIA'?'disabled':''}>
-                    Prov: <input type="text" id="prv_${s.nro_sol}" value="${s.prov}" style="width:90px">
+                    GIP: <input type="text" id="gip_${s.nro_sol}" value="${s.gip}" style="width:60px" ${isT?'disabled':''}>
+                    Prov: <input type="text" id="prv_${s.nro_sol}" value="${s.prov}" style="width:80px" ${isT?'disabled':''}> <br>
+                    Fact: <input type="text" id="fac_${s.nro_sol}" value="${s.factura}" style="width:60px; margin-top:3px" ${isT?'disabled':''}>
+                    $: <input type="text" id="imp_${s.nro_sol}" value="${s.importe}" style="width:60px" ${isT?'disabled':''}>
                 </td>
+                <td><textarea id="obs_${s.nro_sol}" style="width:140px; height:50px;">${s.obs}</textarea></td>
                 <td>
                     <select id="est_${s.nro_sol}">
                         <option value="PENDIENTE" ${s.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option>
+                        <option value="EN EJECUCION" ${s.estado==='EN EJECUCION'?'selected':''}>EN EJECUCION</option>
+                        <option value="ENTREGA PARCIAL" ${s.estado==='ENTREGA PARCIAL'?'selected':''}>ENTREGA PARCIAL</option>
                         <option value="ENTREGADO" ${s.estado==='ENTREGADO'?'selected':''}>ENTREGADO</option>
-                        <option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>
-                        <option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>ANULADO</option>
+                        ${!isT ? `<option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>` : ''}
+                        ${!isT ? `<option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>ANULADO</option>` : ''}
                     </select>
                 </td>
-                <td><button onclick="save('${s.nro_sol}')">💾</button></td></tr>`;
+                <td><button class="btn" style="background:var(--verde-ok); color:white" onclick="guardarSol('${s.nro_sol}')">💾</button></td></tr>`;
         });
     }
 
-    function modFlota(pat, itv, pov, cis) {
-        const ni = prompt("Nueva fecha ITV (dd-mm-yyyy):", itv);
-        const np = prompt("Nueva fecha POV (dd-mm-yyyy):", pov);
-        const nc = prompt("Nueva fecha Cisterna (dd-mm-yyyy):", cis);
-        if(ni && np) ejecutar('updateFlota', {patente:pat, itv:ni, pov:np, cis:nc, user:USUARIO_ACTUAL});
+    function celdaF(pat, campo, valor) {
+        const sem = getSemaforo(valor);
+        return `<div class="semaforo ${sem.c}" id="box_${pat}_${campo}">
+            <span>${sem.t}</span><span class="edit-icon" onclick="editF('${pat}','${campo}','${valor}')">✏️</span>
+        </div>`;
     }
 
-    function save(n) {
+    function editF(pat, campo, val) {
+        document.getElementById(`box_${pat}_${campo}`).innerHTML = 
+            `<input type="text" id="i_${pat}_${campo}" value="${val}" style="width:80px"> <button onclick="saveF('${pat}','${campo}')">OK</button>`;
+    }
+
+    function saveF(pat, campo) {
+        const val = document.getElementById(`i_${pat}_${campo}`).value;
+        ejecutar('updateFlota', { patente: pat, campo: campo, valor: val, user: USUARIO_ACTUAL });
+    }
+
+    function guardarSol(n) {
         ejecutar('update', {
-            nro_sol: n, 
-            gip: document.getElementById('gip_'+n).value,
-            prov: document.getElementById('prv_'+n).value,
-            estado: document.getElementById('est_'+n).value,
-            user: USUARIO_ACTUAL
+            nro_sol: n, gip: document.getElementById(`gip_${n}`).value,
+            prov: document.getElementById(`prv_${n}`).value,
+            factura: document.getElementById(`fac_${n}`).value,
+            importe: document.getElementById(`imp_${n}`).value,
+            obs: document.getElementById(`obs_${n}`).value,
+            estado: document.getElementById(`est_${n}`).value, user: USUARIO_ACTUAL
         });
     }
 
-    function ejecutar(a, p) {
-        let url = `${WEB_APP_URL}?action=${a}&callback=render`;
-        for (let k in p) url += `&${k}=${encodeURIComponent(p[k])}`;
+    function ejecutar(act, par) {
+        let url = `${WEB_APP_URL}?action=${act}&callback=renderTodo`;
+        for (let k in par) url += `&${k}=${encodeURIComponent(par[k])}`;
         const s = document.createElement('script'); s.src = url; document.body.appendChild(s);
+    }
+
+    function filtrar() {
+        const b = document.getElementById('buscador').value.toLowerCase();
+        document.querySelectorAll('.fila-sol').forEach(f => {
+            f.style.display = f.innerText.toLowerCase().includes(b) ? '' : 'none';
+        });
     }
 </script>
 </body>
