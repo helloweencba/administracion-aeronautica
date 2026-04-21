@@ -3,1076 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de Gestión de Solicitudes - Dirección Provincial de Aeronáutica Córdoba">
-    <meta name="theme-color" content="#003366">
-    <title>SGA - Dirección Provincial de Aeronáutica Córdoba</title>
+    <title>SGA - Gestión Aeronáutica</title>
     <style>
         :root {
             --azul-aeronautica: #003366;
             --azul-secundario: #1a5276;
-            --celeste: #2980b9;
-            --naranja: #e67e22;
             --verde: #27ae60;
             --rojo: #c0392b;
             --amarillo: #f1c40f;
-            --gris: #95a5a6;
             --fondo: #f4f7f6;
-            --gris-claro: #ecf0f1;
         }
-        
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--fondo);
-            padding: 20px;
-            font-size: 14px;
-        }
-        
-        .app-header {
-            background: linear-gradient(135deg, var(--azul-aeronautica) 0%, var(--azul-secundario) 100%);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,51,102,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 20px; }
-        
-        .logo-container {
-            background: white;
-            border-radius: 12px;
-            width: 220px;
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .logo-aeronautica { width: 100%; height: 100%; object-fit: contain; }
-        .app-title h1 { font-size: 1.8em; font-weight: 600; }
-        .app-title p { font-size: 0.95em; opacity: 0.95; margin-top: 5px; }
-        .header-right { text-align: right; }
-        .fecha-actual { font-size: 1.2em; font-weight: 500; }
-        
-        .version-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin-top: 8px;
-            display: inline-block;
-        }
-        
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-            border-top: 4px solid var(--azul-aeronautica);
-        }
-        
-        .card h2 {
-            color: var(--azul-aeronautica);
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--gris-claro);
-            padding-bottom: 15px;
-        }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
-        
-        label {
-            font-weight: 600;
-            font-size: 0.8em;
-            color: var(--azul-secundario);
-            display: block;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #d5dbdb;
-            border-radius: 8px;
-            font-size: 0.95em;
-            font-family: inherit;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--celeste);
-            box-shadow: 0 0 0 3px rgba(41,128,185,0.15);
-        }
-        
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .btn-main { background: var(--azul-aeronautica); width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1em; text-transform: uppercase; }
-        .btn-eliminar { background: var(--rojo); padding: 6px 12px; font-size: 0.85em; }
-        .btn-eliminar:hover { background: #a93226; }
-        
-        .flota-container { display: flex; gap: 18px; overflow-x: auto; padding-bottom: 15px; }
-        
-        .flota-card {
-            min-width: 220px;
-            padding: 18px;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            background: white;
-            transition: all 0.2s;
-        }
-        
-        .flota-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .vence-rojo { border-left: 6px solid var(--rojo); background: #fff5f5; }
-        .vence-amarillo { border-left: 6px solid var(--amarillo); background: #fffdf0; }
-        .vence-verde { border-left: 6px solid var(--verde); background: #f5fff5; }
-        
-        .table-container { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-        th { background: var(--azul-aeronautica); color: white; padding: 12px 8px; text-transform: uppercase; font-size: 0.75em; text-align: left; white-space: nowrap; }
-        td { padding: 10px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
-        tbody tr:hover { filter: brightness(0.97); cursor: pointer; }
-        .row-grupo { border-left: 6px solid var(--naranja) !important; }
-        
-        /* FONDOS POR ESTADO */
-        .estado-pendiente { background-color: #fdedec !important; }
-        .estado-ejecucion { background-color: #ebf5fb !important; }
-        .estado-entregado { background-color: #d5f5e3 !important; }
-        .estado-terminado { background-color: #a9dfbf !important; }
-        
-        /* BORDES POR VENCIMIENTO */
-        tr.borde-vencido { border-left: 6px solid #c0392b !important; }
-        tr.borde-proximo { border-left: 6px solid #f1c40f !important; }
-        tr.borde-aldia { border-left: 6px solid #27ae60 !important; }
-        tr.borde-ignorado { border-left: 6px solid #95a5a6 !important; }
-        
-        /* FINALIZADA */
-        tr.finalizada { opacity: 0.7; }
-        
-        .badge-ur {
-            background: #ebf5fb;
-            color: #2874a6;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 0.75em;
-            display: inline-block;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        
-        .badge-grupo {
-            background: var(--naranja);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 0.75em;
-            display: inline-block;
-            margin-top: 5px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .badge-pagado { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600; }
-        .pagado-si { background: #d5f5e3; color: #1e8449; }
-        .pagado-no { background: #fadbd8; color: #922b21; }
-        
-        .alerta-vencimiento {
-            font-size: 0.75em;
-            margin-left: 5px;
-            font-weight: 600;
-        }
-        
-        .alerta-vencido { color: #c0392b; }
-        .alerta-proximo { color: #d4ac0d; }
-        .alerta-aldia { color: #27ae60; }
-        
-        .filtros-estado {
-            background: var(--gris-claro);
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .filtros-estado label {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: none;
-            font-weight: 500;
-            cursor: pointer;
-            margin: 0;
-        }
-        
-        .chk-col { display: none; }
-        
-        .multi-select {
-            height: 130px;
-            overflow-y: auto;
-            border: 2px solid #d5dbdb;
-            padding: 12px;
-            background: #fafafa;
-            border-radius: 8px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            grid-column: span 2;
-        }
-        
-        .multi-select div { display: flex; align-items: center; gap: 8px; }
-        .multi-select input[type="checkbox"] { width: auto; }
-        
-        .obs-input { width: 100%; margin-top: 5px; min-height: 45px; border: 2px dashed #bdc3c7; font-size: 0.85em; resize: vertical; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            z-index: 9999;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .toast-success { background: var(--verde); }
-        .toast-error { background: var(--rojo); }
-        .toast-info { background: var(--celeste); }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .loader-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9998;
-        }
-        
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 5px solid var(--gris-claro);
-            border-top: 5px solid var(--azul-aeronautica);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes eliminarFila {
-            0% { opacity: 1; transform: translateX(0); }
-            100% { opacity: 0; transform: translateX(-100%); }
-        }
-        
-        .fila-eliminada { animation: eliminarFila 0.3s ease forwards; }
-        
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .app-header { padding: 15px; }
-            .app-title h1 { font-size: 1.4em; }
-            .logo-container { width: 180px; height: 60px; }
-            .grid { grid-template-columns: 1fr; }
-            .multi-select { grid-template-columns: 1fr; grid-column: span 1; }
-            .filtros-estado { flex-direction: column; align-items: flex-start; }
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); padding: 20px; font-size: 14px; }
+        .app-header { background: var(--azul-aeronautica); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: var(--azul-aeronautica); color: white; }
+        .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .badge-ur { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .vencido { background-color: #ffd7d7 !important; color: #c0392b; font-weight: bold; }
+        .proximo { background-color: #fff4d7 !important; color: #856404; }
     </style>
 </head>
 <body>
 
+<div id="loader" class="loader"><div>⌛ Cargando sistema...</div></div>
+
 <header class="app-header">
-    <div class="header-left">
-        <div class="logo-container">
-            <svg class="logo-aeronautica" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
-                <rect width="400" height="120" fill="#003366" rx="8"/>
-                <text x="200" y="38" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">DIRECCIÓN PROVINCIAL DE</text>
-                <text x="200" y="65" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="Arial">AERONÁUTICA</text>
-                <text x="200" y="92" text-anchor="middle" fill="#e67e22" font-size="14" font-weight="bold" font-family="Arial">CÓRDOBA</text>
-                <path d="M30 35 L50 20 L70 35 L65 35 L65 60 L70 60 L50 75 L30 60 L35 60 L35 35 Z" fill="#e67e22" opacity="0.8"/>
-                <circle cx="50" cy="48" r="6" fill="white"/>
-            </svg>
-        </div>
-        <div class="app-title">
-            <h1>🛩️ Gestor de Solicitudes</h1>
-            <p>Sistema de Gestión Aeronáutica - Córdoba</p>
-        </div>
-    </div>
-    <div class="header-right">
-        <div class="fecha-actual" id="fechaActual"></div>
-        <div class="version-badge">v3.1.0 | SGA</div>
-    </div>
+    <h1>SGA - Dirección Provincial de Aeronáutica</h1>
+    <button class="btn" style="background:var(--verde)" onclick="cargarDatos()">🔄 Sincronizar</button>
 </header>
 
 <div class="card">
-    <h2><span>🚛</span> Estado de Vencimientos - Flota Terrestre</h2>
-    <div class="flota-container" id="panelFlota">
-        <div style="padding:20px;text-align:center;width:100%;">Cargando información de flota...</div>
-    </div>
+    <h3>Estado de Flota</h3>
+    <table id="tablaFlota">
+        <thead>
+            <tr>
+                <th>Aeronave/Vehículo</th>
+                <th>ITV / Anual</th>
+                <th>POV / Seguro</th>
+                <th>Cisterna / Otros</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoFlota"></tbody>
+    </table>
 </div>
 
 <div class="card">
-    <h2><span>🚀</span> Nueva Solicitud de Mantenimiento</h2>
-    <div class="grid">
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <h3>Solicitudes de Pedido</h3>
         <div>
-            <label for="unidad">Unidad Requirente</label>
-            <select id="unidad">
-                <option value="TÉCNICA">TÉCNICA</option>
-                <option value="OPERACIONES">OPERACIONES</option>
-                <option value="UOTA">UOTA</option>
-                <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
-            </select>
-        </div>
-        <div>
-            <label for="nro_sol">N° Solicitud * (AA-NNN)</label>
-            <input type="text" id="nro_sol" placeholder="Ej: 24-003, 25-120" required>
-        </div>
-        <div>
-            <label for="f_nec">Fecha Necesidad *</label>
-            <input type="date" id="f_nec" required>
-        </div>
-        <div>
-            <label for="detalle">Detalle *</label>
-            <input type="text" id="detalle" placeholder="Detalle del trabajo" required>
-        </div>
-        <div>
-            <label for="motivo">Motivo Solicitud</label>
-            <input type="text" id="motivo" placeholder="Justificación del motivo">
-        </div>
-        <div style="grid-column: span 2;">
-            <label>Activos Aeronáuticos *</label>
-            <div class="multi-select" id="listaActivos"></div>
-        </div>
-        <div style="grid-column: 1/-1;">
-            <label for="observaciones">Observaciones</label>
-            <textarea id="observaciones" rows="2" placeholder="Observaciones adicionales..."></textarea>
+            <button class="btn" style="background:var(--azul-secundario)" onclick="unificarSolicitudes()">🔗 Agrupar Seleccionados</button>
         </div>
     </div>
-    <button class="btn btn-main" onclick="registrarSolicitud()">📝 REGISTRAR SOLICITUD EN SISTEMA</button>
-</div>
-
-<div class="card">
-    <div class="flex-between">
-        <h2><span>📋</span> Trazabilidad y Seguimiento</h2>
-        <div style="display: flex; gap: 8px;">
-            <select id="filtroUR" onchange="filtrarTabla()" style="width: 140px; background: #ebf5fb; font-weight: bold;">
-                <option value="">TODAS LAS UR</option>
-                <option value="TÉCNICA">TÉCNICA</option>
-                <option value="OPERACIONES">OPERACIONES</option>
-                <option value="UOTA">UOTA</option>
-                <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
-            </select>
-            <input type="text" id="busqueda" placeholder="🔍 Buscar..." onkeyup="filtrarTabla()" style="width: 150px;">
-            <button class="btn" style="background: var(--naranja);" onclick="toggleModoSeleccion()">📋 MODO SELECCIÓN</button>
-            <button id="btnUnificar" class="btn" style="background: var(--verde); display: none;" onclick="ejecutarUnificacion()">🔗 UNIFICAR GRUPO</button>
-            <button id="btnEliminarMultiples" class="btn btn-eliminar" style="display: none;" onclick="eliminarMultiplesSolicitudes()">🗑️ ELIMINAR SELECCIÓN</button>
-        </div>
-    </div>
-
-    <div class="filtros-estado">
-        <strong>Filtrar por estado:</strong>
-        <label><input type="checkbox" class="chk-f-est" value="PENDIENTE" checked onchange="filtrarTabla()"> ⏳ PENDIENTE</label>
-        <label><input type="checkbox" class="chk-f-est" value="EN EJECUCIÓN" checked onchange="filtrarTabla()"> 🔧 EN EJECUCIÓN</label>
-        <label><input type="checkbox" class="chk-f-est" value="ENTREGADO" checked onchange="filtrarTabla()"> ✅ ENTREGADO</label>
-        <label><input type="checkbox" class="chk-f-est" value="TERMINADO" onchange="filtrarTabla()"> 🏁 TERMINADO</label>
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th class="chk-col">Sel</th>
-                    <th>UR / Solicitud / Activo</th>
-                    <th>GIP / Exp / Fecha</th>
-                    <th>Proveedor / OC</th>
-                    <th>Factura / Fecha / Importe</th>
-                    <th>Pagado</th>
-                    <th>Estado / Entrega</th>
-                    <th>Finalizado</th>
-                    <th>Observaciones</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpoSol">
-                <tr><td colspan="10" style="text-align: center; padding: 30px;">Cargando solicitudes...</td></tr>
-            </tbody>
-        </table>
-    </div>
+    <table id="tablaSolicitudes">
+        <thead>
+            <tr>
+                <th>Sel.</th>
+                <th>Datos Solicitud</th>
+                <th>N° GIP</th>
+                <th>Proveedor</th>
+                <th>Importe</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoSol"></tbody>
+    </table>
 </div>
 
 <script>
-    // ╔══════════════════════════════════════════════════════════════════════╗
-    // ║                  ⭐⭐⭐ PEGA AQUÍ TU URL DE APPS SCRIPT ⭐⭐⭐              ║
-    // ╚══════════════════════════════════════════════════════════════════════╝
-    
+    // URL DE TU APPS SCRIPT (ASEGÚRATE QUE TERMINE EN /exec)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec";
-    
-    const ACTIVOS = [
-        "LV-IHM (C206)", "LV-BFC (AT802)", "LV-CDE (AT802)", 
-        "LV-KOW (AT802)", "LV-BIU (AT802)", "LV-WHY (FireBoss)", 
-        "LQ-HBQ (LearJet)", "LQ-BAN (B350)", "LQ-COQ (B3)", 
-        "LQ-COP (B3)", "LQ-KOP (B3)", "LQ-KDO (H145)"
-    ];
 
-    // =============================================
-    // INICIALIZACIÓN
-    // =============================================
-    window.onload = function() {
-        inicializarApp();
-    };
-
-    function inicializarApp() {
-        mostrarFechaActual();
-        cargarActivos();
-        cargarDatos();
-        setInterval(mostrarFechaActual, 60000);
-    }
-
-    function mostrarFechaActual() {
-        const fecha = new Date();
-        const opciones = { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        };
-        document.getElementById('fechaActual').textContent = 
-            fecha.toLocaleDateString('es-AR', opciones);
-    }
-
-    function cargarActivos() {
-        const listaActivos = document.getElementById('listaActivos');
-        listaActivos.innerHTML = '';
-        ACTIVOS.forEach(activo => {
-            listaActivos.innerHTML += `
-                <div>
-                    <input type="checkbox" class="chk-activo" value="${activo}" id="act_${activo.replace(/[^a-zA-Z0-9]/g, '')}">
-                    <label for="act_${activo.replace(/[^a-zA-Z0-9]/g, '')}">🛩️ ${activo}</label>
-                </div>
-            `;
+    // 1. CARGA DE DATOS (LECTURA)
+    async function cargarDatos() {
+        mostrarLoader(true);
+        ejecutarJSONP('read', {}, (data) => {
+            if (data.error) {
+                alert("Error: " + data.error);
+            } else {
+                renderFlota(data.flota);
+                renderSolicitudes(data.solicitudes);
+            }
+            mostrarLoader(false);
         });
     }
 
-    function mostrarLoader(mostrar) {
-        let loader = document.getElementById('globalLoader');
-        if (mostrar && !loader) {
-            loader = document.createElement('div');
-            loader.id = 'globalLoader';
-            loader.className = 'loader-overlay';
-            loader.innerHTML = '<div class="loader"></div>';
-            document.body.appendChild(loader);
-        } else if (!mostrar && loader) {
-            loader.remove();
+    // 2. FUNCIÓN DE ACTUALIZACIÓN
+    function actualizarSolicitud(nro_sol) {
+        const gip = document.getElementById(`gip_${nro_sol}`).value;
+        const prov = document.getElementById(`prov_${nro_sol}`).value;
+        const estado = document.getElementById(`sel_${nro_sol}`).value;
+
+        mostrarLoader(true);
+        ejecutarJSONP('update', { nro_sol, gip, prov, estado }, (data) => {
+            alert("✅ Datos actualizados en el Excel");
+            renderSolicitudes(data.solicitudes);
+            mostrarLoader(false);
+        });
+    }
+
+    // 3. FUNCIÓN DE AGRUPAR (LA QUE TE DABA ERROR)
+    function unificarSolicitudes() {
+        const seleccionados = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
+        if (seleccionados.length < 2) {
+            alert('Seleccione al menos 2 filas');
+            return;
         }
+
+        const nombreGrupo = prompt('Nombre para el grupo (ej: Factura 123):');
+        if (!nombreGrupo) return;
+
+        mostrarLoader(true);
+        ejecutarJSONP('unificar', { 
+            ids: seleccionados.join(','), 
+            nombreGrupo: nombreGrupo 
+        }, (data) => {
+            alert("✅ Solicitudes agrupadas correctamente");
+            renderSolicitudes(data.solicitudes);
+            mostrarLoader(false);
+        });
     }
 
-    function mostrarToast(mensaje, tipo = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${tipo}`;
-        toast.textContent = mensaje;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    async function cargarDatos() {
-    mostrarLoader(true);
-    
-    // Usar JSONP en lugar de fetch
-    const callbackName = 'jsonpCallback_' + Date.now();
-    
-    return new Promise((resolve, reject) => {
-        window[callbackName] = function(data) {
+    // MOTOR DE COMUNICACIÓN JSONP (ELIMINA EL FAILED TO FETCH)
+    function ejecutarJSONP(action, params, callbackFn) {
+        const callbackName = 'jsonp_' + Date.now() + Math.floor(Math.random()*1000);
+        window[callbackName] = (data) => {
             delete window[callbackName];
             document.body.removeChild(script);
-            mostrarLoader(false);
-            
-            if (data && data.flota) {
-                renderFlota(data.flota);
-            } else {
-                renderFlota(getFlotaEjemplo());
-            }
-            
-            if (data && data.solicitudes) {
-                renderSolicitudes(data.solicitudes);
-            } else {
-                renderSolicitudes(getSolicitudesEjemplo());
-            }
-            resolve(data);
+            callbackFn(data);
         };
-        
+
         const script = document.createElement('script');
-        script.src = WEB_APP_URL + '?callback=' + callbackName;
-        script.onerror = function() {
-            delete window[callbackName];
-            document.body.removeChild(script);
+        let url = `${WEB_APP_URL}?callback=${callbackName}&action=${action}`;
+        
+        for (const key in params) {
+            url += `&${key}=${encodeURIComponent(params[key])}`;
+        }
+        
+        script.src = url;
+        script.onerror = () => {
             mostrarLoader(false);
-            console.error('Error cargando datos via JSONP');
-            mostrarToast('Usando datos de demostración', 'info');
-            renderFlota(getFlotaEjemplo());
-            renderSolicitudes(getSolicitudesEjemplo());
-            reject(new Error('JSONP error'));
+            alert("Error de comunicación con Google. Revisa la implementación.");
         };
-        
         document.body.appendChild(script);
-    });
-}
-
-    function getFlotaEjemplo() {
-        return [
-            { patente: 'AE875UX (C. Blanco)', itv: '15-03-2025', pov: '20-01-2025', cisterna: '10-06-2025' },
-            { patente: 'FAK619 (C. Amarillo)', itv: '22-04-2025', pov: '10-02-2025', cisterna: '05-07-2025' },
-            { patente: 'AD150QB (Hilux)', itv: '01-12-2024', pov: '15-11-2024', cisterna: '30-01-2025' },
-            { patente: 'IXH694 (Logan)', itv: '18-05-2025', pov: '05-03-2025', cisterna: '20-08-2025' }
-        ];
-    }
-
-    function getSolicitudesEjemplo() {
-        return [
-            { nro_sol: '24-001', unidad: 'TÉCNICA', activo: 'LV-IHM (C206)', detalle: 'Revisión de motor', motivo: 'Mantenimiento', estado_app: 'PENDIENTE', f_nec: '15-03-2025', gip: '', fecha_gip: '', prov: '', oc: '', fecha_factura: '', nro_factura: '', importe: '', pagado: 'NO', fecha_entrega: '', finalizado: 'NO', observaciones: '', id_grupo: '', nombre_grupo: '' }
-        ];
-    }
-
-    function parsearFecha(fechaStr) {
-        if (!fechaStr) return null;
-        if (/^\d{2}-\d{2}-\d{4}$/.test(fechaStr)) {
-            const [day, month, year] = fechaStr.split('-');
-            return new Date(year, month - 1, day);
-        }
-        if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) {
-            const [year, month, day] = fechaStr.split('-');
-            return new Date(year, month - 1, day);
-        }
-        const date = new Date(fechaStr);
-        return isNaN(date) ? null : date;
-    }
-
-    function calcularDiasRestantes(fechaLimite) {
-        if (!fechaLimite) return 999;
-        const fecha = parsearFecha(fechaLimite);
-        if (!fecha) return 999;
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
-        fecha.setHours(0, 0, 0, 0);
-        return Math.ceil((fecha - hoy) / 86400000);
-    }
-
-    function obtenerClasesPorEstadoYVencimiento(estado, fNec) {
-        const clases = { fondo: '', borde: '', textoAlerta: '', claseAlerta: '' };
-        const ignoraVencimiento = (estado === 'ENTREGADO' || estado === 'TERMINADO');
-        
-        switch(estado) {
-            case 'PENDIENTE': clases.fondo = 'estado-pendiente'; break;
-            case 'EN EJECUCIÓN': clases.fondo = 'estado-ejecucion'; break;
-            case 'ENTREGADO': clases.fondo = 'estado-entregado'; break;
-            case 'TERMINADO': clases.fondo = 'estado-terminado'; break;
-            default: clases.fondo = 'estado-pendiente';
-        }
-        
-        if (ignoraVencimiento) {
-            clases.borde = 'borde-ignorado';
-            clases.textoAlerta = '';
-        } else {
-            const dias = calcularDiasRestantes(fNec);
-            if (dias < 0) {
-                clases.borde = 'borde-vencido';
-                clases.textoAlerta = `⚠️ VENCIDO HACE ${Math.abs(dias)} DÍAS`;
-                clases.claseAlerta = 'alerta-vencido';
-            } else if (dias < 45) {
-                clases.borde = 'borde-proximo';
-                clases.textoAlerta = `⏰ QUEDAN ${dias} DÍAS`;
-                clases.claseAlerta = 'alerta-proximo';
-            } else {
-                clases.borde = 'borde-aldia';
-                clases.textoAlerta = `✅ QUEDAN ${dias} DÍAS`;
-                clases.claseAlerta = 'alerta-aldia';
-            }
-        }
-        
-        return clases;
     }
 
     function renderFlota(flota) {
-        const container = document.getElementById('panelFlota');
-        if (!flota || flota.length === 0) {
-            container.innerHTML = '<div style="padding:20px;text-align:center;width:100%;">No hay datos de flota disponibles</div>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        flota.forEach(vehiculo => {
-            const diasITV = calcularDiasRestantes(vehiculo.itv);
-            const diasPOV = calcularDiasRestantes(vehiculo.pov);
-            const diasCIST = calcularDiasRestantes(vehiculo.cisterna);
-            const diasMinimos = Math.min(diasITV, diasPOV, diasCIST);
-            const estadoClase = diasMinimos < 0 ? 'vence-rojo' : (diasMinimos < 30 ? 'vence-amarillo' : 'vence-verde');
-            
-            container.innerHTML += `
-                <div class="flota-card ${estadoClase}">
-                    <strong style="font-size:1.1em;">🚛 ${vehiculo.patente}</strong>
-                    <div style="margin: 10px 0;">
-                        ${crearIndicadorVencimiento('ITV', diasITV, vehiculo.itv)}<br>
-                        ${crearIndicadorVencimiento('POV', diasPOV, vehiculo.pov)}<br>
-                        ${crearIndicadorVencimiento('CIST', diasCIST, vehiculo.cisterna)}
-                    </div>
-                    <button class="btn" style="background: var(--celeste); padding: 5px 10px; font-size: 0.8em; width: 100%;" onclick="editarVencimiento('${vehiculo.patente}')">📅 Actualizar</button>
-                </div>
-            `;
+        const cuerpo = document.getElementById('cuerpoFlota');
+        cuerpo.innerHTML = '';
+        flota.forEach(f => {
+            cuerpo.innerHTML += `
+                <tr>
+                    <td><strong>${f.patente}</strong></td>
+                    <td>${f.itv}</td>
+                    <td>${f.pov}</td>
+                    <td>${f.cisterna}</td>
+                </tr>`;
         });
-    }
-
-    function crearIndicadorVencimiento(tipo, dias, fecha) {
-        const emoji = dias < 0 ? '🔴' : (dias < 30 ? '🟡' : '🟢');
-        const texto = dias < 0 ? 'VENCIDO' : `${dias} días`;
-        return `${emoji} <strong>${tipo}:</strong> ${texto}<br><small style="margin-left:20px;">📆 ${fecha || 'No definida'}</small>`;
     }
 
     function renderSolicitudes(solicitudes) {
         const cuerpo = document.getElementById('cuerpoSol');
-        if (!solicitudes || solicitudes.length === 0) {
-            cuerpo.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;">No hay solicitudes registradas</td></tr>';
-            return;
-        }
-        
         cuerpo.innerHTML = '';
         solicitudes.reverse().forEach(sol => {
-            const finalizada = sol.finalizado === 'SI';
-            const clases = obtenerClasesPorEstadoYVencimiento(sol.estado_app, sol.f_nec);
             const fila = document.createElement('tr');
-            
-            fila.className = `${clases.fondo} ${clases.borde}`;
-            if (sol.id_grupo) fila.classList.add('row-grupo');
-            if (finalizada) fila.classList.add('finalizada');
-            fila.setAttribute('data-estado', sol.estado_app || 'PENDIENTE');
-            
-            const detalleCompleto = [sol.detalle, sol.motivo].filter(Boolean).join(' - ');
-            const clasePagado = sol.pagado === 'SI' ? 'pagado-si' : 'pagado-no';
+            const esGrupo = sol.id_grupo ? `<br><span style="color:blue; font-size:10px;">🔗 ${sol.nombre_grupo}</span>` : '';
             
             fila.innerHTML = `
-                <td class="chk-col"><input type="checkbox" class="chk-sel" value="${sol.nro_sol}" ${finalizada ? 'disabled' : ''}></td>
+                <td><input type="checkbox" class="chk-sel" value="${sol.nro_sol}"></td>
                 <td>
-                    <span class="badge-ur">${sol.unidad || '-'}</span>
-                    <strong>${sol.nro_sol}</strong><br>
-                    <small>🛩️ ${sol.activo || '-'}</small><br>
-                    <small>📝 ${detalleCompleto || '-'}</small>
-                    ${sol.id_grupo ? `<br><span class="badge-grupo" onclick="renombrarGrupoPrompt('${sol.id_grupo}', '${sol.nombre_grupo}')">🔗 ${sol.nombre_grupo} ✏️</span>` : ''}
-                    ${clases.textoAlerta ? `<br><span class="alerta-vencimiento ${clases.claseAlerta}">${clases.textoAlerta}</span>` : ''}
+                    <span class="badge-ur">${sol.unidad}</span> <strong>${sol.nro_sol}</strong>${esGrupo}<br>
+                    <small>🛩️ ${sol.activo || 'S/A'}</small><br>
+                    <small>📅 Nec: ${sol.f_nec}</small>
                 </td>
+                <td><input type="text" id="gip_${sol.nro_sol}" value="${sol.gip || ''}" style="width:70px"></td>
+                <td><input type="text" id="prov_${sol.nro_sol}" value="${sol.prov || ''}" style="width:100px"></td>
+                <td>$${sol.importe || '0'}</td>
                 <td>
-                    <input type="text" id="gip_${sol.nro_sol}" placeholder="GIP/Exp" value="${sol.gip || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
-                    <input type="text" id="fecha_gip_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_gip || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
-                </td>
-                <td>
-                    <input type="text" id="prov_${sol.nro_sol}" placeholder="Proveedor" value="${sol.prov || ''}" ${finalizada ? 'disabled' : ''} style="width:100px;"><br>
-                    <input type="text" id="oc_${sol.nro_sol}" placeholder="OC" value="${sol.oc || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
-                </td>
-                <td>
-                    <input type="text" id="fac_${sol.nro_sol}" placeholder="N° Fact" value="${sol.nro_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:90px;"><br>
-                    <input type="text" id="fecha_fact_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_factura || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;"><br>
-                    <input type="number" id="imp_${sol.nro_sol}" placeholder="$" value="${sol.importe || ''}" ${finalizada ? 'disabled' : ''} style="width:90px; margin-top:3px;" step="0.01">
-                </td>
-                <td>
-                    <select id="pagado_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="width:70px;">
-                        <option value="NO" ${sol.pagado === 'NO' ? 'selected' : ''}>NO</option>
-                        <option value="SI" ${sol.pagado === 'SI' ? 'selected' : ''}>SI</option>
+                    <select id="sel_${sol.nro_sol}">
+                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE'?'selected':''}>⏳</option>
+                        <option value="EN EJECUCIÓN" ${sol.estado_app === 'EN EJECUCIÓN'?'selected':''}>🔧</option>
+                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO'?'selected':''}>🏁</option>
                     </select>
                 </td>
                 <td>
-                    <select id="sel_${sol.nro_sol}" ${finalizada ? 'disabled' : ''} style="width:110px;">
-                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE' ? 'selected' : ''}>⏳ PENDIENTE</option>
-                        <option value="EN EJECUCIÓN" ${sol.estado_app === 'EN EJECUCIÓN' ? 'selected' : ''}>🔧 EN EJECUCIÓN</option>
-                        <option value="ENTREGADO" ${sol.estado_app === 'ENTREGADO' ? 'selected' : ''}>✅ ENTREGADO</option>
-                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO' ? 'selected' : ''}>🏁 TERMINADO</option>
-                    </select><br>
-                    <input type="text" id="fecha_ent_${sol.nro_sol}" placeholder="DD-MM-AAAA" value="${sol.fecha_entrega || ''}" ${finalizada ? 'disabled' : ''} style="width:100px; margin-top:3px;">
-                </td>
-                <td>
-                    <select id="fin_${sol.nro_sol}" onchange="toggleFinalizado('${sol.nro_sol}')" style="width:70px;">
-                        <option value="NO" ${sol.finalizado === 'NO' ? 'selected' : ''}>NO</option>
-                        <option value="SI" ${sol.finalizado === 'SI' ? 'selected' : ''}>SI</option>
-                    </select>
-                </td>
-                <td>
-                    <textarea id="obs_${sol.nro_sol}" class="obs-input" placeholder="Obs." ${finalizada ? 'disabled' : ''}>${sol.observaciones || ''}</textarea>
-                </td>
-                <td style="white-space: nowrap;">
-                    <button class="btn" style="background: var(--verde); padding: 4px 8px; font-size:0.75em;" onclick="actualizarSolicitud('${sol.nro_sol}', '${sol.id_grupo || ''}')">✓ ACT</button>
-                    ${sol.id_grupo ? `<button class="btn" style="background: var(--naranja); padding: 4px 8px; font-size:0.75em; margin-left:3px;" onclick="desagrupar('${sol.nro_sol}')">✖ DES</button>` : ''}
-                    <button class="btn-eliminar" style="padding: 4px 8px; font-size:0.75em; margin-left:3px;" onclick="eliminarSolicitud('${sol.nro_sol}', this.closest('tr'))">🗑️</button>
+                    <button class="btn" style="background:var(--verde)" onclick="actualizarSolicitud('${sol.nro_sol}')">💾</button>
                 </td>
             `;
-            
             cuerpo.appendChild(fila);
         });
-        
-        filtrarTabla();
     }
 
-    function toggleFinalizado(nroSol) {
-        const selectFin = document.getElementById(`fin_${nroSol}`);
-        const finalizado = selectFin.value === 'SI';
-        const campos = ['gip', 'fecha_gip', 'prov', 'oc', 'fac', 'fecha_fact', 'imp', 'pagado', 'sel', 'fecha_ent', 'obs'];
-        campos.forEach(campo => {
-            const elem = document.getElementById(`${campo}_${nroSol}`);
-            if (elem) elem.disabled = finalizado;
-        });
+    function mostrarLoader(ver) {
+        document.getElementById('loader').style.display = ver ? 'flex' : 'none';
     }
 
-    async function registrarSolicitud() {
-        const unidad = document.getElementById('unidad').value;
-        const nroSol = document.getElementById('nro_sol').value.trim();
-        const fNec = document.getElementById('f_nec').value;
-        const detalle = document.getElementById('detalle').value.trim();
-        const motivo = document.getElementById('motivo').value.trim();
-        const observaciones = document.getElementById('observaciones').value.trim();
-        const activosSeleccionados = Array.from(document.querySelectorAll('.chk-activo:checked')).map(cb => cb.value);
-        
-        if (!nroSol) { mostrarToast('El número de solicitud es obligatorio', 'error'); return; }
-        if (!/^\d{2}-\d{3}$/.test(nroSol)) { mostrarToast('Formato inválido. Use: AA-NNN (ej: 24-003)', 'error'); return; }
-        if (!fNec) { mostrarToast('La fecha de necesidad es obligatoria', 'error'); return; }
-        if (!detalle) { mostrarToast('El detalle es obligatorio', 'error'); return; }
-        if (activosSeleccionados.length === 0) { mostrarToast('Debe seleccionar al menos un activo', 'error'); return; }
-        
-        const datos = {
-            action: 'create',
-            unidad, nro_sol: nroSol, f_nec: fNec,
-            activo: activosSeleccionados.join(', '),
-            detalle, motivo, observaciones
-        };
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datos)
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast(`✅ Solicitud ${nroSol} registrada`, 'success');
-                document.getElementById('nro_sol').value = '';
-                document.getElementById('f_nec').value = '';
-                document.getElementById('detalle').value = '';
-                document.getElementById('motivo').value = '';
-                document.getElementById('observaciones').value = '';
-                document.querySelectorAll('.chk-activo:checked').forEach(cb => cb.checked = false);
-                setTimeout(() => cargarDatos(), 500);
-            } else {
-                throw new Error(resultado.message || 'Error al registrar');
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
+    // Carga inicial
+    window.onload = cargarDatos;
 
-    async function actualizarSolicitud(nroSol, idGrupo) {
-        const finalizadoSelect = document.getElementById(`fin_${nroSol}`);
-        const finalizado = finalizadoSelect ? finalizadoSelect.value : 'NO';
-        
-        const datos = {
-            action: 'update',
-            nro_sol: nroSol,
-            id_grupo: idGrupo,
-            update_block: false,
-            force_update: finalizado === 'NO',
-            finalizado: finalizado,
-            gip: document.getElementById(`gip_${nroSol}`)?.value || '',
-            fecha_gip: document.getElementById(`fecha_gip_${nroSol}`)?.value || '',
-            prov: document.getElementById(`prov_${nroSol}`)?.value || '',
-            oc: document.getElementById(`oc_${nroSol}`)?.value || '',
-            fecha_factura: document.getElementById(`fecha_fact_${nroSol}`)?.value || '',
-            nro_factura: document.getElementById(`fac_${nroSol}`)?.value || '',
-            importe: document.getElementById(`imp_${nroSol}`)?.value || '',
-            pagado: document.getElementById(`pagado_${nroSol}`)?.value || 'NO',
-            estado_app: document.getElementById(`sel_${nroSol}`)?.value || 'PENDIENTE',
-            fecha_entrega: document.getElementById(`fecha_ent_${nroSol}`)?.value || '',
-            observaciones: document.getElementById(`obs_${nroSol}`)?.value || ''
-        };
-        
-        if (idGrupo && confirm('¿Aplicar cambios a todo el grupo unificado?')) {
-            datos.update_block = true;
-        }
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datos)
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast('✅ Actualización exitosa', 'success');
-                cargarDatos();
-            } else {
-                throw new Error(resultado.message || 'Error al actualizar');
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    async function eliminarSolicitud(nroSol, elementoFila) {
-        if (!confirm(`¿Eliminar solicitud ${nroSol}?`)) return;
-        if (!confirm('❗ CONFIRMACIÓN FINAL')) return;
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'delete', nro_sol: nroSol })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                if (elementoFila) {
-                    elementoFila.classList.add('fila-eliminada');
-                    setTimeout(() => {
-                        elementoFila.remove();
-                        mostrarToast(`✅ Solicitud ${nroSol} eliminada`, 'success');
-                    }, 300);
-                } else {
-                    mostrarToast(`✅ Solicitud ${nroSol} eliminada`, 'success');
-                    cargarDatos();
-                }
-            } else {
-                throw new Error(resultado.message || 'Error al eliminar');
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-            if (elementoFila) elementoFila.classList.remove('fila-eliminada');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    async function eliminarMultiplesSolicitudes() {
-        const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
-        if (seleccionadas.length === 0) { mostrarToast('Seleccione al menos una solicitud', 'error'); return; }
-        if (!confirm(`⚠️ ¿Eliminar ${seleccionadas.length} solicitudes?`)) return;
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'batch_delete', nros_sol: seleccionadas })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast(`✅ ${resultado.eliminadas} solicitudes eliminadas`, 'success');
-                cargarDatos();
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    async function ejecutarUnificacion() {
-        const seleccionadas = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
-        if (seleccionadas.length < 2) { mostrarToast('Seleccione al menos 2 ítems', 'error'); return; }
-        
-        const nombreGrupo = prompt('Nombre del grupo:');
-        if (!nombreGrupo) return;
-        
-        const idGrupo = 'GRP-' + Date.now();
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'unificar', nros_sol: seleccionadas, id_grupo: idGrupo, nombre_grupo: nombreGrupo })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast(`✅ ${resultado.unificadas} solicitudes unificadas en "${nombreGrupo}"`, 'success');
-                cargarDatos();
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    async function desagrupar(nroSol) {
-        if (!confirm('¿Quitar del grupo?')) return;
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'desagrupar', nro_sol: nroSol })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast('✅ Solicitud removida del grupo', 'success');
-                cargarDatos();
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    async function renombrarGrupoPrompt(idGrupo, nombreActual) {
-        const nuevoNombre = prompt('Editar nombre del grupo:', nombreActual);
-        if (!nuevoNombre || nuevoNombre === nombreActual) return;
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'renombrar_grupo', id_grupo: idGrupo, nuevo_nombre: nuevoNombre })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast(`✅ Grupo renombrado a "${nuevoNombre}"`, 'success');
-                cargarDatos();
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
-
-    function filtrarTabla() {
-        const busqueda = document.getElementById('busqueda').value.toUpperCase();
-        const ur = document.getElementById('filtroUR').value.toUpperCase();
-        const estados = Array.from(document.querySelectorAll('.chk-f-est:checked')).map(c => c.value);
-        
-        document.querySelectorAll('#cuerpoSol tr').forEach(fila => {
-            const texto = fila.innerText.toUpperCase();
-            const estadoFila = fila.getAttribute('data-estado');
-            const cumpleEstado = estados.includes(estadoFila);
-            const cumpleBusqueda = busqueda === '' || texto.includes(busqueda);
-            const cumpleUR = ur === '' || texto.includes(ur);
-            
-            fila.style.display = (cumpleEstado && cumpleBusqueda && cumpleUR) ? '' : 'none';
-        });
-    }
-
-    function toggleModoSeleccion() {
-        const columnas = document.querySelectorAll('.chk-col');
-        const estaVisible = columnas[0]?.style.display === 'table-cell';
-        
-        columnas.forEach(col => col.style.display = estaVisible ? 'none' : 'table-cell');
-        
-        document.getElementById('btnUnificar').style.display = estaVisible ? 'none' : 'inline-block';
-        document.getElementById('btnEliminarMultiples').style.display = estaVisible ? 'none' : 'inline-block';
-    }
-
-    async function editarVencimiento(patente) {
-        const tipo = prompt('Tipo (itv / pov / cisterna):')?.toLowerCase();
-        if (!tipo || !['itv', 'pov', 'cisterna'].includes(tipo)) {
-            mostrarToast('Tipo no válido', 'error');
-            return;
-        }
-        
-        const fecha = prompt('Nueva fecha (DD-MM-AAAA):');
-        if (!fecha) return;
-        if (!/^\d{2}-\d{2}-\d{4}$/.test(fecha)) {
-            mostrarToast('Formato inválido. Use: DD-MM-AAAA', 'error');
-            return;
-        }
-        
-        mostrarLoader(true);
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'update_vencimiento', patente, tipo, fecha })
-            });
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const resultado = await response.json();
-            
-            if (resultado.success) {
-                mostrarToast('✅ Vencimiento actualizado', 'success');
-                cargarDatos();
-            }
-        } catch (error) {
-            mostrarToast(`❌ Error: ${error.message}`, 'error');
-        } finally {
-            mostrarLoader(false);
-        }
-    }
 </script>
-
 </body>
 </html>
