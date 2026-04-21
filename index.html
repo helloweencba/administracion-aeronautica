@@ -2,58 +2,38 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SGA - Aeronáutica Córdoba</title>
     <style>
-        :root {
-            --azul: #003366; --verde: #27ae60; --rojo: #e74c3c; --amarillo: #f1c40f;
-            --rosa: #fce4ec; --celeste: #e3f2fd; --gris: #f4f7f6;
-        }
+        :root { --azul: #003366; --verde: #27ae60; --rojo: #e74c3c; --amarillo: #f1c40f; --gris: #f4f7f6; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--gris); margin: 0; padding: 0; }
-        
-        /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--azul); display: flex; justify-content: center; align-items: center; z-index: 2000; color: white; }
-        .login-card { background: white; color: #333; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        /* LAYOUT */
+        .login-card { background: white; color: #333; padding: 40px; border-radius: 15px; text-align: center; }
         .app-container { display: none; padding: 20px; }
         .app-header { background: var(--azul); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid var(--amarillo); }
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid transparent; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.1); border-color: var(--azul); }
-
-        /* SEMAFORO & ESTADOS */
-        .status-pendiente { background: var(--rosa) !important; }
-        .status-ejecucion { background: var(--celeste) !important; }
-        .status-entregado { background: #e8f5e9 !important; }
-        .status-terminado { background: #c8e6c9 !important; border-left: 5px solid var(--verde); }
-        .status-anulado { background: #333 !important; color: white !important; opacity: 0.7; }
-        
-        .urgente { border: 2px solid var(--rojo) !important; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { border-color: var(--rojo); } 50% { border-color: transparent; } 100% { border-color: var(--rojo); } }
-
-        .semaforo-flota { padding: 5px 12px; border-radius: 20px; color: white; font-weight: bold; font-size: 11px; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .semaforo { padding: 5px 12px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; display: inline-block; }
         .bg-vencido { background: var(--rojo); }
         .bg-aviso { background: var(--amarillo); color: #333; }
         .bg-ok { background: var(--verde); }
-
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; color: var(--azul); border-bottom: 2px solid #ddd; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #ddd; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         .btn { border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .status-anulado { background: #333 !important; color: white !important; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-card">
-        <img src="Logo aeronautica.png" style="height:80px; margin-bottom:20px;">
-        <h2>Acceso al Sistema</h2>
-        <select id="user-select" style="width:100%; padding:10px; margin:20px 0; border-radius:8px;">
-            <option value="">Seleccione su Usuario...</option>
-            <option value="Federico">Federico (Admin)</option>
+        <h2>SGA - Ingreso</h2>
+        <select id="user-select" style="width:100%; padding:10px; margin:20px 0;">
+            <option value="">Seleccione Usuario...</option>
+            <option value="Federico">Federico</option>
             <option value="Lorena">Lorena</option>
             <option value="Santiago">Santiago</option>
-            <option value="Andres">Andres (Jefe)</option>
+            <option value="Andres">Andres</option>
             <option value="INGENIERIA">INGENIERÍA / TÉCNICA</option>
         </select>
         <button class="btn" style="background:var(--azul); color:white; width:100%" onclick="entrar()">INGRESAR</button>
@@ -63,26 +43,22 @@
 <div class="app-container" id="main-app">
     <header class="app-header">
         <div style="display:flex; align-items:center; gap:15px;">
-            <img src="Logo aeronautica.png" style="height:60px; filter: brightness(0) invert(1);">
-            <div>
-                <h1 style="margin:0; font-size:1.2em;">Gestor de Solicitudes - Aeronáutica</h1>
-                <small id="welcome-msg"></small>
-            </div>
+            <img src="Logo aeronautica.png" id="main-logo" style="height:60px; filter: brightness(0) invert(1);" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
+            <div><h1 style="margin:0; font-size:1.2em;">Gestor de Solicitudes</h1><small id="welcome-msg"></small></div>
         </div>
         <button class="btn" style="background:var(--amarillo)" onclick="cargarDatos()">🔄 Sincronizar</button>
     </header>
 
     <div class="card" id="seccion-flota">
-        <h3>🚢 Estado de Flota</h3>
+        <h3>🚢 Estado de Flota (ITV / POV / Cisterna)</h3>
         <table>
-            <thead><tr><th>Vehículo</th><th>ITV</th><th>Seguro</th><th>Otros</th><th>Acción</th></tr></thead>
+            <thead><tr><th>Patente</th><th>ITV</th><th>POV</th><th>Cisterna</th><th>Acción</th></tr></thead>
             <tbody id="cuerpoFlota"></tbody>
         </table>
     </div>
 
     <div class="card">
         <h3>📋 Trazabilidad de Solicitudes</h3>
-        <input type="text" id="buscador" placeholder="🔍 Buscar por detalle o proveedor..." onkeyup="filtrar()" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
         <table id="tablaSol">
             <thead><tr><th>Datos</th><th>Detalle</th><th>Seguimiento</th><th>Estado</th><th>Acción</th></tr></thead>
             <tbody id="cuerpoSol"></tbody>
@@ -96,26 +72,35 @@
 
     function entrar() {
         const u = document.getElementById('user-select').value;
-        if (!u) return alert("Seleccione un usuario");
+        if (!u) return;
         USUARIO_ACTUAL = u;
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-        document.getElementById('welcome-msg').innerText = "Usuario: " + u;
+        document.getElementById('welcome-msg').innerText = "Operador: " + u;
         if(u === 'INGENIERIA') document.getElementById('seccion-flota').style.display = 'none';
         cargarDatos();
     }
 
-    function calcularSem(fStr) {
-        if (!fStr || fStr === "-") return { c: 'bg-ok', t: '-' };
-        const p = fStr.split('-');
-        const d = new Date(p[2], p[1]-1, p[0]);
-        const diff = Math.ceil((d - new Date())/(1000*60*60*24));
-        if (diff < 0) return { c: 'bg-vencido', t: fStr };
-        if (diff <= 45) return { c: 'bg-aviso', t: fStr };
-        return { c: 'bg-ok', t: fStr };
+    function formatFecha(f) {
+        if (!f || f === "-") return "-";
+        // Si viene como fecha larga de JS, la limpiamos
+        let d = new Date(f);
+        if (isNaN(d)) return f; // Si ya es dd-mm-yyyy lo deja igual
+        return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
     }
 
-    async function cargarDatos() {
+    function calcularSem(fStr) {
+        const f = formatFecha(fStr);
+        if (f === "-") return { c: 'bg-ok', t: '-' };
+        const p = f.split('-');
+        const venc = new Date(p[2], p[1]-1, p[0]);
+        const diff = Math.ceil((venc - new Date())/(1000*60*60*24));
+        if (diff < 0) return { c: 'bg-vencido', t: f };
+        if (diff <= 45) return { c: 'bg-aviso', t: f };
+        return { c: 'bg-ok', t: f };
+    }
+
+    function cargarDatos() {
         const s = document.createElement('script');
         s.src = `${WEB_APP_URL}?action=read&callback=render`;
         document.body.appendChild(s);
@@ -127,64 +112,57 @@
         data.flota.forEach(f => {
             const i = calcularSem(f.itv), p = calcularSem(f.pov), c = calcularSem(f.cisterna);
             cF.innerHTML += `<tr><td><strong>${f.patente}</strong></td>
-                <td><span class="semaforo-flota ${i.c}">${i.t}</span></td>
-                <td><span class="semaforo-flota ${p.c}">${p.t}</span></td>
-                <td><span class="semaforo-flota ${c.c}">${c.t}</span></td>
-                <td><button onclick="modFlota('${f.patente}')">📝</button></td></tr>`;
+                <td><span class="semaforo ${i.c}">${i.t}</span></td>
+                <td><span class="semaforo ${p.c}">${p.t}</span></td>
+                <td><span class="semaforo ${c.c}">${c.t}</span></td>
+                <td><button onclick="modFlota('${f.patente}','${i.t}','${p.t}','${c.t}')">📝</button></td></tr>`;
         });
 
         const cS = document.getElementById('cuerpoSol');
         cS.innerHTML = '';
         data.solicitudes.forEach(s => {
             if (USUARIO_ACTUAL === 'INGENIERIA' && s.unidad !== 'TÉCNICA') return;
-            
-            const sem = calcularSem(s.f_nec);
-            const isUrgente = (s.estado === 'PENDIENTE' || s.estado === 'EN EJECUCIÓN') && sem.c !== 'bg-ok';
-            const claseEstado = "status-" + s.estado.toLowerCase().replace(/ /g, '-');
-
-            cS.innerHTML += `<tr class="fila-sol ${claseEstado} ${isUrgente?'urgente':''}">
-                <td><small>${s.unidad}</small><br><strong>${s.nro_sol}</strong><br><small>${s.f_nec}</small> ${isUrgente?'⚠️':''}</td>
+            const clase = "status-" + s.estado.toLowerCase();
+            cS.innerHTML += `<tr class="${clase}">
+                <td><small>${s.unidad}</small><br><strong>${s.nro_sol}</strong><br><small>${formatFecha(s.f_nec)}</small></td>
                 <td><div style="font-weight:bold">${s.activo}</div><div style="font-size:11px">${s.detalle}</div></td>
                 <td>
-                    <input type="text" id="gip_${s.nro_sol}" value="${s.gip}" placeholder="GIP" ${USUARIO_ACTUAL==='INGENIERIA'?'disabled':''} style="width:70px">
-                    <input type="text" id="prv_${s.nro_sol}" value="${s.prov}" placeholder="Prov" style="width:100px">
-                    <textarea id="obs_${s.nro_sol}" placeholder="Obs" style="width:100%; font-size:10px">${s.obs}</textarea>
+                    GIP: <input type="text" id="gip_${s.nro_sol}" value="${s.gip}" style="width:60px" ${USUARIO_ACTUAL==='INGENIERIA'?'disabled':''}>
+                    Prov: <input type="text" id="prv_${s.nro_sol}" value="${s.prov}" style="width:90px">
                 </td>
                 <td>
                     <select id="est_${s.nro_sol}">
-                        <option value="PENDIENTE" ${s.estado==='PENDIENTE'?'selected':''}>⏳ PENDIENTE</option>
-                        <option value="EN EJECUCIÓN" ${s.estado==='EN EJECUCIÓN'?'selected':''}>🔧 EJECUCION</option>
-                        <option value="ENTREGADO" ${s.estado==='ENTREGADO'?'selected':''}>📦 ENTREGADO</option>
-                        <option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>🏁 TERMINADO</option>
-                        <option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>❌ ANULADO</option>
+                        <option value="PENDIENTE" ${s.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option>
+                        <option value="ENTREGADO" ${s.estado==='ENTREGADO'?'selected':''}>ENTREGADO</option>
+                        <option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>
+                        <option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>ANULADO</option>
                     </select>
                 </td>
-                <td>
-                    <button class="btn" style="background:var(--verde); color:white" onclick="save('${s.nro_sol}')">💾</button>
-                    ${USUARIO_ACTUAL!=='INGENIERIA' ? `<button onclick="archivar('${s.nro_sol}')">🗑️</button>` : ''}
-                </td></tr>`;
+                <td><button onclick="save('${s.nro_sol}')">💾</button></td></tr>`;
         });
+    }
+
+    function modFlota(pat, itv, pov, cis) {
+        const ni = prompt("Nueva fecha ITV (dd-mm-yyyy):", itv);
+        const np = prompt("Nueva fecha POV (dd-mm-yyyy):", pov);
+        const nc = prompt("Nueva fecha Cisterna (dd-mm-yyyy):", cis);
+        if(ni && np) ejecutar('updateFlota', {patente:pat, itv:ni, pov:np, cis:nc, user:USUARIO_ACTUAL});
     }
 
     function save(n) {
-        const p = { nro_sol: n, gip: document.getElementById('gip_'+n).value, prov: document.getElementById('prv_'+n).value, estado: document.getElementById('est_'+n).value, obs: document.getElementById('obs_'+n).value, user: USUARIO_ACTUAL };
-        ejecutar('update', p);
+        ejecutar('update', {
+            nro_sol: n, 
+            gip: document.getElementById('gip_'+n).value,
+            prov: document.getElementById('prv_'+n).value,
+            estado: document.getElementById('est_'+n).value,
+            user: USUARIO_ACTUAL
+        });
     }
-
-    function archivar(n) { if(confirm('¿Archivar?')) ejecutar('archivar', {nro_sol:n, user: USUARIO_ACTUAL}); }
 
     function ejecutar(a, p) {
-        const s = document.createElement('script');
         let url = `${WEB_APP_URL}?action=${a}&callback=render`;
         for (let k in p) url += `&${k}=${encodeURIComponent(p[k])}`;
-        s.src = url; document.body.appendChild(s);
-    }
-    
-    function filtrar() {
-        const b = document.getElementById('buscador').value.toLowerCase();
-        document.querySelectorAll('.fila-sol').forEach(f => {
-            f.style.display = f.innerText.toLowerCase().includes(b) ? '' : 'none';
-        });
+        const s = document.createElement('script'); s.src = url; document.body.appendChild(s);
     }
 </script>
 </body>
