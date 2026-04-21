@@ -6,18 +6,13 @@
     <style>
         :root { --azul: #003366; --verde: #27ae60; --rojo: #e74c3c; --amarillo: #f1c40f; --rosa: #fce4ec; --celeste: #e3f2fd; --gris: #f4f7f6; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--gris); margin: 0; padding: 0; font-size: 13px; }
-        
         #login-screen { position: fixed; inset: 0; background: var(--azul); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-card { background: white; padding: 40px; border-radius: 15px; text-align: center; width: 380px; }
-        .login-logo { width: 180px; margin-bottom: 20px; }
-
         .app-header { background: var(--azul); color: white; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--amarillo); }
         .header-logo { height: 45px; filter: brightness(0) invert(1); }
-
         .app-container { display: none; padding: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        /* ESTADOS COLORES */
+        
         .status-pendiente { background-color: var(--rosa) !important; }
         .status-ejecucion { background-color: var(--celeste) !important; }
         .status-entrega-parcial { background-color: #fff59d !important; border-left: 5px solid var(--amarillo); }
@@ -36,8 +31,8 @@
         th { text-align: left; padding: 10px; background: #eee; }
         td { padding: 10px; border-bottom: 1px solid #ddd; }
 
-        .group-header { background: #455a64; color: white; padding: 8px; font-weight: bold; }
-        .group-box { border: 2px solid #455a64; border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
+        .group-header { background: #455a64; color: white; padding: 8px; font-weight: bold; border-radius: 6px 6px 0 0; }
+        .group-box { border: 2px solid #455a64; border-radius: 6px; margin-bottom: 15px; }
         .btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
@@ -45,7 +40,7 @@
 
 <div id="login-screen">
     <div class="login-card">
-        <img src="Logo aeronautica.png" class="login-logo" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
+        <img src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png" width="180">
         <h2>Acceso SGA</h2>
         <select id="user-select" style="width:100%; padding:10px; margin:20px 0;">
             <option value="">Seleccione Usuario...</option>
@@ -62,7 +57,7 @@
 <div class="app-container" id="main-app">
     <header class="app-header">
         <div style="display:flex; align-items:center; gap:15px;">
-            <img src="Logo aeronautica.png" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png'">
+            <img src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png" class="header-logo">
             <div><h3 style="margin:0;">SGA Aeronáutica</h3><small id="welcome-msg"></small></div>
         </div>
         <button class="btn" style="background:var(--amarillo)" onclick="cargarDatos()">🔄 Sincronizar</button>
@@ -91,7 +86,7 @@
 
     <div class="card" id="seccion-flota">
         <h3>🚢 Estado de Flota</h3>
-        <table><thead><tr><th>Unidad</th><th>ITV</th><th>POV</th><th>Cisterna</th></tr></thead><tbody id="cuerpoFlota"></tbody></table>
+        <table id="tablaFlota"><thead><tr><th>Unidad</th><th>ITV</th><th>POV</th><th>Cisterna</th></tr></thead><tbody id="cuerpoFlota"></tbody></table>
     </div>
 
     <div class="card">
@@ -99,14 +94,12 @@
             <h3>📋 Trazabilidad</h3>
             <button class="btn" style="background:var(--verde); color:white" id="btn-nueva-sol" onclick="toggleCarga()">+ NUEVA SOLICITUD</button>
         </div>
-        
-        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9;">
+        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
             <div id="f-admin-only">Unidad: <select id="f_unidad" onchange="filtrar()"><option value="">TODAS</option><option>ADMINISTRACION</option><option>OPERACIONES</option><option>TECNICA</option><option>UOTA</option></select></div>
             Estado: <select id="f_estado" onchange="filtrar()"><option value="">TODOS</option><option>PENDIENTE</option><option>EN EJECUCION</option><option>ENTREGA PARCIAL</option><option>ENTREGADO</option><option>TERMINADO</option></select>
-            Buscador: <input type="text" id="f_texto" onkeyup="filtrar()" style="flex-grow:1">
+            Buscador: <input type="text" id="f_texto" placeholder="Buscar..." onkeyup="filtrar()" style="flex-grow:1">
             <button class="btn" style="background:#455a64; color:white" onclick="crearGrupo()">📦 AGRUPAR</button>
         </div>
-
         <div id="contenedor-trazabilidad"></div>
     </div>
 </div>
@@ -136,9 +129,11 @@
 
     function formatFecha(f) {
         if (!f || f === "-" || f === "undefined") return "-";
-        if (typeof f === 'string' && f.includes('-') && f.length === 10) return f;
-        let d = new Date(f); if (isNaN(d)) return f;
-        return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+        if (typeof f === 'string' && f.includes('-')) {
+            const p = f.split('-');
+            return p[0].length === 4 ? `${p[2]}-${p[1]}-${p[0]}` : f;
+        }
+        return f;
     }
 
     function getSemaforo(fStr) {
@@ -160,15 +155,13 @@
         const cF = document.getElementById('cuerpoFlota'); cF.innerHTML = '';
         data.flota.forEach(f => {
             cF.innerHTML += `<tr><td><strong>${f.patente}</strong></td>
-                <td>${celdaF(f.patente, 'itv', f.itv)}</td>
-                <td>${celdaF(f.patente, 'pov', f.pov)}</td>
-                <td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td></tr>`;
+                <td>${celdaF(f.patente, 'itv', f.itv)}</td><td>${celdaF(f.patente, 'pov', f.pov)}</td><td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td></tr>`;
         });
 
         const cont = document.getElementById('contenedor-trazabilidad'); cont.innerHTML = '';
         const grupos = {};
         data.solicitudes.forEach(s => {
-            if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TÉCNICA') return;
+            if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
             const key = s.id_g || ('S_'+s.nro_sol);
             if (!grupos[key]) grupos[key] = { nom: s.nom_g, sols: [] };
             grupos[key].sols.push(s);
@@ -181,8 +174,7 @@
                 const sem = getSemaforo(s.f_nec);
                 const urg = (s.estado === 'PENDIENTE' || s.estado === 'EN EJECUCION') && sem.c !== 'bg-ok';
                 const isT = USUARIO_ACTUAL === 'TECNICA';
-                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" 
-                        data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.nom_g}">
+                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.nom_g}">
                     <td><input type="checkbox" class="check-agrupar" value="${s.nro_sol}"></td>
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
@@ -214,9 +206,7 @@
 
     function celdaF(pat, campo, valor) {
         const sem = getSemaforo(valor);
-        return `<div class="semaforo-f ${sem.c}" id="box_${pat}_${campo}">
-            <span>${sem.t}</span><span style="cursor:pointer" onclick="editF('${pat}','${campo}','${valor}')">✏️</span>
-        </div>`;
+        return `<div class="semaforo-f ${sem.c}" id="box_${pat}_${campo}"><span>${sem.t}</span><span style="cursor:pointer" onclick="editF('${pat}','${campo}','${valor}')">✏️</span></div>`;
     }
 
     function editF(pat, campo, val) {
@@ -228,23 +218,17 @@
     }
 
     function saveSol(n, idG) {
-        ejecutar('update', {
-            nro_sol: n, id_g: idG, gip: document.getElementById(`gip_${n}`).value,
-            factura: document.getElementById(`fac_${n}`).value, importe: document.getElementById(`imp_${n}`).value,
-            obs: document.getElementById(`obs_${n}`).value, estado: document.getElementById(`est_${n}`).value, user: USUARIO_ACTUAL
-        });
+        ejecutar('update', { nro_sol: n, id_g: idG, gip: document.getElementById(`gip_${n}`).value, factura: document.getElementById(`fac_${n}`).value, importe: document.getElementById(`imp_${n}`).value, obs: document.getElementById(`obs_${n}`).value, estado: document.getElementById(`est_${n}`).value, user: USUARIO_ACTUAL });
     }
 
     function desagrupar(n) { if(confirm("¿Quitar del grupo?")) ejecutar('desagrupar', { nro_sol: n, user: USUARIO_ACTUAL }); }
     function toggleCarga() { const f = document.getElementById('form-carga'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
 
     function enviarNueva() {
+        const fSol = document.getElementById('c_f_sol').value;
+        const fNec = document.getElementById('c_f_nec').value;
         const mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(c => c.value).join(', ');
-        ejecutar('create', {
-            nro_sol: document.getElementById('c_nro').value, unidad: document.getElementById('c_unidad').value,
-            activo: mats, f_sol: document.getElementById('c_f_sol').value, f_nec: document.getElementById('c_f_nec').value,
-            detalle: document.getElementById('c_det').value, motivo: document.getElementById('c_mot').value, user: USUARIO_ACTUAL
-        });
+        ejecutar('create', { nro_sol: document.getElementById('c_nro').value, unidad: document.getElementById('c_unidad').value, activo: mats, f_sol: fSol, f_nec: fNec, detalle: document.getElementById('c_det').value, motivo: document.getElementById('c_mot').value, user: USUARIO_ACTUAL });
         toggleCarga();
     }
 
