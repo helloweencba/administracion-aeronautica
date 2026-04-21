@@ -17,34 +17,34 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); padding: 20px; font-size: 14px; }
         .app-header { background: var(--azul-aeronautica); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; flex-grow: 1; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: var(--azul-aeronautica); color: white; }
         .btn { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
         .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .badge-ur { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .vencido { background-color: #ffd7d7 !important; color: #c0392b; font-weight: bold; }
-        .proximo { background-color: #fff4d7 !important; color: #856404; }
+        textarea { width: 100%; font-family: inherit; font-size: 11px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
     </style>
 </head>
 <body>
 
-<div id="loader" class="loader"><div>⌛ Cargando sistema...</div></div>
+<div id="loader" class="loader"><div>⌛ Sincronizando con Google Sheets...</div></div>
 
 <header class="app-header">
     <div style="display:flex; align-items:center; gap:20px;">
         <img src="Logo aeronautica.png" alt="Logo" style="height: 80px; width: auto; filter: brightness(0) invert(1);">
-        
         <div>
             <h1 style="font-size: 1.6em; letter-spacing: 1px; margin: 0;">Gestor de Solicitudes - Administracion - Dirección de Aeronáutica</h1>
             <p style="font-weight: 300; opacity: 0.9; margin: 0;">Gobierno de la Provincia de Córdoba</p>
         </div>
     </div>
-    <button class="btn btn-sync" onclick="cargarDatos()">🔄 ACTUALIZAR DATOS</button>
+    <button class="btn" style="background:var(--amarillo); color:#333" onclick="cargarDatos()">🔄 ACTUALIZAR DATOS</button>
 </header>
 
 <div class="card">
-    <h3>Estado de Flota</h3>
+    <h3>🚢 Estado de Flota y Vencimientos</h3>
     <table id="tablaFlota">
         <thead>
             <tr>
@@ -52,6 +52,7 @@
                 <th>ITV / Anual</th>
                 <th>POV / Seguro</th>
                 <th>Cisterna / Otros</th>
+                <th>Acción</th>
             </tr>
         </thead>
         <tbody id="cuerpoFlota"></tbody>
@@ -60,21 +61,29 @@
 
 <div class="card">
     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-        <h3>Solicitudes de Pedido</h3>
-        <div>
-            <button class="btn" style="background:var(--azul-secundario)" onclick="unificarSolicitudes()">🔗 Agrupar Seleccionados</button>
-        </div>
+        <h3>📋 Trazabilidad de Solicitudes</h3>
+        <button class="btn" style="background:var(--azul-secundario)" onclick="unificarSolicitudes()">🔗 Agrupar Seleccionados</button>
     </div>
+
+    <div class="filters">
+        <input type="text" id="buscador" class="search-input" placeholder="🔍 Buscar por detalle, unidad, N° o proveedor..." onkeyup="filtrarTabla()">
+        <select id="filtroUnidad" style="padding:8px" onchange="filtrarTabla()">
+            <option value="">Todas las Unidades</option>
+            <option value="TECNICA">Técnica</option>
+            <option value="OPERACIONES">Operaciones</option>
+            <option value="ADMINISTRACIÓN">Administración</option>
+        </select>
+    </div>
+
     <table id="tablaSolicitudes">
         <thead>
             <tr>
                 <th>Sel.</th>
                 <th>Datos Solicitud</th>
-                <th>N° GIP</th>
-                <th>Proveedor</th>
-                <th>Importe</th>
+                <th>Seguimiento</th>
+                <th>Observaciones</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th>Acción</th>
             </tr>
         </thead>
         <tbody id="cuerpoSol"></tbody>
@@ -82,93 +91,28 @@
 </div>
 
 <script>
-    // URL DE TU APPS SCRIPT (ASEGÚRATE QUE TERMINE EN /exec)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec";
 
-    // 1. CARGA DE DATOS (LECTURA)
     async function cargarDatos() {
         mostrarLoader(true);
         ejecutarJSONP('read', {}, (data) => {
-            if (data.error) {
-                alert("Error: " + data.error);
-            } else {
-                renderFlota(data.flota);
-                renderSolicitudes(data.solicitudes);
-            }
-            mostrarLoader(false);
-        });
-    }
-
-    // 2. FUNCIÓN DE ACTUALIZACIÓN
-    function actualizarSolicitud(nro_sol) {
-        const gip = document.getElementById(`gip_${nro_sol}`).value;
-        const prov = document.getElementById(`prov_${nro_sol}`).value;
-        const estado = document.getElementById(`sel_${nro_sol}`).value;
-
-        mostrarLoader(true);
-        ejecutarJSONP('update', { nro_sol, gip, prov, estado }, (data) => {
-            alert("✅ Datos actualizados en el Excel");
+            renderFlota(data.flota);
             renderSolicitudes(data.solicitudes);
             mostrarLoader(false);
         });
-    }
-
-    // 3. FUNCIÓN DE AGRUPAR (LA QUE TE DABA ERROR)
-    function unificarSolicitudes() {
-        const seleccionados = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
-        if (seleccionados.length < 2) {
-            alert('Seleccione al menos 2 filas');
-            return;
-        }
-
-        const nombreGrupo = prompt('Nombre para el grupo (ej: Factura 123):');
-        if (!nombreGrupo) return;
-
-        mostrarLoader(true);
-        ejecutarJSONP('unificar', { 
-            ids: seleccionados.join(','), 
-            nombreGrupo: nombreGrupo 
-        }, (data) => {
-            alert("✅ Solicitudes agrupadas correctamente");
-            renderSolicitudes(data.solicitudes);
-            mostrarLoader(false);
-        });
-    }
-
-    // MOTOR DE COMUNICACIÓN JSONP (ELIMINA EL FAILED TO FETCH)
-    function ejecutarJSONP(action, params, callbackFn) {
-        const callbackName = 'jsonp_' + Date.now() + Math.floor(Math.random()*1000);
-        window[callbackName] = (data) => {
-            delete window[callbackName];
-            document.body.removeChild(script);
-            callbackFn(data);
-        };
-
-        const script = document.createElement('script');
-        let url = `${WEB_APP_URL}?callback=${callbackName}&action=${action}`;
-        
-        for (const key in params) {
-            url += `&${key}=${encodeURIComponent(params[key])}`;
-        }
-        
-        script.src = url;
-        script.onerror = () => {
-            mostrarLoader(false);
-            alert("Error de comunicación con Google. Revisa la implementación.");
-        };
-        document.body.appendChild(script);
     }
 
     function renderFlota(flota) {
         const cuerpo = document.getElementById('cuerpoFlota');
         cuerpo.innerHTML = '';
-        flota.forEach(f => {
+        flota.forEach((f, idx) => {
             cuerpo.innerHTML += `
                 <tr>
                     <td><strong>${f.patente}</strong></td>
-                    <td>${f.itv}</td>
-                    <td>${f.pov}</td>
-                    <td>${f.cisterna}</td>
+                    <td><input type="text" id="itv_${idx}" value="${f.itv}" style="width:100px"></td>
+                    <td><input type="text" id="pov_${idx}" value="${f.pov}" style="width:100px"></td>
+                    <td><input type="text" id="cis_${idx}" value="${f.cisterna}" style="width:100px"></td>
+                    <td><button class="btn" style="background:var(--verde)" onclick="guardarFlota(${idx}, '${f.patente}')">💾</button></td>
                 </tr>`;
         });
     }
@@ -178,23 +122,26 @@
         cuerpo.innerHTML = '';
         solicitudes.reverse().forEach(sol => {
             const fila = document.createElement('tr');
-            const esGrupo = sol.id_grupo ? `<br><span style="color:blue; font-size:10px;">🔗 ${sol.nombre_grupo}</span>` : '';
+            fila.className = "fila-solicitud";
+            const esGrupo = sol.id_grupo ? `<br><small style="color:blue">🔗 ${sol.nombre_grupo}</small>` : '';
             
             fila.innerHTML = `
                 <td><input type="checkbox" class="chk-sel" value="${sol.nro_sol}"></td>
                 <td>
                     <span class="badge-ur">${sol.unidad}</span> <strong>${sol.nro_sol}</strong>${esGrupo}<br>
-                    <small>🛩️ ${sol.activo || 'S/A'}</small><br>
+                    <small>🛩️ ${sol.activo || '-'}</small><br>
                     <small>📅 Nec: ${sol.f_nec}</small>
                 </td>
-                <td><input type="text" id="gip_${sol.nro_sol}" value="${sol.gip || ''}" style="width:70px"></td>
-                <td><input type="text" id="prov_${sol.nro_sol}" value="${sol.prov || ''}" style="width:100px"></td>
-                <td>$${sol.importe || '0'}</td>
+                <td>
+                    GIP: <input type="text" id="gip_${sol.nro_sol}" value="${sol.gip || ''}" style="width:70px"><br>
+                    Prov: <input type="text" id="prov_${sol.nro_sol}" value="${sol.prov || ''}" style="width:90px">
+                </td>
+                <td><textarea id="obs_${sol.nro_sol}" rows="2">${sol.observaciones || ''}</textarea></td>
                 <td>
                     <select id="sel_${sol.nro_sol}">
-                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE'?'selected':''}>⏳</option>
-                        <option value="EN EJECUCIÓN" ${sol.estado_app === 'EN EJECUCIÓN'?'selected':''}>🔧</option>
-                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO'?'selected':''}>🏁</option>
+                        <option value="PENDIENTE" ${sol.estado_app === 'PENDIENTE'?'selected':''}>⏳ PENDIENTE</option>
+                        <option value="EN EJECUCIÓN" ${sol.estado_app === 'EN EJECUCIÓN'?'selected':''}>🔧 EN PROCESO</option>
+                        <option value="TERMINADO" ${sol.estado_app === 'TERMINADO'?'selected':''}>🏁 TERMINADO</option>
                     </select>
                 </td>
                 <td>
@@ -205,13 +152,82 @@
         });
     }
 
-    function mostrarLoader(ver) {
-        document.getElementById('loader').style.display = ver ? 'flex' : 'none';
+    function filtrarTabla() {
+        const busqueda = document.getElementById('buscador').value.toLowerCase();
+        const unidad = document.getElementById('filtroUnidad').value;
+        const filas = document.querySelectorAll('.fila-solicitud');
+
+        filas.forEach(fila => {
+            const texto = fila.innerText.toLowerCase();
+            const coincideBusqueda = texto.includes(busqueda);
+            const coincideUnidad = unidad === "" || texto.includes(unidad.toLowerCase());
+            fila.style.display = (coincideBusqueda && coincideUnidad) ? '' : 'none';
+        });
     }
 
-    // Carga inicial
-    window.onload = cargarDatos;
+    function actualizarSolicitud(nro_sol) {
+        const params = {
+            nro_sol: nro_sol,
+            gip: document.getElementById(`gip_${nro_sol}`).value,
+            prov: document.getElementById(`prov_${nro_sol}`).value,
+            estado: document.getElementById(`sel_${nro_sol}`).value,
+            obs: document.getElementById(`obs_${nro_sol}`).value
+        };
+        mostrarLoader(true);
+        ejecutarJSONP('update', params, (data) => {
+            alert("✅ Registro actualizado");
+            renderSolicitudes(data.solicitudes);
+            mostrarLoader(false);
+        });
+    }
 
+    function guardarFlota(idx, patente) {
+        const params = {
+            patente: patente,
+            itv: document.getElementById(`itv_${idx}`).value,
+            pov: document.getElementById(`pov_${idx}`).value,
+            cis: document.getElementById(`cis_${idx}`).value
+        };
+        mostrarLoader(true);
+        ejecutarJSONP('updateFlota', params, (data) => {
+            alert("✅ Flota actualizada");
+            renderFlota(data.flota);
+            mostrarLoader(false);
+        });
+    }
+
+    function unificarSolicitudes() {
+        const seleccionados = Array.from(document.querySelectorAll('.chk-sel:checked')).map(cb => cb.value);
+        if (seleccionados.length < 2) return alert('Seleccione al menos 2');
+        const nombre = prompt('Nombre del grupo:');
+        if (!nombre) return;
+        mostrarLoader(true);
+        ejecutarJSONP('unificar', { ids: seleccionados.join(','), nombreGrupo: nombre }, (data) => {
+            alert("✅ Solicitudes agrupadas");
+            renderSolicitudes(data.solicitudes);
+            mostrarLoader(false);
+        });
+    }
+
+    function ejecutarJSONP(action, params, callbackFn) {
+        const callbackName = 'jsonp_' + Date.now() + Math.floor(Math.random()*1000);
+        window[callbackName] = (data) => {
+            delete window[callbackName];
+            const s = document.getElementById(callbackName);
+            if(s) s.remove();
+            callbackFn(data);
+        };
+        const script = document.createElement('script');
+        script.id = callbackName;
+        let url = `${WEB_APP_URL}?callback=${callbackName}&action=${action}`;
+        for (const key in params) url += `&${key}=${encodeURIComponent(params[key])}`;
+        script.src = url;
+        document.body.appendChild(script);
+    }
+
+    function mostrarLoader(ver) { document.getElementById('loader').style.display = ver ? 'flex' : 'none'; }
+
+    window.onload = cargarDatos;
 </script>
 </body>
 </html>
