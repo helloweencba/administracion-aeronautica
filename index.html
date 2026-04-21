@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGA - Gestión Aeronáutica</title>
+    <title>Gestor de Solicitudes - Administracion - Dirección de Aeronáutica</title>
     <style>
         :root {
             --azul-aeronautica: #003366;
@@ -32,8 +32,15 @@
 <div id="loader" class="loader"><div>⌛ Cargando sistema...</div></div>
 
 <header class="app-header">
-    <h1>SGA - Dirección Provincial de Aeronáutica</h1>
-    <button class="btn" style="background:var(--verde)" onclick="cargarDatos()">🔄 Sincronizar</button>
+    <div style="display:flex; align-items:center; gap:20px;">
+        <img src="Logo aeronautica.png" alt="Logo" style="height: 80px; width: auto; filter: brightness(0) invert(1);">
+        
+        <div>
+            <h1 style="font-size: 1.8em; letter-spacing: 1px; margin: 0;">SGA - DIRECCIÓN PROVINCIAL DE AERONÁUTICA</h1>
+            <p style="font-weight: 300; opacity: 0.9; margin: 0;">Gobierno de la Provincia de Córdoba</p>
+        </div>
+    </div>
+    <button class="btn btn-sync" onclick="cargarDatos()">🔄 ACTUALIZAR DATOS</button>
 </header>
 
 <div class="card">
