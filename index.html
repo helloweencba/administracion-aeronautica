@@ -13,6 +13,7 @@
         .app-container { display: none; padding: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
+        /* ESTADOS */
         .status-pendiente { background-color: var(--rosa) !important; }
         .status-ejecucion { background-color: var(--celeste) !important; }
         .status-entrega-parcial { background-color: #fff59d !important; border-left: 5px solid var(--amarillo); }
@@ -86,7 +87,7 @@
 
     <div class="card" id="seccion-flota">
         <h3>🚢 Estado de Flota</h3>
-        <table id="tablaFlota"><thead><tr><th>Unidad</th><th>ITV</th><th>POV</th><th>Cisterna</th></tr></thead><tbody id="cuerpoFlota"></tbody></table>
+        <table><thead><tr><th>Unidad</th><th>ITV</th><th>POV</th><th>Cisterna</th></tr></thead><tbody id="cuerpoFlota"></tbody></table>
     </div>
 
     <div class="card">
@@ -94,7 +95,7 @@
             <h3>📋 Trazabilidad</h3>
             <button class="btn" style="background:var(--verde); color:white" id="btn-nueva-sol" onclick="toggleCarga()">+ NUEVA SOLICITUD</button>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
+        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9;">
             <div id="f-admin-only">Unidad: <select id="f_unidad" onchange="filtrar()"><option value="">TODAS</option><option>ADMINISTRACION</option><option>OPERACIONES</option><option>TECNICA</option><option>UOTA</option></select></div>
             Estado: <select id="f_estado" onchange="filtrar()"><option value="">TODOS</option><option>PENDIENTE</option><option>EN EJECUCION</option><option>ENTREGA PARCIAL</option><option>ENTREGADO</option><option>TERMINADO</option></select>
             Buscador: <input type="text" id="f_texto" placeholder="Buscar..." onkeyup="filtrar()" style="flex-grow:1">
@@ -228,6 +229,7 @@
         const fSol = document.getElementById('c_f_sol').value;
         const fNec = document.getElementById('c_f_nec').value;
         const mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(c => c.value).join(', ');
+        if(!document.getElementById('c_nro').value || !fSol || !fNec) return alert("Complete Nro y Fechas");
         ejecutar('create', { nro_sol: document.getElementById('c_nro').value, unidad: document.getElementById('c_unidad').value, activo: mats, f_sol: fSol, f_nec: fNec, detalle: document.getElementById('c_det').value, motivo: document.getElementById('c_mot').value, user: USUARIO_ACTUAL });
         toggleCarga();
     }
