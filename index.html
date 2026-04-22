@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>SGA - Aeronáutica Córdoba</title>
+    <title>Gestor de Solicitudes Dirección de Aeronáutica Córdoba</title>
     <style>
         :root { --azul: #003366; --verde: #27ae60; --rojo: #e74c3c; --amarillo: #f1c40f; --rosa: #fce4ec; --celeste: #e3f2fd; --gris: #f4f7f6; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--gris); margin: 0; padding: 0; font-size: 13px; }
@@ -208,7 +208,7 @@
                 const isT = USUARIO_ACTUAL === 'TECNICA';
                 const uKey = `${s.unidad}|${s.nro_sol}`; // DOBLE LLAVE ÚNICA
 
-                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.nom_g}">
+                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g}">`
                     <td><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
