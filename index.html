@@ -13,7 +13,6 @@
         .app-container { display: none; padding: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
-        /* ESTADOS */
         .status-pendiente { background-color: var(--rosa) !important; }
         .status-ejecucion { background-color: var(--celeste) !important; }
         .status-entrega-parcial { background-color: #fff59d !important; border-left: 5px solid var(--amarillo); }
@@ -95,7 +94,7 @@
             <h3>📋 Trazabilidad</h3>
             <button class="btn" style="background:var(--verde); color:white" id="btn-nueva-sol" onclick="toggleCarga()">+ NUEVA SOLICITUD</button>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9;">
+        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
             <div id="f-admin-only">Unidad: <select id="f_unidad" onchange="filtrar()"><option value="">TODAS</option><option>ADMINISTRACION</option><option>OPERACIONES</option><option>TECNICA</option><option>UOTA</option></select></div>
             Estado: <select id="f_estado" onchange="filtrar()"><option value="">TODOS</option><option>PENDIENTE</option><option>EN EJECUCION</option><option>ENTREGA PARCIAL</option><option>ENTREGADO</option><option>TERMINADO</option></select>
             Buscador: <input type="text" id="f_texto" placeholder="Buscar..." onkeyup="filtrar()" style="flex-grow:1">
@@ -153,6 +152,7 @@
     }
 
     window.renderTotal = function(data) {
+        if(data.error) return alert("Error: " + data.error);
         const cF = document.getElementById('cuerpoFlota'); cF.innerHTML = '';
         data.flota.forEach(f => {
             cF.innerHTML += `<tr><td><strong>${f.patente}</strong></td>
@@ -164,7 +164,7 @@
         data.solicitudes.forEach(s => {
             if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
             const key = s.id_g || ('S_'+s.nro_sol);
-            if (!grupos[key]) grupos[key] = { nom: s.nom_g, sols: [] };
+            if (!grupos[key]) grupos[key] = { nom: s.nom_g, id: s.id_g, sols: [] };
             grupos[key].sols.push(s);
         });
 
@@ -236,7 +236,7 @@
 
     function crearGrupo() {
         const checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(c => c.value);
-        if (checks.length < 2) return alert("Seleccione al menos 2");
+        if (checks.length < 2) return alert("Seleccione al menos 2 solicitudes");
         const nom = prompt("Nombre del Grupo:");
         if (nom) ejecutar('agrupar', { ids: checks.join(','), nombre_grupo: nom, user: USUARIO_ACTUAL });
     }
