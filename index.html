@@ -145,13 +145,21 @@
     }
 
     function formatFecha(f) {
-        if (!f || f === "-" || f === "undefined") return "-";
-        if (typeof f === 'string' && f.includes('-')) {
-            const p = f.split('-');
-            return p[0].length === 4 ? `${p[2]}-${p[1]}-${p[0]}` : f;
+    if (!f || f === "-" || f === "undefined") return "-";
+    
+    // Si la fecha viene como objeto Date o string largo con hora (ISO), 
+    // la convertimos a string y le quitamos todo lo que sobra después de la "T"
+    let fechaLimpia = typeof f === 'string' ? f.split('T')[0] : f.toString().split('T')[0];
+
+    if (fechaLimpia.includes('-')) {
+        const p = fechaLimpia.split('-');
+        // Si el primer bloque tiene 4 dígitos (YYYY-MM-DD), lo damos vuelta a DD-MM-YYYY
+        if (p[0].length === 4) {
+            return `${p[2]}-${p[1]}-${p[0]}`;
         }
-        return f;
     }
+    return fechaLimpia;
+}
 
     function getSemaforo(fStr) {
         const f = formatFecha(fStr); if (f === "-") return { c: 'bg-ok', t: '-' };
