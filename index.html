@@ -208,13 +208,12 @@
                 const isT = USUARIO_ACTUAL === 'TECNICA';
                 const uKey = `${s.unidad}|${s.nro_sol}`; // DOBLE LLAVE ÚNICA
 
-                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g}">
-                    <td><input type="checkbox" class="check-agrupar" value="${uKey}"></td>`;
+              return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g}">
                     <td><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
                     <td>F.Nec: ${formatFecha(s.f_nec)}</td>
-                    <td>
+                    <td>` +
                         <input type="text" id="gip_${uKey}" value="${s.gip}" placeholder="GIP" style="width:50px" ${isT?'disabled':''}>
                         <input type="text" id="oc_${uKey}" value="${s.oc}" placeholder="OC" style="width:50px" ${isT?'disabled':''}>
                         <input type="text" id="fac_${uKey}" value="${s.factura}" placeholder="Fact" style="width:50px" ${isT?'disabled':''}>
