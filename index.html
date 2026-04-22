@@ -13,7 +13,6 @@
         .app-container { display: none; padding: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
-        /* Estados */
         .status-pendiente { background-color: var(--rosa) !important; }
         .status-en-ejecucion { background-color: var(--celeste) !important; }
         .status-entrega-parcial { background-color: #fff59d !important; border-left: 5px solid var(--amarillo); }
@@ -122,7 +121,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec"; // REEMPLAZAR CON TU URL REAL
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec";
     let USUARIO_ACTUAL = "";
     const MATS = ["LV-IHM", "LV-HWY", "LV-KOW", "LV-CDE", "LV-BIU", "LV-BFC", "LQ-KOP", "LQ-COQ", "LQ-COP", "LQ-KDO", "LQ-CCZ", "LQ-BAN", "LQ-HBQ", "AE875UX", "FAK619", "AD150QB", "IXH694"];
 
@@ -145,21 +144,14 @@
     }
 
     function formatFecha(f) {
-    if (!f || f === "-" || f === "undefined") return "-";
-    
-    // Si la fecha viene como objeto Date o string largo con hora (ISO), 
-    // la convertimos a string y le quitamos todo lo que sobra después de la "T"
-    let fechaLimpia = typeof f === 'string' ? f.split('T')[0] : f.toString().split('T')[0];
-
-    if (fechaLimpia.includes('-')) {
-        const p = fechaLimpia.split('-');
-        // Si el primer bloque tiene 4 dígitos (YYYY-MM-DD), lo damos vuelta a DD-MM-YYYY
-        if (p[0].length === 4) {
-            return `${p[2]}-${p[1]}-${p[0]}`;
+        if (!f || f === "-" || f === "undefined") return "-";
+        let fechaLimpia = typeof f === 'string' ? f.split('T')[0] : f.toString().split('T')[0];
+        if (fechaLimpia.includes('-')) {
+            const p = fechaLimpia.split('-');
+            if (p[0].length === 4) return `${p[2]}-${p[1]}-${p[0]}`;
         }
+        return fechaLimpia;
     }
-    return fechaLimpia;
-}
 
     function getSemaforo(fStr) {
         const f = formatFecha(fStr); if (f === "-") return { c: 'bg-ok', t: '-' };
@@ -179,7 +171,6 @@
     window.renderTotal = function(data) {
         if(data.error) return alert("Error: " + data.error);
         
-        // Flota
         const cF = document.getElementById('cuerpoFlota'); 
         cF.innerHTML = '';
         data.flota.forEach(f => {
@@ -187,7 +178,6 @@
                 <td>${celdaF(f.patente, 'itv', f.itv)}</td><td>${celdaF(f.patente, 'pov', f.pov)}</td><td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td></tr>`;
         });
 
-        // Trazabilidad
         const cont = document.getElementById('contenedor-trazabilidad'); 
         cont.innerHTML = '';
         const grupos = {};
@@ -206,9 +196,9 @@
                 const sem = getSemaforo(s.f_nec);
                 const urg = (s.estado !== 'TERMINADO' && s.estado !== 'ENTREGADO' && s.estado !== 'ANULADO') && sem.c !== 'bg-ok';
                 const isT = USUARIO_ACTUAL === 'TECNICA';
-                const uKey = `${s.unidad}|${s.nro_sol}`; // DOBLE LLAVE ÚNICA
+                const uKey = `${s.unidad}|${s.nro_sol}`;
 
-              return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g}">
+                return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g}">
                     <td><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
@@ -234,13 +224,6 @@
                         ${s.id_g ? `<button class="btn" style="background:#607d8b; color:white; margin-top:3px" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">🗑️</button>` : ''}
                     </td>
                 </tr>`;
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn" style="background:var(--verde); color:white" onclick="saveSol('${s.nro_sol}','${s.id_g}','${s.unidad}')">💾</button>
-                        ${s.id_g ? `<button class="btn" style="background:#607d8b; color:white; margin-top:3px" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">🗑️</button>` : ''}
-                    </td>
-                </tr>`;
             }).join('');
             cont.innerHTML += `<div class="group-box">${htmlG}<table>${filas}</table></div>`;
         }
@@ -257,68 +240,4 @@
     }
 
     function saveF(pat, campo) {
-        ejecutar('updateFlota', { patente: pat, campo: campo, valor: document.getElementById(`i_${pat}_${campo}`).value, user: USUARIO_ACTUAL });
-    }
-
-    function saveSol(n, idG, u) {
-        const key = `${u}|${n}`;
-        ejecutar('update', { 
-            nro_sol: n, id_g: idG, unidad: u, 
-            gip: document.getElementById(`gip_${key}`).value, 
-            oc: document.getElementById(`oc_${key}`).value,
-            factura: document.getElementById(`fac_${key}`).value, 
-            obs: document.getElementById(`obs_${key}`).value, 
-            estado: document.getElementById(`est_${key}`).value, 
-            user: USUARIO_ACTUAL 
-        });
-    }
-
-    function desagrupar(n, u) { if(confirm("¿Quitar del grupo?")) ejecutar('desagrupar', { nro_sol: n, unidad: u, user: USUARIO_ACTUAL }); }
-    
-    function toggleCarga() { 
-        const f = document.getElementById('form-carga'); 
-        f.style.display = f.style.display === 'none' ? 'block' : 'none'; 
-    }
-
-    function enviarNueva() {
-        const fSol = document.getElementById('c_f_sol').value;
-        const fNec = document.getElementById('c_f_nec').value;
-        const mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(c => c.value).join(', ');
-        if(!document.getElementById('c_nro').value || !fSol || !fNec) return alert("Complete Nro y Fechas");
-        ejecutar('create', { nro_sol: document.getElementById('c_nro').value, unidad: document.getElementById('c_unidad').value, activo: mats, f_sol: fSol, f_nec: fNec, detalle: document.getElementById('c_det').value, motivo: document.getElementById('c_mot').value, user: USUARIO_ACTUAL });
-        toggleCarga();
-    }
-
-    function crearGrupo() {
-        const checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(c => c.value);
-        if (checks.length < 2) return alert("Seleccione al menos 2");
-        const nom = prompt("Nombre del Grupo:");
-        if (nom) ejecutar('agrupar', { ids: checks.join(','), nombre_grupo: nom, user: USUARIO_ACTUAL });
-    }
-
-    function ejecutar(act, par) {
-        let url = `${WEB_APP_URL}?action=${act}&callback=renderTotal`;
-        for (let k in par) url += `&${k}=${encodeURIComponent(par[k])}`;
-        const s = document.createElement('script'); s.src = url; document.body.appendChild(s);
-    }
-
-    function filtrar() {
-        const u = document.getElementById('f_unidad').value;
-        const t = document.getElementById('f_texto').value.toLowerCase();
-        const estadosPermitidos = Array.from(document.querySelectorAll('.f-estado:checked')).map(c => c.value);
-        
-        document.querySelectorAll('.fila-data').forEach(f => {
-            const matchU = !u || f.dataset.unidad === u;
-            const matchE = estadosPermitidos.includes(f.dataset.estado);
-            const matchT = !t || f.dataset.txt.toLowerCase().includes(t);
-            f.style.display = (matchU && matchE && matchT) ? '' : 'none';
-        });
-        
-        document.querySelectorAll('.group-box').forEach(gb => {
-            const tieneFilasVisibles = Array.from(gb.querySelectorAll('.fila-data')).some(r => r.style.display !== 'none');
-            gb.style.display = tieneFilasVisibles ? '' : 'none';
-        });
-    }
-</script>
-</body>
-</html>
+        ejecutar('updateFlota', { patente: pat, campo: campo, valor: document.getElementById(`i_${
