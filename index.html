@@ -213,12 +213,12 @@
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
                     <td>F.Nec: ${formatFecha(s.f_nec)}</td>
-                    <td>` +
-                        <input type="text" id="gip_${uKey}" value="${s.gip}" placeholder="GIP" style="width:50px" ${isT?'disabled':''}>
-                        <input type="text" id="oc_${uKey}" value="${s.oc}" placeholder="OC" style="width:50px" ${isT?'disabled':''}>
-                        <input type="text" id="fac_${uKey}" value="${s.factura}" placeholder="Fact" style="width:50px" ${isT?'disabled':''}>
+                    <td>
+                        <input type="text" id="gip_${uKey}" value="${s.gip || ''}" placeholder="GIP" style="width:50px" ${isT?'disabled':''}>
+                        <input type="text" id="oc_${uKey}" value="${s.oc || ''}" placeholder="OC" style="width:50px" ${isT?'disabled':''}>
+                        <input type="text" id="fac_${uKey}" value="${s.factura || ''}" placeholder="Fact" style="width:50px" ${isT?'disabled':''}>
                     </td>
-                    <td><textarea id="obs_${uKey}" style="width:100px; height:40px;">${s.obs}</textarea></td>
+                    <td><textarea id="obs_${uKey}" style="width:100px; height:40px;">${s.obs || ''}</textarea></td>
                     <td>
                         <select id="est_${uKey}">
                             <option value="PENDIENTE" ${s.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option>
@@ -227,6 +227,13 @@
                             <option value="ENTREGADO" ${s.estado==='ENTREGADO'?'selected':''}>ENTREGADO</option>
                             <option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>ANULADO</option>
                             ${!isT ? `<option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>` : ''}
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn" style="background:var(--verde); color:white" onclick="saveSol('${s.nro_sol}','${s.id_g || ''}','${s.unidad}')">💾</button>
+                        ${s.id_g ? `<button class="btn" style="background:#607d8b; color:white; margin-top:3px" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">🗑️</button>` : ''}
+                    </td>
+                </tr>`;
                         </select>
                     </td>
                     <td>
