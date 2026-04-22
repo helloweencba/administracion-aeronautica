@@ -13,10 +13,12 @@
         .app-container { display: none; padding: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
+        /* Estados */
         .status-pendiente { background-color: var(--rosa) !important; }
-        .status-ejecucion { background-color: var(--celeste) !important; }
+        .status-en-ejecucion { background-color: var(--celeste) !important; }
         .status-entrega-parcial { background-color: #fff59d !important; border-left: 5px solid var(--amarillo); }
         .status-entregado { background-color: #c8e6c9 !important; }
+        .status-anulado { background-color: #cfd8dc !important; text-decoration: line-through; }
         .status-terminado { background-color: #a5d6a7 !important; font-weight: bold; }
 
         .urgente { border: 2px solid var(--rojo) !important; animation: blink 1.5s infinite; }
@@ -34,6 +36,9 @@
         .group-header { background: #455a64; color: white; padding: 8px; font-weight: bold; border-radius: 6px 6px 0 0; }
         .group-box { border: 2px solid #455a64; border-radius: 6px; margin-bottom: 15px; }
         .btn { border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        
+        .filtros-box { display: flex; flex-wrap: wrap; gap: 15px; padding: 15px; background: #f9f9f9; border-radius: 8px; margin-bottom: 15px; border: 1px solid #eee; align-items: center;}
+        .chk-label { display: flex; align-items: center; gap: 5px; cursor: pointer; background: white; padding: 5px 10px; border-radius: 5px; border: 1px solid #ddd; font-size: 11px;}
     </style>
 </head>
 <body>
@@ -73,7 +78,7 @@
                 F. Nec: <input type="date" id="c_f_nec" style="width:100%">
             </div>
             <div>
-                Matrículas:<br>
+                Activo:<br>
                 <div id="check-mats" style="height:150px; overflow-y:auto; background:white; border:1px solid #ccc; padding:5px;"></div>
             </div>
             <div>
@@ -94,18 +99,30 @@
             <h3>📋 Trazabilidad</h3>
             <button class="btn" style="background:var(--verde); color:white" id="btn-nueva-sol" onclick="toggleCarga()">+ NUEVA SOLICITUD</button>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
+        
+        <div class="filtros-box">
             <div id="f-admin-only">Unidad: <select id="f_unidad" onchange="filtrar()"><option value="">TODAS</option><option>ADMINISTRACION</option><option>OPERACIONES</option><option>TECNICA</option><option>UOTA</option></select></div>
-            Estado: <select id="f_estado" onchange="filtrar()"><option value="">TODOS</option><option>PENDIENTE</option><option>EN EJECUCION</option><option>ENTREGA PARCIAL</option><option>ENTREGADO</option><option>TERMINADO</option></select>
-            Buscador: <input type="text" id="f_texto" placeholder="Buscar..." onkeyup="filtrar()" style="flex-grow:1">
+            
+            <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                <b>Estados:</b>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="PENDIENTE" checked onchange="filtrar()"> Pendiente</label>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="EN EJECUCION" checked onchange="filtrar()"> Ejecución</label>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="ENTREGA PARCIAL" checked onchange="filtrar()"> E. Parcial</label>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="ENTREGADO" checked onchange="filtrar()"> Entregado</label>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="ANULADO" onchange="filtrar()"> Anulado</label>
+                <label class="chk-label"><input type="checkbox" class="f-estado" value="TERMINADO" onchange="filtrar()"> Terminado</label>
+            </div>
+
+            <input type="text" id="f_texto" placeholder="Buscar..." onkeyup="filtrar()" style="flex-grow:1; padding:8px; border-radius:6px; border:1px solid #ddd;">
             <button class="btn" style="background:#455a64; color:white" onclick="crearGrupo()">📦 AGRUPAR</button>
         </div>
+
         <div id="contenedor-trazabilidad"></div>
     </div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZYBhN9hKVz4e2GE2tRDTyxiRA53hA6JHtkiInORCmFZ8JwBB9nWfUIAO9YGL4Fh1A/exec"; // REEMPLAZAR CON TU URL REAL
     let USUARIO_ACTUAL = "";
     const MATS = ["LV-IHM", "LV-HWY", "LV-KOW", "LV-CDE", "LV-BIU", "LV-BFC", "LQ-KOP", "LQ-COQ", "LQ-COP", "LQ-KDO", "LQ-CCZ", "LQ-BAN", "LQ-HBQ", "AE875UX", "FAK619", "AD150QB", "IXH694"];
 
@@ -153,17 +170,23 @@
 
     window.renderTotal = function(data) {
         if(data.error) return alert("Error: " + data.error);
-        const cF = document.getElementById('cuerpoFlota'); cF.innerHTML = '';
+        
+        // Flota
+        const cF = document.getElementById('cuerpoFlota'); 
+        cF.innerHTML = '';
         data.flota.forEach(f => {
             cF.innerHTML += `<tr><td><strong>${f.patente}</strong></td>
                 <td>${celdaF(f.patente, 'itv', f.itv)}</td><td>${celdaF(f.patente, 'pov', f.pov)}</td><td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td></tr>`;
         });
 
-        const cont = document.getElementById('contenedor-trazabilidad'); cont.innerHTML = '';
+        // Trazabilidad
+        const cont = document.getElementById('contenedor-trazabilidad'); 
+        cont.innerHTML = '';
         const grupos = {};
+        
         data.solicitudes.forEach(s => {
             if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
-            const key = s.id_g || ('S_'+s.nro_sol);
+            const key = s.id_g || ('S_' + s.unidad + '_' + s.nro_sol);
             if (!grupos[key]) grupos[key] = { nom: s.nom_g, id: s.id_g, sols: [] };
             grupos[key].sols.push(s);
         });
@@ -173,36 +196,40 @@
             const htmlG = g.nom ? `<div class="group-header">📦 GRUPO: ${g.nom}</div>` : '';
             let filas = g.sols.map(s => {
                 const sem = getSemaforo(s.f_nec);
-                const urg = (s.estado === 'PENDIENTE' || s.estado === 'EN EJECUCION') && sem.c !== 'bg-ok';
+                const urg = (s.estado !== 'TERMINADO' && s.estado !== 'ENTREGADO' && s.estado !== 'ANULADO') && sem.c !== 'bg-ok';
                 const isT = USUARIO_ACTUAL === 'TECNICA';
+                const uKey = `${s.unidad}|${s.nro_sol}`; // DOBLE LLAVE ÚNICA
+
                 return `<tr class="fila-data status-${s.estado.toLowerCase().replace(/ /g,'-')} ${urg?'urgente':''}" data-unidad="${s.unidad}" data-estado="${s.estado}" data-txt="${s.nro_sol} ${s.detalle} ${s.nom_g}">
-                    <td><input type="checkbox" class="check-agrupar" value="${s.nro_sol}"></td>
+                    <td><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
                     <td><small style="color:var(--azul); font-weight:bold;">${s.unidad}</small><br><b style="font-size:14px;">${s.nro_sol}</b></td>
                     <td><b>${s.activo}</b><br><small>${s.detalle}</small></td>
                     <td>F.Nec: ${formatFecha(s.f_nec)}</td>
                     <td>
-                        <input type="text" id="gip_${s.nro_sol}" value="${s.gip}" placeholder="GIP" style="width:50px" ${isT?'disabled':''}>
-                        <input type="text" id="fac_${s.nro_sol}" value="${s.factura}" placeholder="Fact" style="width:50px" ${isT?'disabled':''}>
-                        <input type="text" id="imp_${s.nro_sol}" value="${s.importe}" placeholder="$" style="width:50px" ${isT?'disabled':''}>
+                        <input type="text" id="gip_${uKey}" value="${s.gip}" placeholder="GIP" style="width:50px" ${isT?'disabled':''}>
+                        <input type="text" id="oc_${uKey}" value="${s.oc}" placeholder="OC" style="width:50px" ${isT?'disabled':''}>
+                        <input type="text" id="fac_${uKey}" value="${s.factura}" placeholder="Fact" style="width:50px" ${isT?'disabled':''}>
                     </td>
-                    <td><textarea id="obs_${s.nro_sol}" style="width:100px; height:40px;">${s.obs}</textarea></td>
+                    <td><textarea id="obs_${uKey}" style="width:100px; height:40px;">${s.obs}</textarea></td>
                     <td>
-                        <select id="est_${s.nro_sol}">
+                        <select id="est_${uKey}">
                             <option value="PENDIENTE" ${s.estado==='PENDIENTE'?'selected':''}>PENDIENTE</option>
                             <option value="EN EJECUCION" ${s.estado==='EN EJECUCION'?'selected':''}>EN EJECUCION</option>
                             <option value="ENTREGA PARCIAL" ${s.estado==='ENTREGA PARCIAL'?'selected':''}>E. PARCIAL</option>
                             <option value="ENTREGADO" ${s.estado==='ENTREGADO'?'selected':''}>ENTREGADO</option>
+                            <option value="ANULADO" ${s.estado==='ANULADO'?'selected':''}>ANULADO</option>
                             ${!isT ? `<option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>` : ''}
                         </select>
                     </td>
                     <td>
-                        <button class="btn" style="background:var(--verde); color:white" onclick="saveSol('${s.nro_sol}','${s.id_g}')">💾</button>
-                        ${s.id_g ? `<button class="btn" style="background:#607d8b; color:white; margin-top:3px" onclick="desagrupar('${s.nro_sol}')">🗑️</button>` : ''}
+                        <button class="btn" style="background:var(--verde); color:white" onclick="saveSol('${s.nro_sol}','${s.id_g}','${s.unidad}')">💾</button>
+                        ${s.id_g ? `<button class="btn" style="background:#607d8b; color:white; margin-top:3px" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">🗑️</button>` : ''}
                     </td>
                 </tr>`;
             }).join('');
             cont.innerHTML += `<div class="group-box">${htmlG}<table>${filas}</table></div>`;
         }
+        filtrar();
     }
 
     function celdaF(pat, campo, valor) {
@@ -218,12 +245,25 @@
         ejecutar('updateFlota', { patente: pat, campo: campo, valor: document.getElementById(`i_${pat}_${campo}`).value, user: USUARIO_ACTUAL });
     }
 
-    function saveSol(n, idG) {
-        ejecutar('update', { nro_sol: n, id_g: idG, gip: document.getElementById(`gip_${n}`).value, factura: document.getElementById(`fac_${n}`).value, importe: document.getElementById(`imp_${n}`).value, obs: document.getElementById(`obs_${n}`).value, estado: document.getElementById(`est_${n}`).value, user: USUARIO_ACTUAL });
+    function saveSol(n, idG, u) {
+        const key = `${u}|${n}`;
+        ejecutar('update', { 
+            nro_sol: n, id_g: idG, unidad: u, 
+            gip: document.getElementById(`gip_${key}`).value, 
+            oc: document.getElementById(`oc_${key}`).value,
+            factura: document.getElementById(`fac_${key}`).value, 
+            obs: document.getElementById(`obs_${key}`).value, 
+            estado: document.getElementById(`est_${key}`).value, 
+            user: USUARIO_ACTUAL 
+        });
     }
 
-    function desagrupar(n) { if(confirm("¿Quitar del grupo?")) ejecutar('desagrupar', { nro_sol: n, user: USUARIO_ACTUAL }); }
-    function toggleCarga() { const f = document.getElementById('form-carga'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
+    function desagrupar(n, u) { if(confirm("¿Quitar del grupo?")) ejecutar('desagrupar', { nro_sol: n, unidad: u, user: USUARIO_ACTUAL }); }
+    
+    function toggleCarga() { 
+        const f = document.getElementById('form-carga'); 
+        f.style.display = f.style.display === 'none' ? 'block' : 'none'; 
+    }
 
     function enviarNueva() {
         const fSol = document.getElementById('c_f_sol').value;
@@ -236,7 +276,7 @@
 
     function crearGrupo() {
         const checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(c => c.value);
-        if (checks.length < 2) return alert("Seleccione al menos 2 solicitudes");
+        if (checks.length < 2) return alert("Seleccione al menos 2");
         const nom = prompt("Nombre del Grupo:");
         if (nom) ejecutar('agrupar', { ids: checks.join(','), nombre_grupo: nom, user: USUARIO_ACTUAL });
     }
@@ -249,13 +289,19 @@
 
     function filtrar() {
         const u = document.getElementById('f_unidad').value;
-        const e = document.getElementById('f_estado').value;
         const t = document.getElementById('f_texto').value.toLowerCase();
+        const estadosPermitidos = Array.from(document.querySelectorAll('.f-estado:checked')).map(c => c.value);
+        
         document.querySelectorAll('.fila-data').forEach(f => {
             const matchU = !u || f.dataset.unidad === u;
-            const matchE = !e || f.dataset.estado === e;
+            const matchE = estadosPermitidos.includes(f.dataset.estado);
             const matchT = !t || f.dataset.txt.toLowerCase().includes(t);
             f.style.display = (matchU && matchE && matchT) ? '' : 'none';
+        });
+        
+        document.querySelectorAll('.group-box').forEach(gb => {
+            const tieneFilasVisibles = Array.from(gb.querySelectorAll('.fila-data')).some(r => r.style.display !== 'none');
+            gb.style.display = tieneFilasVisibles ? '' : 'none';
         });
     }
 </script>
