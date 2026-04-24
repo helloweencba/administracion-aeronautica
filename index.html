@@ -506,7 +506,7 @@ window.renderTotal = function(data) {
   const grupos = {};
 
   data.solicitudes.forEach(s => {
-    if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
+    if (USUARIO_ACTUAL === 'TECNICA' && String(s.unidad).toUpperCase() !== 'TECNICA') return;
     const key = s.id_g || ('_' + s.unidad + '_' + s.nro_sol);
     if (!grupos[key]) grupos[key] = { nom: s.nom_g, id: s.id_g, sols: [] };
     grupos[key].sols.push(s);
