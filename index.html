@@ -480,13 +480,67 @@ function cargarDatos() {
 // ── RENDER PRINCIPAL ──
 window.renderTotal = function(data) {
   setLoading(false);
-  if (data.error) { mostrarToast("❌", "Error", data.error); return; }
+  console.log("📥 DATOS RECIBIDOS DE GOOGLE:", data); // <--- ESTO ES VITAL PARA VER EL ERROR
 
-  // Cargar MATS dinámicos desde Flota
-  if (data.flota && data.flota.length > 0) {
-    MATS_DINAMICOS = data.flota.map(f => f.patente || f[Object.keys(f)[0]]).filter(Boolean);
-    cargarCheckboxes();
+  if (!data) {
+    console.error("❌ No se recibieron datos.");
+    return;
   }
+
+  if (data.error) { 
+    mostrarToast("❌", "Error de Backend", data.error); 
+    return; 
+  }
+
+  // Cargar MATS dinámicos desde Flota (con protección)
+  if (data.flota && data.flota.length > 0) {
+    try {
+      MATS_DINAMICOS = data.flota.map(f => f.patente || "").filter(Boolean);
+      cargarCheckboxes();
+      renderFlota(data.flota);
+    } catch (e) {
+      console.error("❌ Error procesando flota:", e);
+    }
+  }
+
+  const c = document.getElementById('cards-container');
+  if (!c) return;
+  c.innerHTML = '';
+
+  if (!data.solicitudes || data.solicitudes.length === 0) {
+    c.innerHTML = '<p style="text-align:center; padding:20px; color:#5a6a80;">No hay solicitudes registradas en el Excel.</p>';
+    return;
+  }
+
+  // Agrupar Solicitudes
+  const grupos = {};
+  data.solicitudes.forEach(s => {
+    // FILTRO MEJORADO: No distingue mayúsculas/minúsculas
+    const unidadNormalizada = String(s.unidad || "").toUpperCase().trim();
+    if (USUARIO_ACTUAL === 'TECNICA' && unidadNormalizada !== 'TECNICA') {
+      return; 
+    }
+
+    const idG = s.id_g || 'SIN_GRUPO';
+    if (!grupos[idG]) {
+      grupos[idG] = { 
+        id: idG, 
+        nombre: s.nom_g || 'Solicitudes Individuales', 
+        items: [] 
+      };
+    }
+    grupos[idG].items.push(s);
+  });
+
+  // Dibujar los grupos (Renderizado)
+  Object.values(grupos).forEach(g => {
+    if (g.items.length === 0) return;
+    const gb = crearCajaGrupo(g);
+    c.appendChild(gb);
+  });
+
+  console.log("✅ Renderizado completado con éxito");
+};
 
   // Flota
   const cF = document.getElementById('cuerpoFlota');
