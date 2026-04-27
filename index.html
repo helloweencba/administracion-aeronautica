@@ -7,25 +7,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --azul:     #001f4d;
-  --azul-mid: #0a3270;
-  --azul-brd: #1e4d8c;
-  --azul-txt: #7a9cc4;
-  --dorado:   #c9a84c;
-  --dorado-d: #a07830;
-  --blanco:   #ffffff;
-  --gris-bg:  #f0f3f8;
-  --gris-brd: #d0d8e8;
-  --rojo:     #c0392b;
-  --rojo-bg:  #fdf0ef;
-  --amarillo-bg: #fef9ec;
-  --verde:    #1a7a3a;
-  --verde-bg: #edf7f1;
-  --gris-txt: #5a6a80;
-  --font:     'Barlow', sans-serif;
-  --font-cond:'Barlow Condensed', sans-serif;
+  --azul:      #001f4d;
+  --azul-mid:  #0a3270;
+  --azul-brd:  #1e4d8c;
+  --azul-txt:  #7a9cc4;
+  --dorado:    #c9a84c;
+  --dorado-d:  #a07830;
+  --blanco:    #ffffff;
+  --gris-bg:   #f0f3f8;
+  --gris-brd:  #d0d8e8;
+  --rojo:      #c0392b;
+  --rojo-bg:   #fdf0ef;
+  --amarillo-bg:#fef9ec;
+  --verde:     #1a7a3a;
+  --verde-bg:  #edf7f1;
+  --gris-txt:  #5a6a80;
+  --font:      'Barlow', sans-serif;
+  --font-cond: 'Barlow Condensed', sans-serif;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font); background: var(--gris-bg); color: var(--azul); font-size: 13px; }
 
@@ -33,120 +32,107 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 #login-screen {
   position: fixed; inset: 0;
   background: var(--azul);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 2000;
   background-image: radial-gradient(ellipse at 60% 40%, #0a3270 0%, #001f4d 70%);
+  display: flex; justify-content: center; align-items: center; z-index: 2000;
 }
 .login-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(201,168,76,0.25);
-  border-radius: 16px;
-  padding: 48px 40px 40px;
-  text-align: center;
-  width: 380px;
-  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 18px; padding: 48px 44px 40px;
+  text-align: center; width: 400px;
+  backdrop-filter: blur(10px);
 }
-.login-logo {
-  width: 160px;
-  filter: brightness(0) invert(1);
+.login-logo-wrap {
+  display: flex; justify-content: center; align-items: center;
   margin-bottom: 20px;
 }
+.login-logo {
+  width: 170px; height: auto;
+  filter: brightness(0) invert(1);
+}
+.login-logo-fallback {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: var(--azul-mid);
+  border: 3px solid var(--dorado);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-cond); font-size: 11px; font-weight: 700;
+  color: var(--dorado); letter-spacing: 0.05em; text-align: center;
+  line-height: 1.3;
+}
 .login-title {
-  font-family: var(--font-cond);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--blanco);
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-  margin-bottom: 4px;
+  font-family: var(--font-cond); font-size: 22px; font-weight: 700;
+  color: var(--blanco); letter-spacing: 0.04em; line-height: 1.2; margin-bottom: 4px;
 }
-.login-sub {
-  font-size: 11px;
-  color: var(--azul-txt);
-  letter-spacing: 0.06em;
-  margin-bottom: 28px;
-}
+.login-sub { font-size: 11px; color: var(--azul-txt); letter-spacing: 0.07em; margin-bottom: 10px; }
 .login-divider { width: 40px; height: 2px; background: var(--dorado); margin: 0 auto 24px; border-radius: 2px; }
 .login-card select {
   width: 100%; padding: 11px 14px;
-  background: var(--azul-mid);
-  border: 1px solid var(--azul-brd);
-  border-radius: 8px;
-  color: var(--blanco);
-  font-family: var(--font);
-  font-size: 13px;
-  margin-bottom: 14px;
-  appearance: none;
-  cursor: pointer;
+  background: var(--azul-mid); border: 1px solid var(--azul-brd);
+  border-radius: 8px; color: var(--blanco);
+  font-family: var(--font); font-size: 13px; margin-bottom: 14px;
+  appearance: none; cursor: pointer;
 }
 .login-card select option { background: var(--azul-mid); }
 .btn-login {
-  width: 100%; padding: 12px;
-  background: var(--dorado);
-  color: var(--azul);
+  width: 100%; padding: 13px;
+  background: var(--dorado); color: var(--azul);
   border: none; border-radius: 8px;
-  font-family: var(--font-cond);
-  font-size: 15px; font-weight: 700;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: background 0.2s;
+  font-family: var(--font-cond); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.07em; cursor: pointer; transition: background 0.2s;
 }
-.btn-login:hover { background: var(--dorado-d); }
+.btn-login:hover { background: var(--dorado-d); color: var(--blanco); }
 
 /* ── HEADER ── */
 .app-header {
-  background: var(--azul);
-  padding: 10px 24px;
+  background: var(--azul); padding: 10px 24px;
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 3px solid var(--dorado);
   position: sticky; top: 0; z-index: 100;
 }
-.header-logo { height: 38px; filter: brightness(0) invert(1); }
-.header-info h3 { color: var(--blanco); font-family: var(--font-cond); font-size: 16px; font-weight: 700; letter-spacing: 0.03em; margin-bottom: 1px; }
+.header-logo { height: 36px; filter: brightness(0) invert(1); }
+.header-logo-fallback {
+  height: 36px; width: 36px; border-radius: 50%;
+  background: var(--azul-mid); border: 2px solid var(--dorado);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: var(--dorado); font-family: var(--font-cond);
+  letter-spacing: 0.03em; text-align: center; line-height: 1.2;
+}
+.header-info h3 { color: var(--blanco); font-family: var(--font-cond); font-size: 15px; font-weight: 700; letter-spacing: 0.03em; }
 .header-info small { color: var(--azul-txt); font-size: 11px; }
 .btn-sync {
-  background: transparent;
-  border: 1px solid var(--dorado);
-  color: var(--dorado);
-  border-radius: 7px; padding: 7px 16px;
-  font-family: var(--font); font-size: 12px; font-weight: 600;
-  cursor: pointer; letter-spacing: 0.04em;
-  transition: background 0.2s, color 0.2s;
+  background: transparent; border: 1px solid var(--dorado); color: var(--dorado);
+  border-radius: 7px; padding: 7px 16px; font-family: var(--font); font-size: 12px; font-weight: 600;
+  cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s, color 0.2s;
 }
 .btn-sync:hover { background: var(--dorado); color: var(--azul); }
 
 /* ── LAYOUT ── */
 #main-app { display: none; }
-.app-body { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+.app-body { padding: 20px 24px; max-width: 1500px; margin: 0 auto; }
 
 /* ── CARD ── */
 .card {
-  background: var(--blanco);
-  border: 0.5px solid var(--gris-brd);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
+  background: var(--blanco); border: 0.5px solid var(--gris-brd);
+  border-radius: 12px; padding: 20px; margin-bottom: 20px;
   box-shadow: 0 2px 10px rgba(0,31,77,0.05);
 }
 .card-title {
-  font-family: var(--font-cond);
-  font-size: 15px; font-weight: 700;
-  color: var(--azul);
-  letter-spacing: 0.03em;
+  font-family: var(--font-cond); font-size: 15px; font-weight: 700;
+  color: var(--azul); letter-spacing: 0.03em;
   display: flex; align-items: center; gap: 8px;
-  border-bottom: 1px solid var(--gris-brd);
-  padding-bottom: 12px; margin-bottom: 16px;
+  border-bottom: 1px solid var(--gris-brd); padding-bottom: 12px; margin-bottom: 16px;
 }
+.top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 
-/* ── FORMULARIO NUEVA SOLICITUD ── */
+/* ── FORMULARIO ── */
 #form-carga { display: none; border: 1px solid var(--dorado); background: #fdfaf3; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 12px; }
 .form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--gris-txt); letter-spacing: 0.05em; margin-bottom: 5px; }
 .form-group input, .form-group select, .form-group textarea {
   width: 100%; padding: 8px 10px;
   border: 1px solid var(--gris-brd); border-radius: 7px;
-  font-family: var(--font); font-size: 13px; color: var(--azul);
-  background: var(--blanco);
+  font-family: var(--font); font-size: 13px; color: var(--azul); background: var(--blanco);
 }
 .form-group textarea { resize: vertical; }
 #check-mats {
@@ -161,12 +147,11 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 .flota-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--azul-txt); letter-spacing: 0.05em; border-bottom: 1px solid var(--gris-brd); }
 .flota-table td { padding: 8px 12px; border-bottom: 0.5px solid var(--gris-brd); }
 .flota-table tr:last-child td { border-bottom: none; }
-.flota-table td:first-child { font-weight: 600; color: var(--azul); font-size: 13px; }
+.flota-table td:first-child { font-weight: 600; color: var(--azul); }
 .semaforo-pill {
   display: inline-flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 4px 10px;
-  border-radius: 6px; font-size: 12px; font-weight: 500;
-  min-width: 110px;
+  gap: 8px; padding: 4px 10px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; min-width: 120px;
 }
 .sem-ok      { background: var(--verde-bg); color: var(--verde); border: 1px solid #a3d9b1; }
 .sem-aviso   { background: var(--amarillo-bg); color: #7a5a00; border: 1px solid #f0d580; }
@@ -174,133 +159,102 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 
 /* ── FILTROS ── */
 .filtros-box {
-  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
   background: var(--gris-bg); border-radius: 8px;
-  padding: 12px 16px; margin-bottom: 16px;
-  border: 0.5px solid var(--gris-brd);
+  padding: 12px 16px; margin-bottom: 16px; border: 0.5px solid var(--gris-brd);
 }
 .filtros-box select, .filtros-box input[type="text"] {
   padding: 7px 10px; border-radius: 7px;
   border: 1px solid var(--gris-brd); font-family: var(--font); font-size: 12px;
   color: var(--azul); background: var(--blanco);
 }
-.filtros-box input[type="text"] { flex-grow: 1; min-width: 160px; }
+.filtros-box input[type="text"] { flex-grow: 1; min-width: 180px; }
 .chk-label {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 11px; font-weight: 500; cursor: pointer;
-  background: var(--blanco); padding: 5px 10px;
-  border-radius: 6px; border: 1px solid var(--gris-brd);
-  color: var(--azul);
+  display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500;
+  cursor: pointer; background: var(--blanco); padding: 5px 10px;
+  border-radius: 6px; border: 1px solid var(--gris-brd); color: var(--azul);
 }
 
-/* ── GRUPO ── */
+/* ── GRUPOS ── */
 .group-box { border: 0.5px solid var(--gris-brd); border-radius: 10px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,31,77,0.04); }
-.group-header {
-  background: var(--azul);
-  padding: 9px 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
+.group-header { background: var(--azul); padding: 9px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 .group-header-name { color: var(--blanco); font-family: var(--font-cond); font-size: 14px; font-weight: 700; letter-spacing: 0.03em; }
 .group-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.gpill {
-  font-size: 10px; font-weight: 600; padding: 2px 9px;
-  border-radius: 10px; letter-spacing: 0.03em;
-}
-.gpill-pendiente   { background: #fce4ec; color: #8b1a1a; }
-.gpill-ejecucion   { background: #e3f2fd; color: #0d47a1; }
-.gpill-parcial     { background: #fff9e6; color: #7a5a00; }
-.gpill-entregado   { background: #e8f5e9; color: #1b5e20; }
-.gpill-anulado     { background: #eceff1; color: #455a64; }
-.gpill-terminado   { background: #e8f5e9; color: #1b5e20; font-style: italic; }
+.gpill { font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 10px; letter-spacing: 0.03em; }
+.gpill-PENDIENTE        { background: #fce4ec; color: #8b1a1a; }
+.gpill-EN-EJECUCION     { background: #e3f2fd; color: #0d47a1; }
+.gpill-ENTREGA-PARCIAL  { background: #fff9e6; color: #7a5a00; }
+.gpill-ENTREGADO        { background: #e8f5e9; color: #1b5e20; }
+.gpill-ANULADO          { background: #eceff1; color: #455a64; }
+.gpill-TERMINADO        { background: #c8e6c9; color: #1b5e20; font-style: italic; }
 
-/* ── TABLA DE SOLICITUDES ── */
+/* ── TABLA SOLICITUDES ── */
 .sol-table { width: 100%; border-collapse: collapse; }
 .sol-table td { padding: 9px 10px; border-bottom: 0.5px solid var(--gris-brd); vertical-align: middle; }
 .sol-table tr:last-child td { border-bottom: none; }
 .unidad-tag { font-size: 10px; font-weight: 600; color: var(--azul-txt); letter-spacing: 0.06em; }
-.nro-sol { font-family: var(--font-cond); font-size: 16px; font-weight: 700; color: var(--azul); }
+.nro-sol { font-family: var(--font-cond); font-size: 17px; font-weight: 700; color: var(--azul); }
 .activo-txt { font-weight: 600; color: var(--azul); }
 .detalle-txt { font-size: 11px; color: var(--gris-txt); }
 .fecha-ok      { color: var(--verde); font-weight: 500; font-size: 12px; }
-.fecha-aviso   { color: #9a6f00; font-weight: 500; font-size: 12px; }
-.fecha-vencida { color: var(--rojo); font-weight: 600; font-size: 12px; }
+.fecha-aviso   { color: #9a6f00; font-weight: 600; font-size: 12px; }
+.fecha-vencida { color: var(--rojo); font-weight: 700; font-size: 12px; }
 
-.campo-mini { width: 56px; padding: 5px 6px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; color: var(--azul); text-align: center; }
+.campo-mini { width: 60px; padding: 5px 6px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; color: var(--azul); text-align: center; }
 .campo-mini:focus { outline: none; border-color: var(--dorado); }
-.obs-input { width: 110px; height: 38px; padding: 5px 7px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; resize: none; }
+.obs-input { width: 120px; height: 40px; padding: 5px 7px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; resize: none; }
 .obs-input:focus { outline: none; border-color: var(--dorado); }
-.estado-select { padding: 5px 7px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; color: var(--azul); background: var(--blanco); }
+.estado-select { padding: 6px 7px; border: 1px solid var(--gris-brd); border-radius: 5px; font-family: var(--font); font-size: 12px; color: var(--azul); background: var(--blanco); }
 
 /* estados de fila */
-.status-pendiente   { background: #fff5f5 !important; }
-.status-en-ejecucion{ background: #f0f7ff !important; }
-.status-entrega-parcial { background: #fffbee !important; }
-.status-entregado   { background: #f0faf4 !important; }
-.status-anulado     { background: #f5f5f5 !important; opacity: 0.7; }
-.status-terminado   { background: #e8f5e9 !important; }
-.urgente { animation: blink-brd 1.8s infinite; }
-@keyframes blink-brd { 0%,100%{ box-shadow: inset 3px 0 0 var(--rojo); } 50%{ box-shadow: inset 3px 0 0 transparent; } }
-
-/* ── BADGES DE ESTADO ── */
-.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 10px; letter-spacing: 0.03em; }
-.badge-PENDIENTE        { background: #fce4ec; color: #8b1a1a; border: 1px solid #f1aeb5; }
-.badge-EN\ EJECUCION    { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; }
-.badge-ENTREGA\ PARCIAL { background: #fff9e6; color: #7a5a00; border: 1px solid #f0d580; }
-.badge-ENTREGADO        { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
-.badge-ANULADO          { background: #eceff1; color: #455a64; border: 1px solid #cfd8dc; }
-.badge-TERMINADO        { background: #c8e6c9; color: #1b5e20; border: 1px solid #81c784; font-style: italic; }
+.status-PENDIENTE        { background: #fff5f5 !important; }
+.status-EN-EJECUCION     { background: #f0f7ff !important; }
+.status-ENTREGA-PARCIAL  { background: #fffbee !important; }
+.status-ENTREGADO        { background: #f0faf4 !important; }
+.status-ANULADO          { background: #f5f5f5 !important; opacity: 0.75; }
+.status-TERMINADO        { background: #e8f5e9 !important; }
+.urgente td:first-child  { box-shadow: inset 4px 0 0 var(--rojo); animation: blink-brd 1.8s infinite; }
+@keyframes blink-brd { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
 
 /* ── BOTONES ── */
-.btn {
-  border: none; border-radius: 6px; cursor: pointer;
-  font-family: var(--font); font-weight: 600;
-  transition: opacity 0.15s, transform 0.1s;
-}
+.btn { border: none; border-radius: 6px; cursor: pointer; font-family: var(--font); font-weight: 600; transition: opacity 0.15s, transform 0.1s; }
 .btn:active { transform: scale(0.97); }
-.btn-gold   { background: var(--dorado); color: var(--azul); padding: 7px 12px; font-size: 12px; }
-.btn-gold:hover { background: var(--dorado-d); }
+.btn-gold    { background: var(--dorado); color: var(--azul); padding: 7px 12px; font-size: 12px; }
+.btn-gold:hover { background: var(--dorado-d); color: var(--blanco); }
 .btn-outline { background: transparent; border: 1px solid var(--gris-brd); color: var(--azul); padding: 7px 12px; font-size: 12px; }
 .btn-outline:hover { background: var(--gris-bg); }
-.btn-danger { background: #fce4ec; color: var(--rojo); border: 1px solid #f5b8b3; padding: 6px 10px; font-size: 11px; }
-.btn-primary { background: var(--azul); color: var(--blanco); padding: 8px 16px; font-size: 12px; letter-spacing: 0.04em; }
+.btn-danger  { background: #fce4ec; color: var(--rojo); border: 1px solid #f5b8b3; padding: 5px 9px; font-size: 11px; }
+.btn-primary { background: var(--azul); color: var(--blanco); padding: 9px 18px; font-size: 12px; letter-spacing: 0.04em; }
 .btn-primary:hover { background: var(--azul-mid); }
-.btn-green { background: var(--verde-bg); color: var(--verde); border: 1px solid #a3d9b1; padding: 7px 14px; font-size: 12px; }
+.btn-green   { background: var(--verde-bg); color: var(--verde); border: 1px solid #a3d9b1; padding: 7px 14px; font-size: 12px; }
 
 /* ── TOAST ── */
 #toast {
   position: fixed; bottom: 28px; right: 28px; z-index: 9999;
-  background: var(--azul);
-  border-left: 4px solid var(--dorado);
+  background: var(--azul); border-left: 4px solid var(--dorado);
   border-radius: 10px; padding: 14px 20px;
   display: flex; align-items: flex-start; gap: 12px;
   min-width: 280px; max-width: 360px;
-  box-shadow: 0 8px 24px rgba(0,31,77,0.22);
+  box-shadow: 0 8px 24px rgba(0,31,77,0.25);
   transform: translateY(80px); opacity: 0;
   transition: transform 0.3s ease, opacity 0.3s ease;
   pointer-events: none;
 }
 #toast.show { transform: translateY(0); opacity: 1; }
-#toast-icon { font-size: 18px; margin-top: 1px; }
+#toast-icon  { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
 #toast-title { color: var(--blanco); font-weight: 600; font-size: 13px; }
 #toast-sub   { color: var(--azul-txt); font-size: 11px; margin-top: 2px; }
 
 /* ── LOADING ── */
 #loading-overlay {
-  position: fixed; inset: 0; background: rgba(0,31,77,0.18);
-  z-index: 1500; display: none;
-  justify-content: center; align-items: center;
+  position: fixed; inset: 0; background: rgba(0,31,77,0.15);
+  z-index: 1500; display: none; justify-content: center; align-items: center;
 }
 #loading-overlay.show { display: flex; }
-.spinner {
-  width: 36px; height: 36px;
-  border: 3px solid rgba(201,168,76,0.3);
-  border-top-color: var(--dorado);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+.spinner { width: 36px; height: 36px; border: 3px solid rgba(201,168,76,0.3); border-top-color: var(--dorado); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.meta-txt { font-size: 10px; color: var(--gris-txt); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -308,7 +262,15 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <img src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png" class="login-logo" alt="Aeronáutica Córdoba">
+    <div class="login-logo-wrap">
+      <img
+        src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png"
+        class="login-logo"
+        alt="Aeronáutica Córdoba"
+        onerror="this.style.display='none'; document.getElementById('logo-fallback-login').style.display='flex';"
+      >
+      <div class="login-logo-fallback" id="logo-fallback-login" style="display:none;">AERONÁUTICA<br>CÓRDOBA</div>
+    </div>
     <div class="login-title">Gestor de Solicitudes</div>
     <div class="login-sub">DIRECCIÓN DE AERONÁUTICA CÓRDOBA</div>
     <div class="login-divider"></div>
@@ -340,9 +302,15 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 <div id="main-app">
   <header class="app-header">
     <div style="display:flex;align-items:center;gap:14px;">
-      <img src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png" class="header-logo" alt="Aeronáutica Córdoba">
+      <img
+        src="https://raw.githubusercontent.com/helloweencba/administracion-aeronautica/main/Logo%20aeronautica.png"
+        class="header-logo"
+        alt="Aeronáutica Córdoba"
+        onerror="this.style.display='none'; document.getElementById('logo-fallback-header').style.display='flex';"
+      >
+      <div class="header-logo-fallback" id="logo-fallback-header" style="display:none;">AC</div>
       <div class="header-info">
-        <h3>Gestor de Solicitudes</h3>
+        <h3>Gestor de Solicitudes – Dirección de Aeronáutica Córdoba</h3>
         <small id="welcome-msg"></small>
       </div>
     </div>
@@ -356,7 +324,7 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
       <div class="card-title">➕ Nueva Solicitud</div>
       <div class="form-grid">
         <div>
-          <div class="form-group" style="margin-bottom:12px;">
+          <div class="form-group">
             <label>UNIDAD REQUIRENTE</label>
             <select id="c_unidad">
               <option>ADMINISTRACION</option>
@@ -365,11 +333,11 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
               <option>UOTA</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom:12px;">
+          <div class="form-group">
             <label>N° SOLICITUD</label>
             <input type="text" id="c_nro" placeholder="Ej: 26-009">
           </div>
-          <div class="form-group" style="margin-bottom:12px;">
+          <div class="form-group">
             <label>FECHA SOLICITUD</label>
             <input type="date" id="c_f_sol">
           </div>
@@ -379,21 +347,21 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
           </div>
         </div>
         <div>
-          <div class="form-group" style="margin-bottom:12px;">
-            <label>ACTIVOS / AERONAVES</label>
+          <div class="form-group">
+            <label>AERONAVE / VEHÍCULO</label>
             <div id="check-mats"></div>
           </div>
         </div>
         <div>
-          <div class="form-group" style="margin-bottom:12px;">
+          <div class="form-group">
             <label>DETALLE</label>
-            <textarea id="c_det" style="height:60px;"></textarea>
+            <textarea id="c_det" style="height:65px;"></textarea>
           </div>
-          <div class="form-group" style="margin-bottom:16px;">
+          <div class="form-group">
             <label>MOTIVO</label>
-            <textarea id="c_mot" style="height:60px;"></textarea>
+            <textarea id="c_mot" style="height:65px;"></textarea>
           </div>
-          <button class="btn btn-primary" style="width:100%" onclick="enviarNueva()">GUARDAR SOLICITUD</button>
+          <button class="btn btn-primary" style="width:100%;margin-top:4px;" onclick="enviarNueva()">GUARDAR SOLICITUD</button>
         </div>
       </div>
     </div>
@@ -402,7 +370,14 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
     <div class="card" id="seccion-flota">
       <div class="card-title">🚁 Estado de Flota</div>
       <table class="flota-table">
-        <thead><tr><th>PATENTE</th><th>ITV</th><th>POV</th><th>CISTERNA</th></tr></thead>
+        <thead>
+          <tr>
+            <th>PATENTE / UNIDAD</th>
+            <th>ITV</th>
+            <th>POV</th>
+            <th>CISTERNA</th>
+          </tr>
+        </thead>
         <tbody id="cuerpoFlota"></tbody>
       </table>
     </div>
@@ -418,8 +393,10 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
         <div id="f-admin-only">
           <select id="f_unidad" onchange="filtrar()">
             <option value="">Todas las unidades</option>
-            <option>ADMINISTRACION</option><option>OPERACIONES</option>
-            <option>TECNICA</option><option>UOTA</option>
+            <option>ADMINISTRACION</option>
+            <option>OPERACIONES</option>
+            <option>TECNICA</option>
+            <option>UOTA</option>
           </select>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
@@ -431,262 +408,228 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
           <label class="chk-label"><input type="checkbox" class="f-estado" value="ANULADO" onchange="filtrar()"> Anulado</label>
           <label class="chk-label"><input type="checkbox" class="f-estado" value="TERMINADO" onchange="filtrar()"> Terminado</label>
         </div>
-        <input type="text" id="f_texto" placeholder="Buscar por N°, detalle, activo..." onkeyup="filtrar()">
-        <button class="btn btn-outline" onclick="crearGrupo()">📦 Agrupar</button>
+        <input type="text" id="f_texto" placeholder="Buscar por N°, detalle, aeronave..." onkeyup="filtrar()">
+        <button class="btn btn-outline" onclick="crearGrupo()">📦 Agrupar seleccionadas</button>
       </div>
 
       <div id="contenedor-trazabilidad"></div>
     </div>
-  </div>
-</div>
+
+  </div><!-- /app-body -->
+</div><!-- /main-app -->
 
 <script>
-// ── CONFIGURACIÓN ──
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyl7lGIq1m6zgPcOEQ55nSJxGQQ3Gj82h3ORsr27DLR6_7-mC6kToCN4DsjipdxUHed/exec";
-let USUARIO_ACTUAL = "";
-let MATS_DINAMICOS = []; // se carga desde Flota
-let _toastTimer = null;
+// ── CONFIG ──
+var WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbyl7lGIq1m6zgPcOEQ55nSJxGQQ3Gj82h3ORsr27DLR6_7-mC6kToCN4DsjipdxUHed/exec";
+var USUARIO_ACTUAL = "";
+var MATS_DINAMICOS = [];
+var _toastTimer    = null;
+var _pendingScript = null;
+
+// Fallback MATS hardcodeado — se pisa con lo que venga del Sheet de Flota
+var MATS_FALLBACK = [
+  "LV-IHM","LV-HWY","LV-KOW","LV-CDE","LV-BIU","LV-BFC",
+  "LQ-KOP","LQ-COQ","LQ-COP","LQ-KDO","LQ-CCZ","LQ-BAN","LQ-HBQ",
+  "AE875UX","FAK619","AD150QB","IXH694"
+];
 
 // ── LOGIN ──
 function entrar() {
-  const u = document.getElementById('user-select').value;
-  if (!u) return;
+  var u = document.getElementById('user-select').value;
+  if (!u) { mostrarToast('⚠️','Seleccione usuario','Debe elegir un usuario para ingresar.'); return; }
   USUARIO_ACTUAL = u;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
-  document.getElementById('welcome-msg').innerText = "Operador: " + u;
+  document.getElementById('welcome-msg').innerText = 'Operador: ' + u;
 
   if (u === 'TECNICA') {
     document.getElementById('seccion-flota').style.display = 'none';
-    document.getElementById('f-admin-only').style.display = 'none';
+    document.getElementById('f-admin-only').style.display  = 'none';
     document.getElementById('btn-nueva-sol').style.display = 'none';
   }
+  cargarCheckboxes(MATS_FALLBACK);
   cargarDatos();
 }
 
-// ── CARGA DE DATOS (JSONP limpio) ──
-let _scriptActual = null;
+// ── CARGA DATOS ──
 function cargarDatos() {
   setLoading(true);
-  if (_scriptActual && _scriptActual.parentNode) {
-    _scriptActual.parentNode.removeChild(_scriptActual);
-  }
-  const s = document.createElement('script');
-  s.src = WEB_APP_URL + "?action=read&callback=renderTotal&_t=" + Date.now();
+  limpiarScriptPendiente();
+  var s = document.createElement('script');
+  s.src = WEB_APP_URL + '?action=read&callback=renderTotal&_t=' + Date.now();
+  s.onerror = function() { setLoading(false); mostrarToast('❌','Error de conexión','No se pudo conectar con el servidor.'); };
   document.body.appendChild(s);
-  _scriptActual = s;
+  _pendingScript = s;
+}
+
+function limpiarScriptPendiente() {
+  if (_pendingScript && _pendingScript.parentNode) {
+    _pendingScript.parentNode.removeChild(_pendingScript);
+    _pendingScript = null;
+  }
 }
 
 // ── RENDER PRINCIPAL ──
 window.renderTotal = function(data) {
   setLoading(false);
-  console.log("📥 DATOS RECIBIDOS DE GOOGLE:", data); // <--- ESTO ES VITAL PARA VER EL ERROR
+  if (data.error) { mostrarToast('❌','Error','Error: ' + data.error); return; }
 
-  if (!data) {
-    console.error("❌ No se recibieron datos.");
-    return;
-  }
-
-  if (data.error) { 
-    mostrarToast("❌", "Error de Backend", data.error); 
-    return; 
-  }
-
-  // Cargar MATS dinámicos desde Flota (con protección)
+  // Actualizar MATS desde Flota
   if (data.flota && data.flota.length > 0) {
-    try {
-      MATS_DINAMICOS = data.flota.map(f => f.patente || "").filter(Boolean);
-      cargarCheckboxes();
-      renderFlota(data.flota);
-    } catch (e) {
-      console.error("❌ Error procesando flota:", e);
-    }
+    var primerCampo = Object.keys(data.flota[0])[0];
+    MATS_DINAMICOS = data.flota.map(function(f){ return f[primerCampo]; }).filter(Boolean);
+    cargarCheckboxes(MATS_DINAMICOS);
   }
 
-  const c = document.getElementById('cards-container');
-  if (!c) return;
-  c.innerHTML = '';
-
-  if (!data.solicitudes || data.solicitudes.length === 0) {
-    c.innerHTML = '<p style="text-align:center; padding:20px; color:#5a6a80;">No hay solicitudes registradas en el Excel.</p>';
-    return;
-  }
-
-  // Agrupar Solicitudes
-  const grupos = {};
-  data.solicitudes.forEach(s => {
-    // FILTRO MEJORADO: No distingue mayúsculas/minúsculas
-    const unidadNormalizada = String(s.unidad || "").toUpperCase().trim();
-    if (USUARIO_ACTUAL === 'TECNICA' && unidadNormalizada !== 'TECNICA') {
-      return; 
-    }
-
-    const idG = s.id_g || 'SIN_GRUPO';
-    if (!grupos[idG]) {
-      grupos[idG] = { 
-        id: idG, 
-        nombre: s.nom_g || 'Solicitudes Individuales', 
-        items: [] 
-      };
-    }
-    grupos[idG].items.push(s);
-  });
-
-  // Dibujar los grupos (Renderizado)
-  Object.values(grupos).forEach(g => {
-    if (g.items.length === 0) return;
-    const gb = crearCajaGrupo(g);
-    c.appendChild(gb);
-  });
-
-  console.log("✅ Renderizado completado con éxito");
-};
-
-  // Flota
-  const cF = document.getElementById('cuerpoFlota');
+  // ── FLOTA ──
+  var cF = document.getElementById('cuerpoFlota');
   cF.innerHTML = '';
-  data.flota.forEach(f => {
-    cF.innerHTML += `<tr>
-      <td>${f.patente}</td>
-      <td>${celdaF(f.patente, 'itv', f.itv)}</td>
-      <td>${celdaF(f.patente, 'pov', f.pov)}</td>
-      <td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td>
-    </tr>`;
+  data.flota.forEach(function(f) {
+    var primerCampo = Object.keys(f)[0];
+    var patente = f[primerCampo];
+    // Detectar columnas de fecha (2°, 3°, 4° campo)
+    var campos  = Object.keys(f).slice(1);
+    var celdas  = campos.map(function(c) { return celdaF(patente, c, f[c]); }).join('');
+    cF.innerHTML += '<tr><td><strong>' + patente + '</strong></td>' + celdas + '</tr>';
   });
 
-  // Trazabilidad
-  const cont = document.getElementById('contenedor-trazabilidad');
+  // ── TRAZABILIDAD ──
+  var cont = document.getElementById('contenedor-trazabilidad');
   cont.innerHTML = '';
-  const grupos = {};
+  var grupos = {};
 
-  data.solicitudes.forEach(s => {
-    if (USUARIO_ACTUAL === 'TECNICA' && String(s.unidad).toUpperCase() !== 'TECNICA') return;
-    const key = s.id_g || ('_' + s.unidad + '_' + s.nro_sol);
+  data.solicitudes.forEach(function(s) {
+    if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
+    var key = s.id_g ? s.id_g : ('_SOL_' + s.unidad + '_' + s.nro_sol);
     if (!grupos[key]) grupos[key] = { nom: s.nom_g, id: s.id_g, sols: [] };
     grupos[key].sols.push(s);
   });
 
-  for (let k in grupos) {
-    const g = grupos[k];
-    const conteoEstados = {};
-    g.sols.forEach(s => { conteoEstados[s.estado] = (conteoEstados[s.estado] || 0) + 1; });
+  var estadoSlug = {
+    'PENDIENTE':       'PENDIENTE',
+    'EN EJECUCION':    'EN-EJECUCION',
+    'ENTREGA PARCIAL': 'ENTREGA-PARCIAL',
+    'ENTREGADO':       'ENTREGADO',
+    'ANULADO':         'ANULADO',
+    'TERMINADO':       'TERMINADO'
+  };
+  var labelCorto = {
+    'PENDIENTE':'Pendiente','EN EJECUCION':'Ejecución',
+    'ENTREGA PARCIAL':'E. Parcial','ENTREGADO':'Entregado',
+    'ANULADO':'Anulado','TERMINADO':'Terminado'
+  };
 
-    let pillsHtml = '';
-    const mapPill = {
-      'PENDIENTE':      'gpill-pendiente',
-      'EN EJECUCION':   'gpill-ejecucion',
-      'ENTREGA PARCIAL':'gpill-parcial',
-      'ENTREGADO':      'gpill-entregado',
-      'ANULADO':        'gpill-anulado',
-      'TERMINADO':      'gpill-terminado',
-    };
-    const labelCorto = {
-      'PENDIENTE':'Pendiente','EN EJECUCION':'Ejecución',
-      'ENTREGA PARCIAL':'E. Parcial','ENTREGADO':'Entregado',
-      'ANULADO':'Anulado','TERMINADO':'Terminado'
-    };
-    for (let est in conteoEstados) {
-      pillsHtml += `<span class="gpill ${mapPill[est] || ''}">${conteoEstados[est]} ${labelCorto[est] || est}</span>`;
+  for (var k in grupos) {
+    var g = grupos[k];
+
+    // Pills de resumen
+    var conteo = {};
+    g.sols.forEach(function(s){ conteo[s.estado] = (conteo[s.estado]||0)+1; });
+    var pillsHtml = '';
+    for (var est in conteo) {
+      var slug = estadoSlug[est] || est.replace(/ /g,'-');
+      pillsHtml += '<span class="gpill gpill-' + slug + '">' + conteo[est] + ' ' + (labelCorto[est]||est) + '</span>';
     }
 
-    const headerHtml = g.nom
-      ? `<div class="group-header">
-           <span class="group-header-name">📦 ${g.nom}</span>
-           <div class="group-pills">${pillsHtml}</div>
-         </div>`
+    var headerHtml = g.nom
+      ? '<div class="group-header"><span class="group-header-name">📦 ' + g.nom + '</span><div class="group-pills">' + pillsHtml + '</div></div>'
       : '';
 
-    const filas = g.sols.map(s => {
-      const sem = getSemaforo(s.f_nec);
-      const urg = !['TERMINADO','ENTREGADO','ANULADO'].includes(s.estado) && sem.cls !== 'fecha-ok';
-      const isT = USUARIO_ACTUAL === 'TECNICA';
-      const uKey = s.unidad + '|' + s.nro_sol;
-      const claseEstado = 'status-' + s.estado.toLowerCase().replace(/ /g, '-');
-      const fechaLabel = sem.cls === 'fecha-ok'
-        ? `<span class="fecha-ok">${s.f_nec || '-'}</span>`
-        : sem.cls === 'fecha-aviso'
-          ? `<span class="fecha-aviso">⚠ ${s.f_nec || '-'}</span>`
-          : `<span class="fecha-vencida">⚠ ${s.f_nec || '-'}</span>`;
+    var filasHtml = g.sols.map(function(s) {
+      var sem     = getSemaforo(s.f_nec);
+      var urg     = ['PENDIENTE','EN EJECUCION','ENTREGA PARCIAL'].indexOf(s.estado) > -1 && sem !== 'fecha-ok';
+      var isT     = USUARIO_ACTUAL === 'TECNICA';
+      var uKey    = s.unidad + '|' + s.nro_sol;
+      var clsFila = 'status-' + (estadoSlug[s.estado] || s.estado.replace(/ /g,'-'));
 
-      return `<tr class="fila-data ${claseEstado} ${urg ? 'urgente' : ''}"
-                  data-unidad="${s.unidad}" data-estado="${s.estado}"
-                  data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g || ''}">
-        <td style="width:30px"><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
-        <td style="min-width:110px">
-          <div class="unidad-tag">${s.unidad}</div>
-          <div class="nro-sol">${s.nro_sol}</div>
-          <div style="font-size:10px;color:var(--gris-txt);margin-top:2px;">F.Sol: ${s.f_sol || '-'}</div>
-        </td>
-        <td style="min-width:140px">
-          <div class="activo-txt">${s.activo || '-'}</div>
-          <div class="detalle-txt">${s.detalle || ''}</div>
-        </td>
-        <td style="min-width:110px">
-          <div style="font-size:10px;color:var(--gris-txt);">F. Necesidad</div>
-          ${fechaLabel}
-          ${s.f_estado ? `<div style="font-size:10px;color:var(--gris-txt);margin-top:2px;">Ult.cambio: ${s.f_estado}</div>` : ''}
-        </td>
-        <td>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;">
-            <input type="text" class="campo-mini" id="gip_${uKey}" value="${s.gip || ''}" placeholder="GIP" ${isT ? 'disabled' : ''}>
-            <input type="text" class="campo-mini" id="oc_${uKey}"  value="${s.oc  || ''}" placeholder="OC"  ${isT ? 'disabled' : ''}>
-            <input type="text" class="campo-mini" id="fac_${uKey}" value="${s.factura || ''}" placeholder="Fact" ${isT ? 'disabled' : ''}>
-          </div>
-        </td>
-        <td><textarea class="obs-input" id="obs_${uKey}">${s.obs || ''}</textarea></td>
-        <td style="min-width:130px">
-          <select class="estado-select" id="est_${uKey}">
-            <option value="PENDIENTE"        ${s.estado==='PENDIENTE'        ?'selected':''}>PENDIENTE</option>
-            <option value="EN EJECUCION"     ${s.estado==='EN EJECUCION'     ?'selected':''}>EN EJECUCION</option>
-            <option value="ENTREGA PARCIAL"  ${s.estado==='ENTREGA PARCIAL'  ?'selected':''}>E. PARCIAL</option>
-            <option value="ENTREGADO"        ${s.estado==='ENTREGADO'        ?'selected':''}>ENTREGADO</option>
-            <option value="ANULADO"          ${s.estado==='ANULADO'          ?'selected':''}>ANULADO</option>
-            ${!isT ? `<option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>` : ''}
-          </select>
-        </td>
-        <td style="min-width:90px">
-          <div style="display:flex;flex-direction:column;gap:5px;">
-            <button class="btn btn-gold" onclick="saveSol('${s.nro_sol}','${s.id_g || ''}','${s.unidad}')">💾 Guardar</button>
-            ${s.id_g ? `<button class="btn btn-danger" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">Quitar grupo</button>` : ''}
-          </div>
-        </td>
-      </tr>`;
+      var fechaHtml = s.f_nec
+        ? '<span class="' + sem + '">' + (sem !== 'fecha-ok' ? '⚠ ' : '') + s.f_nec + '</span>'
+        : '<span class="meta-txt">-</span>';
+
+      var disabledAttr = isT ? 'disabled' : '';
+
+      return '<tr class="fila-data ' + clsFila + (urg ? ' urgente' : '') + '"' +
+             ' data-unidad="' + s.unidad + '"' +
+             ' data-estado="' + s.estado + '"' +
+             ' data-txt="' + (s.nro_sol + ' ' + s.detalle + ' ' + s.activo + ' ' + (s.nom_g||'')).toLowerCase() + '">' +
+        '<td style="width:30px"><input type="checkbox" class="check-agrupar" value="' + uKey + '"></td>' +
+        '<td style="min-width:110px">' +
+          '<div class="unidad-tag">' + s.unidad + '</div>' +
+          '<div class="nro-sol">' + s.nro_sol + '</div>' +
+          '<div class="meta-txt">F.Sol: ' + (s.f_sol||'-') + '</div>' +
+        '</td>' +
+        '<td style="min-width:150px">' +
+          '<div class="activo-txt">' + (s.activo||'-') + '</div>' +
+          '<div class="detalle-txt">' + (s.detalle||'') + '</div>' +
+        '</td>' +
+        '<td style="min-width:120px">' +
+          '<div class="meta-txt">Fecha Necesidad</div>' +
+          fechaHtml +
+          (s.f_estado ? '<div class="meta-txt" style="margin-top:3px;">Ult.cambio: ' + s.f_estado + '</div>' : '') +
+        '</td>' +
+        '<td>' +
+          '<div style="display:flex;gap:4px;flex-wrap:wrap;">' +
+            '<input type="text" class="campo-mini" id="gip_' + uKey + '" value="' + (s.gip||'') + '" placeholder="GIP" ' + disabledAttr + '>' +
+            '<input type="text" class="campo-mini" id="oc_' + uKey  + '" value="' + (s.oc ||'') + '" placeholder="OC"  ' + disabledAttr + '>' +
+            '<input type="text" class="campo-mini" id="fac_' + uKey + '" value="' + (s.factura||'') + '" placeholder="Fact" ' + disabledAttr + '>' +
+          '</div>' +
+        '</td>' +
+        '<td><textarea class="obs-input" id="obs_' + uKey + '">' + (s.obs||'') + '</textarea></td>' +
+        '<td style="min-width:140px">' +
+          '<select class="estado-select" id="est_' + uKey + '">' +
+            '<option value="PENDIENTE"'       + (s.estado==='PENDIENTE'       ?'selected':'') + '>PENDIENTE</option>' +
+            '<option value="EN EJECUCION"'    + (s.estado==='EN EJECUCION'    ?'selected':'') + '>EN EJECUCION</option>' +
+            '<option value="ENTREGA PARCIAL"' + (s.estado==='ENTREGA PARCIAL' ?'selected':'') + '>E. PARCIAL</option>' +
+            '<option value="ENTREGADO"'       + (s.estado==='ENTREGADO'       ?'selected':'') + '>ENTREGADO</option>' +
+            '<option value="ANULADO"'         + (s.estado==='ANULADO'         ?'selected':'') + '>ANULADO</option>' +
+            (!isT ? '<option value="TERMINADO"' + (s.estado==='TERMINADO'?'selected':'') + '>TERMINADO</option>' : '') +
+          '</select>' +
+        '</td>' +
+        '<td style="min-width:100px">' +
+          '<div style="display:flex;flex-direction:column;gap:5px;">' +
+            '<button class="btn btn-gold" onclick="saveSol(\'' + s.nro_sol + '\',\'' + (s.id_g||'') + '\',\'' + s.unidad + '\')">💾 Guardar</button>' +
+            (s.id_g ? '<button class="btn btn-danger" onclick="desagrupar(\'' + s.nro_sol + '\',\'' + s.unidad + '\')">Quitar grupo</button>' : '') +
+          '</div>' +
+        '</td>' +
+      '</tr>';
     }).join('');
 
-    cont.innerHTML += `<div class="group-box">${headerHtml}<table class="sol-table">${filas}</table></div>`;
+    cont.innerHTML += '<div class="group-box">' + headerHtml + '<table class="sol-table">' + filasHtml + '</table></div>';
   }
+
   filtrar();
 };
 
-// ── FLOTA INLINE EDIT ──
+// ── FLOTA CELDA ──
 function celdaF(pat, campo, valor) {
-  const sem = getSemaforo(valor);
-  return `<div class="semaforo-pill ${sem.cls === 'fecha-ok' ? 'sem-ok' : sem.cls === 'fecha-aviso' ? 'sem-aviso' : 'sem-vencido'}" id="box_${pat}_${campo}">
-    <span>${valor || '-'}</span>
-    <span style="cursor:pointer;font-size:13px;" onclick="editF('${pat}','${campo}','${valor || ''}')">✏️</span>
-  </div>`;
+  var cls = getSemaforoFlota(valor);
+  var semCls = cls === 'fecha-ok' ? 'sem-ok' : cls === 'fecha-aviso' ? 'sem-aviso' : 'sem-vencido';
+  return '<td><div class="semaforo-pill ' + semCls + '" id="box_' + pat + '_' + campo + '">' +
+    '<span>' + (valor||'-') + '</span>' +
+    '<span style="cursor:pointer;font-size:13px;" onclick="editF(\'' + pat + '\',\'' + campo + '\',\'' + (valor||'') + '\')">✏️</span>' +
+    '</div></td>';
 }
 function editF(pat, campo, val) {
-  document.getElementById(`box_${pat}_${campo}`).innerHTML =
-    `<input type="text" id="i_${pat}_${campo}" value="${val}" style="width:85px;padding:3px 5px;border:1px solid var(--gris-brd);border-radius:5px;font-size:12px;">
-     <button class="btn btn-gold" style="padding:4px 8px;font-size:11px;" onclick="saveF('${pat}','${campo}')">OK</button>`;
+  document.getElementById('box_' + pat + '_' + campo).innerHTML =
+    '<input type="text" id="i_' + pat + '_' + campo + '" value="' + val + '" style="width:90px;padding:4px 6px;border:1px solid var(--gris-brd);border-radius:5px;font-size:12px;" placeholder="dd-mm-yyyy">' +
+    '<button class="btn btn-gold" style="padding:4px 8px;font-size:11px;margin-left:4px;" onclick="saveF(\'' + pat + '\',\'' + campo + '\')">OK</button>';
 }
 function saveF(pat, campo) {
-  const val = document.getElementById(`i_${pat}_${campo}`).value;
-  ejecutar('updateFlota', { patente: pat, campo, valor: val, user: USUARIO_ACTUAL });
-  mostrarToast('✅', 'Flota actualizada', pat + ' · ' + campo.toUpperCase() + ': ' + val);
+  var val = document.getElementById('i_' + pat + '_' + campo).value;
+  ejecutar('updateFlota', { patente: pat, campo: campo, valor: val, user: USUARIO_ACTUAL });
+  mostrarToast('✅', 'Flota actualizada', pat + ' · ' + campo.toUpperCase() + ' → ' + val);
 }
 
 // ── GUARDAR SOLICITUD ──
 function saveSol(n, idG, u) {
-  const key = u + '|' + n;
+  var key = u + '|' + n;
   ejecutar('update', {
     nro_sol: n, id_g: idG, unidad: u,
-    gip:     document.getElementById(`gip_${key}`).value,
-    oc:      document.getElementById(`oc_${key}`).value,
-    factura: document.getElementById(`fac_${key}`).value,
-    obs:     document.getElementById(`obs_${key}`).value,
-    estado:  document.getElementById(`est_${key}`).value,
+    gip:     document.getElementById('gip_' + key).value,
+    oc:      document.getElementById('oc_'  + key).value,
+    factura: document.getElementById('fac_' + key).value,
+    obs:     document.getElementById('obs_' + key).value,
+    estado:  document.getElementById('est_' + key).value,
     user:    USUARIO_ACTUAL
   });
   mostrarToast('✅', 'Cambios guardados', n + ' · ' + u + ' · ' + USUARIO_ACTUAL);
@@ -701,23 +644,22 @@ function desagrupar(n, u) {
 
 // ── NUEVA SOLICITUD ──
 function toggleCarga() {
-  const f = document.getElementById('form-carga');
+  var f = document.getElementById('form-carga');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
 }
-function cargarCheckboxes() {
-  const mats = MATS_DINAMICOS.length > 0 ? MATS_DINAMICOS :
-    ["LV-IHM","LV-HWY","LV-KOW","LV-CDE","LV-BIU","LV-BFC",
-     "LQ-KOP","LQ-COQ","LQ-COP","LQ-KDO","LQ-CCZ","LQ-BAN","LQ-HBQ",
-     "AE875UX","FAK619","AD150QB","IXH694"];
+function cargarCheckboxes(lista) {
   document.getElementById('check-mats').innerHTML =
-    mats.map(m => `<label><input type="checkbox" value="${m}"> ${m}</label>`).join('');
+    lista.map(function(m){ return '<label><input type="checkbox" value="' + m + '"> ' + m + '</label>'; }).join('');
 }
 function enviarNueva() {
-  const nro  = document.getElementById('c_nro').value.trim();
-  const fSol = document.getElementById('c_f_sol').value;
-  const fNec = document.getElementById('c_f_nec').value;
-  if (!nro || !fSol || !fNec) { mostrarToast('❌', 'Campos incompletos', 'Complete N°, Fecha Solicitud y Fecha Necesidad.'); return; }
-  const mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(c => c.value).join(', ');
+  var nro  = document.getElementById('c_nro').value.trim();
+  var fSol = document.getElementById('c_f_sol').value;
+  var fNec = document.getElementById('c_f_nec').value;
+  if (!nro || !fSol || !fNec) {
+    mostrarToast('⚠️','Campos incompletos','Complete N° Solicitud, Fecha Solicitud y Fecha Necesidad.');
+    return;
+  }
+  var mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(function(c){ return c.value; }).join(', ');
   ejecutar('create', {
     nro_sol: nro,
     unidad:  document.getElementById('c_unidad').value,
@@ -728,86 +670,89 @@ function enviarNueva() {
     motivo:  document.getElementById('c_mot').value,
     user:    USUARIO_ACTUAL
   });
-  mostrarToast('✅', 'Solicitud creada', nro + ' · ' + document.getElementById('c_unidad').value);
+  mostrarToast('✅','Solicitud creada', nro + ' · ' + document.getElementById('c_unidad').value);
   toggleCarga();
 }
 
 // ── AGRUPAR ──
 function crearGrupo() {
-  const checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(c => c.value);
-  if (checks.length < 2) { mostrarToast('⚠️', 'Selección inválida', 'Seleccione al menos 2 solicitudes para agrupar.'); return; }
-  const nom = prompt('Nombre del grupo:');
+  var checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(function(c){ return c.value; });
+  if (checks.length < 2) {
+    mostrarToast('⚠️','Selección inválida','Seleccione al menos 2 solicitudes para agrupar.');
+    return;
+  }
+  var nom = prompt('Nombre del grupo:');
   if (nom && nom.trim()) {
     ejecutar('agrupar', { ids: checks.join(','), nombre_grupo: nom.trim(), user: USUARIO_ACTUAL });
   }
 }
 
 // ── EJECUTAR (JSONP limpio) ──
-let _pendingScripts = [];
 function ejecutar(act, par) {
   setLoading(true);
-  // limpiar scripts anteriores
-  _pendingScripts.forEach(s => { if (s.parentNode) s.parentNode.removeChild(s); });
-  _pendingScripts = [];
-
-  let url = WEB_APP_URL + '?action=' + act + '&callback=renderTotal&_t=' + Date.now();
-  for (let k in par) url += '&' + k + '=' + encodeURIComponent(par[k]);
-  const s = document.createElement('script');
+  limpiarScriptPendiente();
+  var url = WEB_APP_URL + '?action=' + act + '&callback=renderTotal&_t=' + Date.now();
+  for (var k in par) url += '&' + k + '=' + encodeURIComponent(par[k]);
+  var s = document.createElement('script');
   s.src = url;
+  s.onerror = function(){ setLoading(false); mostrarToast('❌','Error de red','No se pudo completar la operación.'); };
   document.body.appendChild(s);
-  _pendingScripts.push(s);
+  _pendingScript = s;
 }
 
 // ── FILTRAR ──
 function filtrar() {
-  const u = document.getElementById('f_unidad') ? document.getElementById('f_unidad').value : '';
-  const t = document.getElementById('f_texto').value.toLowerCase();
-  const estadosOK = Array.from(document.querySelectorAll('.f-estado:checked')).map(c => c.value);
+  var uEl = document.getElementById('f_unidad');
+  var u   = uEl ? uEl.value : '';
+  var t   = document.getElementById('f_texto').value.toLowerCase();
+  var ok  = Array.from(document.querySelectorAll('.f-estado:checked')).map(function(c){ return c.value; });
 
-  document.querySelectorAll('.fila-data').forEach(f => {
-    const mU = !u || f.dataset.unidad === u;
-    const mE = estadosOK.includes(f.dataset.estado);
-    const mT = !t || f.dataset.txt.toLowerCase().includes(t);
+  document.querySelectorAll('.fila-data').forEach(function(f) {
+    var mU = !u || f.dataset.unidad === u;
+    var mE = ok.indexOf(f.dataset.estado) > -1;
+    var mT = !t || f.dataset.txt.includes(t);
     f.style.display = (mU && mE && mT) ? '' : 'none';
   });
-  document.querySelectorAll('.group-box').forEach(gb => {
-    const visible = Array.from(gb.querySelectorAll('.fila-data')).some(r => r.style.display !== 'none');
-    gb.style.display = visible ? '' : 'none';
+  document.querySelectorAll('.group-box').forEach(function(gb) {
+    var vis = Array.from(gb.querySelectorAll('.fila-data')).some(function(r){ return r.style.display !== 'none'; });
+    gb.style.display = vis ? '' : 'none';
   });
 }
 
-// ── SEMÁFORO ──
+// ── SEMÁFORO solicitudes (retorna clase CSS) ──
 function getSemaforo(fStr) {
-  if (!fStr || fStr === '-' || fStr === '') return { cls: 'fecha-ok' };
-  // formato esperado: dd-mm-yyyy
-  const partes = String(fStr).split('-');
-  if (partes.length !== 3) return { cls: 'fecha-ok' };
-  const venc = new Date(partes[2], partes[1] - 1, partes[0]);
-  if (isNaN(venc)) return { cls: 'fecha-ok' };
-  const diff = Math.ceil((venc - new Date()) / (1000 * 60 * 60 * 24));
-  if (diff < 0)  return { cls: 'fecha-vencida' };
-  if (diff <= 45) return { cls: 'fecha-aviso' };
-  return { cls: 'fecha-ok' };
+  if (!fStr || fStr === '-' || fStr === '') return 'fecha-ok';
+  var p = String(fStr).split('-');
+  if (p.length !== 3) return 'fecha-ok';
+  // formato dd-mm-yyyy
+  var venc = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
+  if (isNaN(venc.getTime())) return 'fecha-ok';
+  var diff = Math.ceil((venc - new Date()) / 86400000);
+  if (diff < 0)   return 'fecha-vencida';
+  if (diff <= 45) return 'fecha-aviso';
+  return 'fecha-ok';
+}
+
+// ── SEMÁFORO flota (retorna clase CSS) ──
+function getSemaforoFlota(fStr) {
+  return getSemaforo(fStr); // misma lógica
 }
 
 // ── TOAST ──
 function mostrarToast(icon, titulo, sub) {
   document.getElementById('toast-icon').innerText  = icon;
   document.getElementById('toast-title').innerText = titulo;
-  document.getElementById('toast-sub').innerText   = sub;
-  const t = document.getElementById('toast');
+  document.getElementById('toast-sub').innerText   = sub || '';
+  var t = document.getElementById('toast');
   t.classList.add('show');
   if (_toastTimer) clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+  _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
 }
 
 // ── LOADING ──
 function setLoading(v) {
   document.getElementById('loading-overlay').classList.toggle('show', v);
 }
-
-// Al cargar página
-cargarCheckboxes();
 </script>
 </body>
 </html>
