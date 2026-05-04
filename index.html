@@ -417,222 +417,242 @@ body { font-family: var(--font); background: var(--gris-bg); color: var(--azul);
 
   </div><!-- /app-body -->
 </div><!-- /main-app -->
-
 <script>
-// ── CONFIG ──
-var WEB_APP_URL  = "https://script.google.com/macros/s/AKfycbyl7lGIq1m6zgPcOEQ55nSJxGQQ3Gj82h3ORsr27DLR6_7-mC6kToCN4DsjipdxUHed/exec";
-var USUARIO_ACTUAL = "";
-var MATS_DINAMICOS = [];
-var _toastTimer    = null;
-var _pendingScript = null;
+// ── CONFIGURACIÓN ──
+// OJO: Pega aquí la URL de la ÚLTIMA implementación (Nueva Versión) que hiciste en Apps Script.
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyl7lGIq1m6zgPcOEQ55nSJxGQQ3Gj82h3ORsr27DLR6_7-mC6kToCN4DsjipdxUHed/exec"; 
 
-// Fallback MATS hardcodeado — se pisa con lo que venga del Sheet de Flota
-var MATS_FALLBACK = [
-  "LV-IHM","LV-HWY","LV-KOW","LV-CDE","LV-BIU","LV-BFC",
-  "LQ-KOP","LQ-COQ","LQ-COP","LQ-KDO","LQ-CCZ","LQ-BAN","LQ-HBQ",
-  "AE875UX","FAK619","AD150QB","IXH694"
-];
+let USUARIO_ACTUAL = "";
+let MATS_DINAMICOS = []; 
+let _toastTimer = null;
 
 // ── LOGIN ──
 function entrar() {
-  var u = document.getElementById('user-select').value;
-  if (!u) { mostrarToast('⚠️','Seleccione usuario','Debe elegir un usuario para ingresar.'); return; }
+  const u = document.getElementById('user-select').value;
+  if (!u) return;
   USUARIO_ACTUAL = u;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
-  document.getElementById('welcome-msg').innerText = 'Operador: ' + u;
+  document.getElementById('welcome-msg').innerText = "Operador: " + u;
 
   if (u === 'TECNICA') {
     document.getElementById('seccion-flota').style.display = 'none';
-    document.getElementById('f-admin-only').style.display  = 'none';
+    document.getElementById('f-admin-only').style.display = 'none';
     document.getElementById('btn-nueva-sol').style.display = 'none';
   }
-  cargarCheckboxes(MATS_FALLBACK);
   cargarDatos();
 }
 
-// ── CARGA DATOS ──
+// ── CARGA DE DATOS (A PRUEBA DE FALLOS) ──
 function cargarDatos() {
   setLoading(true);
-  limpiarScriptPendiente();
-  var s = document.createElement('script');
-  s.src = WEB_APP_URL + '?action=read&callback=renderTotal&_t=' + Date.now();
-  s.onerror = function() { setLoading(false); mostrarToast('❌','Error de conexión','No se pudo conectar con el servidor.'); };
-  document.body.appendChild(s);
-  _pendingScript = s;
-}
+  
+  // Limpiamos llamadas viejas para no superponer datos
+  const scriptViejo = document.getElementById('script-datos-lectura');
+  if (scriptViejo) scriptViejo.remove();
 
-function limpiarScriptPendiente() {
-  if (_pendingScript && _pendingScript.parentNode) {
-    _pendingScript.parentNode.removeChild(_pendingScript);
-    _pendingScript = null;
-  }
+  const s = document.createElement('script');
+  s.id = 'script-datos-lectura';
+  s.src = WEB_APP_URL + "?action=read&callback=renderTotal&_t=" + Date.now();
+  
+  // Si Google rechaza la conexión, nos avisa
+  s.onerror = function() {
+    setLoading(false);
+    console.error("❌ Falla de red: No se pudo conectar con Apps Script.");
+    mostrarToast("❌", "Error de Conexión", "El servidor de Google no responde.");
+  };
+
+  document.body.appendChild(s);
 }
 
 // ── RENDER PRINCIPAL ──
 window.renderTotal = function(data) {
   setLoading(false);
-  if (data.error) { mostrarToast('❌','Error','Error: ' + data.error); return; }
+  console.log("📥 DATOS RECIBIDOS DE GOOGLE:", data); // Vital para debug
 
-  // Actualizar MATS desde Flota
-  if (data.flota && data.flota.length > 0) {
-    var primerCampo = Object.keys(data.flota[0])[0];
-    MATS_DINAMICOS = data.flota.map(function(f){ return f[primerCampo]; }).filter(Boolean);
-    cargarCheckboxes(MATS_DINAMICOS);
+  if (!data) {
+    mostrarToast("❌", "Error", "No se recibieron datos de Google.");
+    return;
   }
 
-  // ── FLOTA ──
-  var cF = document.getElementById('cuerpoFlota');
+  if (data.error) { 
+    console.error("❌ Error en Backend:", data.error);
+    mostrarToast("❌", "Error del Servidor", data.error); 
+    return; 
+  }
+
+  // 1. Cargar Flota y Checkboxes (con protección por si viene vacío)
+  const cF = document.getElementById('cuerpoFlota');
   cF.innerHTML = '';
-  data.flota.forEach(function(f) {
-    var primerCampo = Object.keys(f)[0];
-    var patente = f[primerCampo];
-    // Detectar columnas de fecha (2°, 3°, 4° campo)
-    var campos  = Object.keys(f).slice(1);
-    var celdas  = campos.map(function(c) { return celdaF(patente, c, f[c]); }).join('');
-    cF.innerHTML += '<tr><td><strong>' + patente + '</strong></td>' + celdas + '</tr>';
-  });
 
-  // ── TRAZABILIDAD ──
-  var cont = document.getElementById('contenedor-trazabilidad');
+  if (data.flota && data.flota.length > 0) {
+    try {
+      MATS_DINAMICOS = data.flota.map(f => f.patente || "").filter(Boolean);
+      cargarCheckboxes();
+      
+      data.flota.forEach(f => {
+        cF.innerHTML += `<tr>
+          <td>${f.patente || '-'}</td>
+          <td>${celdaF(f.patente, 'itv', f.itv)}</td>
+          <td>${celdaF(f.patente, 'pov', f.pov)}</td>
+          <td>${celdaF(f.patente, 'cisterna', f.cisterna)}</td>
+        </tr>`;
+      });
+    } catch (e) {
+      console.error("❌ Error al dibujar flota:", e);
+    }
+  }
+
+  // 2. Trazabilidad de Solicitudes
+  const cont = document.getElementById('contenedor-trazabilidad');
   cont.innerHTML = '';
-  var grupos = {};
+  
+  if (!data.solicitudes || data.solicitudes.length === 0) {
+     cont.innerHTML = '<p style="text-align:center; padding:20px;">No hay solicitudes cargadas en el Excel.</p>';
+     return;
+  }
 
-  data.solicitudes.forEach(function(s) {
-    if (USUARIO_ACTUAL === 'TECNICA' && s.unidad !== 'TECNICA') return;
-    var key = s.id_g ? s.id_g : ('_SOL_' + s.unidad + '_' + s.nro_sol);
+  const grupos = {};
+  data.solicitudes.forEach(s => {
+    // Filtro seguro: Convertimos a mayúsculas y quitamos espacios para evitar errores de tipeo
+    const unidadSafe = String(s.unidad || '').toUpperCase().trim();
+    if (USUARIO_ACTUAL === 'TECNICA' && unidadSafe !== 'TECNICA') return;
+
+    const key = s.id_g || ('_' + s.unidad + '_' + s.nro_sol);
     if (!grupos[key]) grupos[key] = { nom: s.nom_g, id: s.id_g, sols: [] };
     grupos[key].sols.push(s);
   });
 
-  var estadoSlug = {
-    'PENDIENTE':       'PENDIENTE',
-    'EN EJECUCION':    'EN-EJECUCION',
-    'ENTREGA PARCIAL': 'ENTREGA-PARCIAL',
-    'ENTREGADO':       'ENTREGADO',
-    'ANULADO':         'ANULADO',
-    'TERMINADO':       'TERMINADO'
-  };
-  var labelCorto = {
-    'PENDIENTE':'Pendiente','EN EJECUCION':'Ejecución',
-    'ENTREGA PARCIAL':'E. Parcial','ENTREGADO':'Entregado',
-    'ANULADO':'Anulado','TERMINADO':'Terminado'
-  };
+  for (let k in grupos) {
+    const g = grupos[k];
+    const conteoEstados = {};
+    g.sols.forEach(s => { conteoEstados[s.estado] = (conteoEstados[s.estado] || 0) + 1; });
 
-  for (var k in grupos) {
-    var g = grupos[k];
+    let pillsHtml = '';
+    const mapPill = {
+      'PENDIENTE':      'gpill-pendiente',
+      'EN EJECUCION':   'gpill-ejecucion',
+      'ENTREGA PARCIAL':'gpill-parcial',
+      'ENTREGADO':      'gpill-entregado',
+      'ANULADO':        'gpill-anulado',
+      'TERMINADO':      'gpill-terminado',
+    };
+    const labelCorto = {
+      'PENDIENTE':'Pendiente', 'EN EJECUCION':'Ejecución',
+      'ENTREGA PARCIAL':'E. Parcial', 'ENTREGADO':'Entregado',
+      'ANULADO':'Anulado', 'TERMINADO':'Terminado'
+    };
 
-    // Pills de resumen
-    var conteo = {};
-    g.sols.forEach(function(s){ conteo[s.estado] = (conteo[s.estado]||0)+1; });
-    var pillsHtml = '';
-    for (var est in conteo) {
-      var slug = estadoSlug[est] || est.replace(/ /g,'-');
-      pillsHtml += '<span class="gpill gpill-' + slug + '">' + conteo[est] + ' ' + (labelCorto[est]||est) + '</span>';
+    for (let est in conteoEstados) {
+      pillsHtml += `<span class="gpill ${mapPill[est] || ''}">${conteoEstados[est]} ${labelCorto[est] || est}</span>`;
     }
 
-    var headerHtml = g.nom
-      ? '<div class="group-header"><span class="group-header-name">📦 ' + g.nom + '</span><div class="group-pills">' + pillsHtml + '</div></div>'
+    const headerHtml = g.nom
+      ? `<div class="group-header">
+           <span class="group-header-name">📦 ${g.nom}</span>
+           <div class="group-pills">${pillsHtml}</div>
+         </div>`
       : '';
 
-    var filasHtml = g.sols.map(function(s) {
-      var sem     = getSemaforo(s.f_nec);
-      var urg     = ['PENDIENTE','EN EJECUCION','ENTREGA PARCIAL'].indexOf(s.estado) > -1 && sem !== 'fecha-ok';
-      var isT     = USUARIO_ACTUAL === 'TECNICA';
-      var uKey    = s.unidad + '|' + s.nro_sol;
-      var clsFila = 'status-' + (estadoSlug[s.estado] || s.estado.replace(/ /g,'-'));
+    const filas = g.sols.map(s => {
+      const sem = getSemaforo(s.f_nec);
+      const urg = !['TERMINADO','ENTREGADO','ANULADO'].includes(s.estado) && sem.cls !== 'fecha-ok';
+      const isT = USUARIO_ACTUAL === 'TECNICA';
+      const uKey = s.unidad + '|' + s.nro_sol;
+      
+      const estadoLimpio = (s.estado || 'PENDIENTE').toLowerCase().replace(/ /g, '-');
+      const claseEstado = 'status-' + estadoLimpio;
+      
+      let fechaLabel = `<span class="fecha-ok">${s.f_nec || '-'}</span>`;
+      if (sem.cls === 'fecha-aviso') fechaLabel = `<span class="fecha-aviso">⚠ ${s.f_nec || '-'}</span>`;
+      if (sem.cls === 'fecha-vencida') fechaLabel = `<span class="fecha-vencida">⚠ ${s.f_nec || '-'}</span>`;
 
-      var fechaHtml = s.f_nec
-        ? '<span class="' + sem + '">' + (sem !== 'fecha-ok' ? '⚠ ' : '') + s.f_nec + '</span>'
-        : '<span class="meta-txt">-</span>';
-
-      var disabledAttr = isT ? 'disabled' : '';
-
-      return '<tr class="fila-data ' + clsFila + (urg ? ' urgente' : '') + '"' +
-             ' data-unidad="' + s.unidad + '"' +
-             ' data-estado="' + s.estado + '"' +
-             ' data-txt="' + (s.nro_sol + ' ' + s.detalle + ' ' + s.activo + ' ' + (s.nom_g||'')).toLowerCase() + '">' +
-        '<td style="width:30px"><input type="checkbox" class="check-agrupar" value="' + uKey + '"></td>' +
-        '<td style="min-width:110px">' +
-          '<div class="unidad-tag">' + s.unidad + '</div>' +
-          '<div class="nro-sol">' + s.nro_sol + '</div>' +
-          '<div class="meta-txt">F.Sol: ' + (s.f_sol||'-') + '</div>' +
-        '</td>' +
-        '<td style="min-width:150px">' +
-          '<div class="activo-txt">' + (s.activo||'-') + '</div>' +
-          '<div class="detalle-txt">' + (s.detalle||'') + '</div>' +
-        '</td>' +
-        '<td style="min-width:120px">' +
-          '<div class="meta-txt">Fecha Necesidad</div>' +
-          fechaHtml +
-          (s.f_estado ? '<div class="meta-txt" style="margin-top:3px;">Ult.cambio: ' + s.f_estado + '</div>' : '') +
-        '</td>' +
-        '<td>' +
-          '<div style="display:flex;gap:4px;flex-wrap:wrap;">' +
-            '<input type="text" class="campo-mini" id="gip_' + uKey + '" value="' + (s.gip||'') + '" placeholder="GIP" ' + disabledAttr + '>' +
-            '<input type="text" class="campo-mini" id="oc_' + uKey  + '" value="' + (s.oc ||'') + '" placeholder="OC"  ' + disabledAttr + '>' +
-            '<input type="text" class="campo-mini" id="fac_' + uKey + '" value="' + (s.factura||'') + '" placeholder="Fact" ' + disabledAttr + '>' +
-          '</div>' +
-        '</td>' +
-        '<td><textarea class="obs-input" id="obs_' + uKey + '">' + (s.obs||'') + '</textarea></td>' +
-        '<td style="min-width:140px">' +
-          '<select class="estado-select" id="est_' + uKey + '">' +
-            '<option value="PENDIENTE"'       + (s.estado==='PENDIENTE'       ?'selected':'') + '>PENDIENTE</option>' +
-            '<option value="EN EJECUCION"'    + (s.estado==='EN EJECUCION'    ?'selected':'') + '>EN EJECUCION</option>' +
-            '<option value="ENTREGA PARCIAL"' + (s.estado==='ENTREGA PARCIAL' ?'selected':'') + '>E. PARCIAL</option>' +
-            '<option value="ENTREGADO"'       + (s.estado==='ENTREGADO'       ?'selected':'') + '>ENTREGADO</option>' +
-            '<option value="ANULADO"'         + (s.estado==='ANULADO'         ?'selected':'') + '>ANULADO</option>' +
-            (!isT ? '<option value="TERMINADO"' + (s.estado==='TERMINADO'?'selected':'') + '>TERMINADO</option>' : '') +
-          '</select>' +
-        '</td>' +
-        '<td style="min-width:100px">' +
-          '<div style="display:flex;flex-direction:column;gap:5px;">' +
-            '<button class="btn btn-gold" onclick="saveSol(\'' + s.nro_sol + '\',\'' + (s.id_g||'') + '\',\'' + s.unidad + '\')">💾 Guardar</button>' +
-            (s.id_g ? '<button class="btn btn-danger" onclick="desagrupar(\'' + s.nro_sol + '\',\'' + s.unidad + '\')">Quitar grupo</button>' : '') +
-          '</div>' +
-        '</td>' +
-      '</tr>';
+      return `<tr class="fila-data ${claseEstado} ${urg ? 'urgente' : ''}"
+                  data-unidad="${s.unidad}" data-estado="${s.estado}"
+                  data-txt="${s.nro_sol} ${s.detalle} ${s.activo} ${s.nom_g || ''}">
+        <td style="width:30px"><input type="checkbox" class="check-agrupar" value="${uKey}"></td>
+        
+        <td style="min-width:110px">
+          <div class="unidad-tag">${s.unidad}</div>
+          <div class="nro-sol">${s.nro_sol}</div>
+          <div style="font-size:10px;color:var(--gris-txt);margin-top:2px;">F.Sol: ${s.f_sol || '-'}</div>
+        </td>
+        <td style="min-width:140px">
+          <div class="activo-txt">${s.activo || '-'}</div>
+          <div class="detalle-txt">${s.detalle || ''}</div>
+        </td>
+        <td style="min-width:110px">
+          <div style="font-size:10px;color:var(--gris-txt);">F. Necesidad</div>
+          ${fechaLabel}
+          ${s.f_estado ? `<div style="font-size:10px;color:var(--gris-txt);margin-top:2px;">Ult.cambio: ${s.f_estado}</div>` : ''}
+        </td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <input type="text" class="campo-mini" id="gip_${uKey}" value="${s.gip || ''}" placeholder="GIP" ${isT ? 'disabled' : ''}>
+            <input type="text" class="campo-mini" id="oc_${uKey}"  value="${s.oc  || ''}" placeholder="OC"  ${isT ? 'disabled' : ''}>
+            <input type="text" class="campo-mini" id="fac_${uKey}" value="${s.factura || ''}" placeholder="Fact" ${isT ? 'disabled' : ''}>
+          </div>
+        </td>
+        <td><textarea class="obs-input" id="obs_${uKey}">${s.obs || ''}</textarea></td>
+        <td style="min-width:130px">
+          <select class="estado-select" id="est_${uKey}">
+            <option value="PENDIENTE"        ${s.estado==='PENDIENTE'        ?'selected':''}>PENDIENTE</option>
+            <option value="EN EJECUCION"     ${s.estado==='EN EJECUCION'     ?'selected':''}>EN EJECUCION</option>
+            <option value="ENTREGA PARCIAL"  ${s.estado==='ENTREGA PARCIAL'  ?'selected':''}>E. PARCIAL</option>
+            <option value="ENTREGADO"        ${s.estado==='ENTREGADO'        ?'selected':''}>ENTREGADO</option>
+            <option value="ANULADO"          ${s.estado==='ANULADO'          ?'selected':''}>ANULADO</option>
+            ${!isT ? `<option value="TERMINADO" ${s.estado==='TERMINADO'?'selected':''}>TERMINADO</option>` : ''}
+          </select>
+        </td>
+        <td style="min-width:90px">
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button class="btn btn-gold" onclick="saveSol('${s.nro_sol}','${s.id_g || ''}','${s.unidad}')">💾 Guardar</button>
+            ${s.id_g ? `<button class="btn btn-danger" onclick="desagrupar('${s.nro_sol}','${s.unidad}')">Quitar grupo</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
     }).join('');
 
-    cont.innerHTML += '<div class="group-box">' + headerHtml + '<table class="sol-table">' + filasHtml + '</table></div>';
+    cont.innerHTML += `<div class="group-box">${headerHtml}<table class="sol-table">${filas}</table></div>`;
   }
-
   filtrar();
 };
 
-// ── FLOTA CELDA ──
+// ── FLOTA INLINE EDIT ──
 function celdaF(pat, campo, valor) {
-  var cls = getSemaforoFlota(valor);
-  var semCls = cls === 'fecha-ok' ? 'sem-ok' : cls === 'fecha-aviso' ? 'sem-aviso' : 'sem-vencido';
-  return '<td><div class="semaforo-pill ' + semCls + '" id="box_' + pat + '_' + campo + '">' +
-    '<span>' + (valor||'-') + '</span>' +
-    '<span style="cursor:pointer;font-size:13px;" onclick="editF(\'' + pat + '\',\'' + campo + '\',\'' + (valor||'') + '\')">✏️</span>' +
-    '</div></td>';
+  const sem = getSemaforo(valor);
+  const clase = sem.cls === 'fecha-ok' ? 'sem-ok' : sem.cls === 'fecha-aviso' ? 'sem-aviso' : 'sem-vencido';
+  return `<div class="semaforo-pill ${clase}" id="box_${pat}_${campo}">
+    <span>${valor || '-'}</span>
+    <span style="cursor:pointer;font-size:13px;" onclick="editF('${pat}','${campo}','${valor || ''}')">✏️</span>
+  </div>`;
 }
+
 function editF(pat, campo, val) {
-  document.getElementById('box_' + pat + '_' + campo).innerHTML =
-    '<input type="text" id="i_' + pat + '_' + campo + '" value="' + val + '" style="width:90px;padding:4px 6px;border:1px solid var(--gris-brd);border-radius:5px;font-size:12px;" placeholder="dd-mm-yyyy">' +
-    '<button class="btn btn-gold" style="padding:4px 8px;font-size:11px;margin-left:4px;" onclick="saveF(\'' + pat + '\',\'' + campo + '\')">OK</button>';
+  document.getElementById(`box_${pat}_${campo}`).innerHTML =
+    `<input type="text" id="i_${pat}_${campo}" value="${val}" style="width:85px;padding:3px 5px;border:1px solid var(--gris-brd);border-radius:5px;font-size:12px;">
+     <button class="btn btn-gold" style="padding:4px 8px;font-size:11px;" onclick="saveF('${pat}','${campo}')">OK</button>`;
 }
+
 function saveF(pat, campo) {
-  var val = document.getElementById('i_' + pat + '_' + campo).value;
+  const val = document.getElementById(`i_${pat}_${campo}`).value;
   ejecutar('updateFlota', { patente: pat, campo: campo, valor: val, user: USUARIO_ACTUAL });
-  mostrarToast('✅', 'Flota actualizada', pat + ' · ' + campo.toUpperCase() + ' → ' + val);
+  mostrarToast('✅', 'Guardando Flota...', 'Enviando cambios a Google...');
 }
 
 // ── GUARDAR SOLICITUD ──
 function saveSol(n, idG, u) {
-  var key = u + '|' + n;
+  const key = u + '|' + n;
   ejecutar('update', {
     nro_sol: n, id_g: idG, unidad: u,
-    gip:     document.getElementById('gip_' + key).value,
-    oc:      document.getElementById('oc_'  + key).value,
-    factura: document.getElementById('fac_' + key).value,
-    obs:     document.getElementById('obs_' + key).value,
-    estado:  document.getElementById('est_' + key).value,
+    gip:     document.getElementById(`gip_${key}`).value,
+    oc:      document.getElementById(`oc_${key}`).value,
+    factura: document.getElementById(`fac_${key}`).value,
+    obs:     document.getElementById(`obs_${key}`).value,
+    estado:  document.getElementById(`est_${key}`).value,
     user:    USUARIO_ACTUAL
   });
-  mostrarToast('✅', 'Cambios guardados', n + ' · ' + u + ' · ' + USUARIO_ACTUAL);
+  mostrarToast('✅', 'Enviando cambios...', 'Actualizando Excel...');
 }
 
 // ── DESAGRUPAR ──
@@ -644,22 +664,31 @@ function desagrupar(n, u) {
 
 // ── NUEVA SOLICITUD ──
 function toggleCarga() {
-  var f = document.getElementById('form-carga');
+  const f = document.getElementById('form-carga');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
 }
-function cargarCheckboxes(lista) {
+
+function cargarCheckboxes() {
+  const mats = MATS_DINAMICOS.length > 0 ? MATS_DINAMICOS :
+    ["LV-IHM","LV-HWY","LV-KOW","LV-CDE","LV-BIU","LV-BFC",
+     "LQ-KOP","LQ-COQ","LQ-COP","LQ-KDO","LQ-CCZ","LQ-BAN","LQ-HBQ",
+     "AE875UX","FAK619","AD150QB","IXH694"];
   document.getElementById('check-mats').innerHTML =
-    lista.map(function(m){ return '<label><input type="checkbox" value="' + m + '"> ' + m + '</label>'; }).join('');
+    mats.map(m => `<label><input type="checkbox" value="${m}"> ${m}</label>`).join('');
 }
+
 function enviarNueva() {
-  var nro  = document.getElementById('c_nro').value.trim();
-  var fSol = document.getElementById('c_f_sol').value;
-  var fNec = document.getElementById('c_f_nec').value;
-  if (!nro || !fSol || !fNec) {
-    mostrarToast('⚠️','Campos incompletos','Complete N° Solicitud, Fecha Solicitud y Fecha Necesidad.');
-    return;
+  const nro  = document.getElementById('c_nro').value.trim();
+  const fSol = document.getElementById('c_f_sol').value;
+  const fNec = document.getElementById('c_f_nec').value;
+  
+  if (!nro || !fSol || !fNec) { 
+    mostrarToast('❌', 'Campos incompletos', 'Complete N°, Fecha Solicitud y Fecha Necesidad.');
+    return; 
   }
-  var mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(function(c){ return c.value; }).join(', ');
+  
+  const mats = Array.from(document.querySelectorAll('#check-mats input:checked')).map(c => c.value).join(', ');
+  
   ejecutar('create', {
     nro_sol: nro,
     unidad:  document.getElementById('c_unidad').value,
@@ -670,89 +699,96 @@ function enviarNueva() {
     motivo:  document.getElementById('c_mot').value,
     user:    USUARIO_ACTUAL
   });
-  mostrarToast('✅','Solicitud creada', nro + ' · ' + document.getElementById('c_unidad').value);
+  
+  mostrarToast('✅', 'Creando solicitud...', 'Aguarde un momento...');
   toggleCarga();
 }
 
 // ── AGRUPAR ──
 function crearGrupo() {
-  var checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(function(c){ return c.value; });
-  if (checks.length < 2) {
-    mostrarToast('⚠️','Selección inválida','Seleccione al menos 2 solicitudes para agrupar.');
+  const checks = Array.from(document.querySelectorAll('.check-agrupar:checked')).map(c => c.value);
+  if (checks.length < 2) { 
+    mostrarToast('⚠️', 'Selección inválida', 'Seleccione al menos 2 solicitudes para agrupar.'); 
     return;
   }
-  var nom = prompt('Nombre del grupo:');
+  const nom = prompt('Nombre del grupo:');
   if (nom && nom.trim()) {
     ejecutar('agrupar', { ids: checks.join(','), nombre_grupo: nom.trim(), user: USUARIO_ACTUAL });
   }
 }
 
-// ── EJECUTAR (JSONP limpio) ──
+// ── MOTOR DE EJECUCIÓN (A PRUEBA DE FALLOS) ──
 function ejecutar(act, par) {
   setLoading(true);
-  limpiarScriptPendiente();
-  var url = WEB_APP_URL + '?action=' + act + '&callback=renderTotal&_t=' + Date.now();
-  for (var k in par) url += '&' + k + '=' + encodeURIComponent(par[k]);
-  var s = document.createElement('script');
+  
+  let url = WEB_APP_URL + '?action=' + act + '&callback=renderTotal&_t=' + Date.now();
+  for (let k in par) {
+    url += '&' + k + '=' + encodeURIComponent(par[k]);
+  }
+  
+  const s = document.createElement('script');
   s.src = url;
-  s.onerror = function(){ setLoading(false); mostrarToast('❌','Error de red','No se pudo completar la operación.'); };
+  s.onerror = function() {
+    setLoading(false);
+    console.error(`❌ Falla al ejecutar acción: ${act}`);
+    mostrarToast("❌", "Error de Comunicación", "No se pudieron enviar los datos a Google.");
+  };
+  
   document.body.appendChild(s);
-  _pendingScript = s;
 }
 
 // ── FILTRAR ──
 function filtrar() {
-  var uEl = document.getElementById('f_unidad');
-  var u   = uEl ? uEl.value : '';
-  var t   = document.getElementById('f_texto').value.toLowerCase();
-  var ok  = Array.from(document.querySelectorAll('.f-estado:checked')).map(function(c){ return c.value; });
-
-  document.querySelectorAll('.fila-data').forEach(function(f) {
-    var mU = !u || f.dataset.unidad === u;
-    var mE = ok.indexOf(f.dataset.estado) > -1;
-    var mT = !t || f.dataset.txt.includes(t);
+  const u = document.getElementById('f_unidad') ? document.getElementById('f_unidad').value : '';
+  const t = document.getElementById('f_texto').value.toLowerCase();
+  const estadosOK = Array.from(document.querySelectorAll('.f-estado:checked')).map(c => c.value);
+  
+  document.querySelectorAll('.fila-data').forEach(f => {
+    const mU = !u || f.dataset.unidad === u;
+    const mE = estadosOK.includes(f.dataset.estado);
+    const mT = !t || f.dataset.txt.toLowerCase().includes(t);
     f.style.display = (mU && mE && mT) ? '' : 'none';
   });
-  document.querySelectorAll('.group-box').forEach(function(gb) {
-    var vis = Array.from(gb.querySelectorAll('.fila-data')).some(function(r){ return r.style.display !== 'none'; });
-    gb.style.display = vis ? '' : 'none';
+  
+  document.querySelectorAll('.group-box').forEach(gb => {
+    const visible = Array.from(gb.querySelectorAll('.fila-data')).some(r => r.style.display !== 'none');
+    gb.style.display = visible ? '' : 'none';
   });
 }
 
-// ── SEMÁFORO solicitudes (retorna clase CSS) ──
+// ── SEMÁFORO ──
 function getSemaforo(fStr) {
-  if (!fStr || fStr === '-' || fStr === '') return 'fecha-ok';
-  var p = String(fStr).split('-');
-  if (p.length !== 3) return 'fecha-ok';
-  // formato dd-mm-yyyy
-  var venc = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
-  if (isNaN(venc.getTime())) return 'fecha-ok';
-  var diff = Math.ceil((venc - new Date()) / 86400000);
-  if (diff < 0)   return 'fecha-vencida';
-  if (diff <= 45) return 'fecha-aviso';
-  return 'fecha-ok';
-}
-
-// ── SEMÁFORO flota (retorna clase CSS) ──
-function getSemaforoFlota(fStr) {
-  return getSemaforo(fStr); // misma lógica
+  if (!fStr || fStr === '-' || fStr === '') return { cls: 'fecha-ok' };
+  const partes = String(fStr).split('-');
+  if (partes.length !== 3) return { cls: 'fecha-ok' };
+  
+  const venc = new Date(partes[2], partes[1] - 1, partes[0]);
+  if (isNaN(venc)) return { cls: 'fecha-ok' };
+  
+  const diff = Math.ceil((venc - new Date()) / (1000 * 60 * 60 * 24));
+  if (diff < 0)  return { cls: 'fecha-vencida' };
+  if (diff <= 45) return { cls: 'fecha-aviso' };
+  return { cls: 'fecha-ok' };
 }
 
 // ── TOAST ──
 function mostrarToast(icon, titulo, sub) {
   document.getElementById('toast-icon').innerText  = icon;
   document.getElementById('toast-title').innerText = titulo;
-  document.getElementById('toast-sub').innerText   = sub || '';
-  var t = document.getElementById('toast');
+  document.getElementById('toast-sub').innerText   = sub;
+  const t = document.getElementById('toast');
   t.classList.add('show');
   if (_toastTimer) clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 // ── LOADING ──
 function setLoading(v) {
   document.getElementById('loading-overlay').classList.toggle('show', v);
 }
+
+// Inicialización
+cargarCheckboxes();
 </script>
 </body>
 </html>
